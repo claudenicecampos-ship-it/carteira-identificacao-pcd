@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Carteira - GO Card PCD</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="carteira.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
+                </div>
+                <nav class="nav-links">
+                    <a href="index.html" class="nav-link">Cadastro</a>
+                    <a href="central-direitos.html" class="nav-link">Central de Direitos</a>
+                    <a href="comunidade.html" class="nav-link">Comunidade</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="wallet-container">
+                <!-- Carteira Digital -->
+                <div class="wallet-card" id="walletCard">
+                    <div class="wallet-header">
+                        <div class="wallet-logo">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <h1 id="headerTitle">CARTEIRA GO CARD PCD</h1>
+                        <div class="wallet-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            Documento Valido
+                        </div>
+                    </div>
+
+                    <div class="wallet-content">
+                        <div class="foto-section">
+                            <div id="fotoWallet" class="foto-wallet"></div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-row">
+                                <div class="info-field">
+                                    <span class="info-label">Nome Completo</span>
+                                    <span id="nomeWallet" class="info-value">-</span>
+                                </div>
+                            </div>
+
+                            <div class="info-row two-cols">
+                                <div class="info-field">
+                                    <span class="info-label">Data de Nascimento</span>
+                                    <span id="dataWallet" class="info-value">-</span>
+                                </div>
+                                <div class="info-field">
+                                    <span class="info-label">CPF</span>
+                                    <span id="cpfWallet" class="info-value">-</span>
+                                </div>
+                            </div>
+
+                            <div class="info-row two-cols">
+                                <div class="info-field">
+                                    <span class="info-label">CID</span>
+                                    <span id="cidWallet" class="info-value highlight">-</span>
+                                </div>
+                                <div class="info-field">
+                                    <span class="info-label">Tipo de Deficiencia</span>
+                                    <span id="deficienciaWallet" class="info-value">-</span>
+                                </div>
+                            </div>
+
+                            <div class="info-row">
+                                <div class="info-field">
+                                    <span class="info-label">Cidade</span>
+                                    <span id="cidadeWallet" class="info-value">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="qrcode-section">
+                            <div class="qrcode-container">
+                                <div id="qrcodeWallet"></div>
+                            </div>
+                            <span class="qrcode-label">Escaneie para verificar</span>
+                        </div>
+                    </div>
+
+                    <div class="wallet-footer">
+                        <div class="validity-info">
+                            <div class="validity-item">
+                                <span class="label">Emissao</span>
+                                <span id="dataEmissao" class="value">-</span>
+                            </div>
+                            <div class="validity-item">
+                                <span class="label">Validade</span>
+                                <span id="dataValidade" class="value">-</span>
+                            </div>
+                            <div class="validity-item">
+                                <span class="label">N Carteira</span>
+                                <span id="numeroCarteira" class="value">-</span>
+                            </div>
+                        </div>
+                        <p class="footer-text">Documento valido em todo territorio nacional - Lei 13.146/2015</p>
+                    </div>
+                </div>
+
+                <!-- Botoes de Acao -->
+                <div class="action-buttons">
+                    <button id="printBtn" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                        Imprimir
+                    </button>
+                    <button id="downloadBtn" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Baixar PNG
+                    </button>
+                    <a href="index.html" class="btn btn-secondary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Editar Dados
+                    </a>
+                </div>
+
+                <!-- Informacoes de Emergencia (QR Code Dinamico) -->
+                <div class="emergency-card">
+                    <div class="emergency-header">
+                        <div class="emergency-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>Informacoes de Emergencia</h3>
+                            <p class="emergency-subtitle">Visiveis ao escanear o QR Code</p>
+                        </div>
+                    </div>
+                    <div class="emergency-grid">
+                        <div class="emergency-item">
+                            <span class="label">Tipo Sanguineo</span>
+                            <span id="tipoSanguineoDisplay" class="value">-</span>
+                        </div>
+                        <div class="emergency-item">
+                            <span class="label">Contato de Emergencia</span>
+                            <span id="contatoDisplay" class="value">-</span>
+                        </div>
+                        <div class="emergency-item full-width">
+                            <span class="label">Alergias</span>
+                            <span id="alergiasDisplay" class="value">-</span>
+                        </div>
+                        <div class="emergency-item full-width">
+                            <span class="label">Medicacoes de Uso Continuo</span>
+                            <span id="medicacoesDisplay" class="value">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Socorro ao Direito -->
+                <div class="socorro-card">
+                    <div class="socorro-header">
+                        <div class="socorro-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>Socorro ao Direito</h3>
+                            <p class="socorro-subtitle">Seu direito foi negado? Estamos aqui para ajudar!</p>
+                        </div>
+                    </div>
+                    <div class="socorro-actions">
+                        <button class="socorro-btn" id="guiaLegalBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            Guia Legal Rapido
+                        </button>
+                        <button class="socorro-btn" id="denunciaBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            Fazer Denuncia
+                        </button>
+                        <button class="socorro-btn" id="suporteBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            Falar com Suporte
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Alertas Push -->
+                <div class="alerts-section">
+                    <h3 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        Central de Alertas
+                    </h3>
+                    <div class="alerts-list">
+                        <div class="alert-card success">
+                            <div class="alert-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                            <div class="alert-content">
+                                <h4>Carteira Emitida com Sucesso!</h4>
+                                <p>Sua carteira digital GO Card esta pronta para uso.</p>
+                            </div>
+                        </div>
+                        <div class="alert-card info">
+                            <div class="alert-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M12 16v-4"></path>
+                                    <path d="M12 8h.01"></path>
+                                </svg>
+                            </div>
+                            <div class="alert-content">
+                                <h4>Nova Lei Municipal</h4>
+                                <p>Desconto de 50% em eventos culturais para PCDs. Clique para saber mais.</p>
+                            </div>
+                        </div>
+                        <div class="alert-card warning">
+                            <div class="alert-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                            <div class="alert-content">
+                                <h4>Campanha de Vacinacao</h4>
+                                <p>Vacinacao prioritaria contra gripe disponivel nos postos de saude.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <p>&copy; 2024 GO Card PCD - Garantindo Dignidade e Direitos</p>
+        </footer>
+    </div>
+
+    <!-- Modal Guia Legal -->
+    <div id="guiaLegalModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Guia Legal Rapido</h3>
+                <button class="close-modal" id="closeGuiaLegal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="legal-item">
+                    <h4>Fila Prioritaria</h4>
+                    <p><strong>Lei 10.048/2000</strong> - Garante atendimento prioritario em estabelecimentos publicos e privados.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Acompanhante em Hospitais</h4>
+                    <p><strong>Lei 13.146/2015 (Art. 22)</strong> - Direito a acompanhante durante internacoes.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Gratuidade em Transporte</h4>
+                    <p><strong>Lei 8.899/1994</strong> - Passe livre interestadual para PCDs comprovadamente carentes.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Vagas Reservadas</h4>
+                    <p><strong>Lei 13.146/2015 (Art. 47)</strong> - 2% das vagas em estacionamentos publicos e privados.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Isencao de Impostos</h4>
+                    <p><strong>Lei 8.989/1995</strong> - Isencao de IPI na compra de veiculos adaptados.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Denuncia -->
+    <div id="denunciaModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header denuncia-header">
+                <h3>Canal de Denuncia</h3>
+                <button class="close-modal" id="closeDenuncia">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="denunciaForm" class="denuncia-form">
+                    <div class="form-group">
+                        <label for="localDenuncia">Local do Ocorrido</label>
+                        <input type="text" id="localDenuncia" class="input-field" placeholder="Nome do estabelecimento" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipoDenuncia">Tipo de Violacao</label>
+                        <select id="tipoDenuncia" class="input-field" required>
+                            <option value="">Selecione...</option>
+                            <option value="fila">Negaram Fila Prioritaria</option>
+                            <option value="acesso">Falta de Acessibilidade</option>
+                            <option value="atendimento">Atendimento Discriminatorio</option>
+                            <option value="transporte">Problema em Transporte</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="descricaoDenuncia">Descricao do Ocorrido</label>
+                        <textarea id="descricaoDenuncia" class="input-field textarea" rows="4" placeholder="Descreva o que aconteceu..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m22 2-7 20-4-9-9-4Z"></path>
+                            <path d="M22 2 11 13"></path>
+                        </svg>
+                        Enviar Denuncia
+                    </button>
+                </form>
+                <p class="denuncia-note">Sua denuncia sera encaminhada para orgaos competentes (MP, Defensoria Publica, ONGs parceiras).</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="carteira.js"></script>
+</body>
+</html>

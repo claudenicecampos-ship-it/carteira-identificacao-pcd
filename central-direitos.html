@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Direitos - GO Card PCD</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
+                </div>
+                <nav class="nav-links">
+                    <a href="index.html" class="nav-link">Cadastro</a>
+                    <a href="central-direitos.html" class="nav-link active">Central de Direitos</a>
+                    <a href="comunidade.html" class="nav-link">Comunidade</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container-wide">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>Central de Direitos "Push"</h1>
+                    <p>Receba alertas inteligentes sobre seus direitos, prazos e novas leis. Voce nao precisa procurar - nos avisamos!</p>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <a href="carteira.html" class="quick-action-card">
+                        <div class="quick-action-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <h3>Minha Carteira</h3>
+                        <p>Acesse sua carteira digital GO Card</p>
+                    </a>
+                    <a href="#guia-legal" class="quick-action-card">
+                        <div class="quick-action-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                        </div>
+                        <h3>Guia Legal Rapido</h3>
+                        <p>Leis e artigos que garantem seus direitos</p>
+                    </a>
+                    <a href="#denuncia" class="quick-action-card">
+                        <div class="quick-action-icon socorro">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </div>
+                        <h3>Socorro ao Direito</h3>
+                        <p>Direito negado? Faca uma denuncia</p>
+                    </a>
+                    <a href="comunidade.html" class="quick-action-card">
+                        <div class="quick-action-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <h3>Rede de Apoio</h3>
+                        <p>Conecte-se com a comunidade</p>
+                    </a>
+                </div>
+
+                <!-- Notificacoes Inteligentes -->
+                <section class="section">
+                    <h2 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        Notificacoes Recentes
+                    </h2>
+
+                    <div class="notification-card warning">
+                        <div class="notification-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Alerta de Prazo</h4>
+                            <p>Sua gratuidade no transporte interestadual vence em 30 dias. Clique para renovar automaticamente.</p>
+                            <span class="notification-date">Hoje</span>
+                        </div>
+                    </div>
+
+                    <div class="notification-card">
+                        <div class="notification-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Nova Lei Municipal</h4>
+                            <p>Uma nova lei garante desconto de 50% em eventos culturais para PCDs. Baixe aqui o comprovante atualizado.</p>
+                            <span class="notification-date">Ontem</span>
+                        </div>
+                    </div>
+
+                    <div class="notification-card success">
+                        <div class="notification-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                            </svg>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Campanha de Vacinacao</h4>
+                            <p>Vacinacao prioritaria contra gripe disponivel nos postos de saude. Voce tem prioridade!</p>
+                            <span class="notification-date">15/03/2024</span>
+                        </div>
+                    </div>
+
+                    <div class="notification-card">
+                        <div class="notification-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 16v-4"></path>
+                                <path d="M12 8h.01"></path>
+                            </svg>
+                        </div>
+                        <div class="notification-content">
+                            <h4>Mutirao de Exames</h4>
+                            <p>Mutirao de exames oftalmologicos gratuitos no proximo sabado no Centro de Saude Municipal.</p>
+                            <span class="notification-date">12/03/2024</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Guia Legal -->
+                <section class="section" id="guia-legal">
+                    <h2 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <path d="M12 17h.01"></path>
+                        </svg>
+                        Guia Legal - Conheca Seus Direitos
+                    </h2>
+
+                    <div class="legal-grid">
+                        <div class="legal-card">
+                            <div class="legal-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                            <h3>Fila Prioritaria</h3>
+                            <p><strong>Lei 10.048/2000</strong></p>
+                            <p>Atendimento prioritario em estabelecimentos publicos e privados, bancos, hospitais, cartórios e todos os servicos de atendimento ao publico.</p>
+                        </div>
+
+                        <div class="legal-card">
+                            <div class="legal-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                                </svg>
+                            </div>
+                            <h3>Acompanhante em Hospitais</h3>
+                            <p><strong>Lei 13.146/2015 - Art. 22</strong></p>
+                            <p>Direito a acompanhante ou atendente pessoal durante internacoes hospitalares, sem custo adicional.</p>
+                        </div>
+
+                        <div class="legal-card">
+                            <div class="legal-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="1" y="3" width="15" height="13"></rect>
+                                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                                </svg>
+                            </div>
+                            <h3>Passe Livre Interestadual</h3>
+                            <p><strong>Lei 8.899/1994</strong></p>
+                            <p>Gratuidade em transporte coletivo interestadual para PCDs comprovadamente carentes.</p>
+                        </div>
+
+                        <div class="legal-card">
+                            <div class="legal-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                                    <line x1="9" y1="21" x2="9" y2="9"></line>
+                                </svg>
+                            </div>
+                            <h3>Vagas Reservadas</h3>
+                            <p><strong>Lei 13.146/2015 - Art. 47</strong></p>
+                            <p>2% das vagas em estacionamentos publicos e privados, localizadas proximas a entradas acessiveis.</p>
+                        </div>
+
+                        <div class="legal-card">
+                            <div class="legal-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                            </div>
+                            <h3>Isencao de Impostos</h3>
+                            <p><strong>Lei 8.989/1995</strong></p>
+                            <p>Isencao de IPI, IOF e ICMS na compra de veiculos adaptados. Isencao de IPVA em varios estados.</p>
+                        </div>
+
+                        <div class="legal-card">
+                            <div class="legal-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+                            </div>
+                            <h3>Educacao Inclusiva</h3>
+                            <p><strong>Lei 13.146/2015 - Cap. IV</strong></p>
+                            <p>Direito a educacao em sistema inclusivo, com apoio especializado e adaptacoes curriculares quando necessario.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Socorro ao Direito -->
+                <section class="section" id="denuncia">
+                    <h2 class="section-title socorro-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        Socorro ao Direito
+                    </h2>
+                    <p class="section-desc">Se voce esta em um estabelecimento e seu direito esta sendo negado, use estas ferramentas:</p>
+
+                    <div class="socorro-grid">
+                        <div class="socorro-action-card">
+                            <div class="socorro-action-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                            </div>
+                            <h3>Mostrar a Lei</h3>
+                            <p>Apresente o artigo da lei que garante seu direito diretamente do seu celular.</p>
+                            <button class="btn btn-secondary">Ver Leis</button>
+                        </div>
+
+                        <div class="socorro-action-card highlight">
+                            <div class="socorro-action-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                            </div>
+                            <h3>Fazer Denuncia</h3>
+                            <p>Registre a violacao e receba um protocolo. Encaminhamos para MP e Defensoria.</p>
+                            <button class="btn btn-primary" id="btnDenuncia">Denunciar Agora</button>
+                        </div>
+
+                        <div class="socorro-action-card">
+                            <div class="socorro-action-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </div>
+                            <h3>Chat com Suporte</h3>
+                            <p>Fale com um atendente que pode orientar voce em tempo real.</p>
+                            <button class="btn btn-secondary">Iniciar Chat</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <p>&copy; 2024 GO Card PCD - Garantindo Dignidade e Direitos</p>
+        </footer>
+    </div>
+
+    <!-- Modal Denuncia -->
+    <div id="denunciaModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header denuncia-header">
+                <h3>Canal de Denuncia</h3>
+                <button class="close-modal" id="closeDenuncia">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="denunciaForm" class="denuncia-form">
+                    <div class="form-group">
+                        <label for="localDenuncia">Local do Ocorrido</label>
+                        <input type="text" id="localDenuncia" class="input-field" placeholder="Nome do estabelecimento" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="enderecoDenuncia">Endereco</label>
+                        <input type="text" id="enderecoDenuncia" class="input-field" placeholder="Rua, numero, bairro">
+                    </div>
+                    <div class="form-group">
+                        <label for="tipoDenuncia">Tipo de Violacao</label>
+                        <select id="tipoDenuncia" class="input-field" required>
+                            <option value="">Selecione...</option>
+                            <option value="fila">Negaram Fila Prioritaria</option>
+                            <option value="acesso">Falta de Acessibilidade</option>
+                            <option value="atendimento">Atendimento Discriminatorio</option>
+                            <option value="transporte">Problema em Transporte</option>
+                            <option value="estacionamento">Vaga Reservada Ocupada</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="descricaoDenuncia">Descricao do Ocorrido</label>
+                        <textarea id="descricaoDenuncia" class="input-field textarea" rows="4" placeholder="Descreva detalhadamente o que aconteceu..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m22 2-7 20-4-9-9-4Z"></path>
+                            <path d="M22 2 11 13"></path>
+                        </svg>
+                        Registrar Denuncia
+                    </button>
+                </form>
+                <p class="denuncia-note">Sua denuncia sera encaminhada para: Ministerio Publico, Defensoria Publica e ONGs parceiras de defesa dos direitos da PCD.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal Denuncia
+        const denunciaModal = document.getElementById('denunciaModal');
+        const btnDenuncia = document.getElementById('btnDenuncia');
+        const closeDenuncia = document.getElementById('closeDenuncia');
+
+        btnDenuncia?.addEventListener('click', () => {
+            denunciaModal?.classList.remove('hidden');
+        });
+
+        closeDenuncia?.addEventListener('click', () => {
+            denunciaModal?.classList.add('hidden');
+        });
+
+        denunciaModal?.addEventListener('click', (e) => {
+            if (e.target === denunciaModal) {
+                denunciaModal.classList.add('hidden');
+            }
+        });
+
+        // Formulario de Denuncia
+        document.getElementById('denunciaForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const protocolo = 'DEN' + Date.now().toString().slice(-10);
+            alert('Denuncia registrada com sucesso!\n\nProtocolo: ' + protocolo + '\n\nSua denuncia sera encaminhada aos orgaos competentes.');
+            denunciaModal?.classList.add('hidden');
+            e.target.reset();
+        });
+    </script>
+</body>
+</html>
