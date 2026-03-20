@@ -1,320 +1,380 @@
-// GO Card PCD - Sistema da Carteira Digital
-// Database de CIDs
+// GO Card PCD — carteira.js
+// Carrega dados do localStorage e gera QR Code que aponta para verificar.html
+
 const validCIDs = {
-  "6A02": "Transtorno do Espectro Autista",
-  "A00": "Sem Deficiencia",
-  "A01": "Deficiencia Auditiva",
-  "A15": "Deficiencia Fisica",
-  "B99": "Deficiencia Auditiva",
-  "C00": "Deficiencia Fisica",
-  "C50": "Deficiencia Fisica",
-  "D89": "Deficiencia Auditiva",
-  "E10": "Deficiencia Fisica",
-  "E11": "Deficiencia Fisica",
-  "E89": "Deficiencia Fisica",
-  "F01": "Deficiencia Intelectual",
-  "F10": "Deficiencia Intelectual",
-  "F20": "Deficiencia Intelectual",
-  "F32": "Deficiencia Intelectual",
-  "F41": "Deficiencia Intelectual",
-  "F60": "Deficiencia Intelectual",
-  "F70": "Deficiencia Intelectual Leve",
-  "F71": "Deficiencia Intelectual Moderada",
-  "F72": "Deficiencia Intelectual Grave",
-  "F73": "Deficiencia Intelectual Profunda",
-  "F78": "Deficiencia Intelectual",
-  "F79": "Deficiencia Intelectual",
-  "F84": "Transtorno Global do Desenvolvimento",
-  "F88": "Deficiencia Intelectual",
-  "F89": "Deficiencia Intelectual",
-  "F99": "Deficiencia Intelectual",
-  "G06": "Deficiencia Fisica",
-  "G11": "Deficiencia Fisica",
-  "G20": "Doenca de Parkinson",
-  "G80": "Paralisia Cerebral",
-  "G82": "Paraplegia/Tetraplegia",
-  "G89": "Deficiencia Fisica",
-  "G99": "Deficiencia Fisica",
-  "H00": "Deficiencia Visual",
-  "H04": "Deficiencia Visual",
-  "H10": "Deficiencia Visual",
-  "H20": "Deficiencia Visual",
-  "H25": "Catarata",
-  "H26": "Deficiencia Visual",
-  "H28": "Deficiencia Visual",
-  "H30": "Deficiencia Visual",
-  "H33": "Deficiencia Visual",
-  "H34": "Deficiencia Visual",
-  "H35": "Deficiencia Visual",
-  "H36": "Deficiencia Visual",
-  "H40": "Glaucoma",
-  "H42": "Deficiencia Visual",
-  "H43": "Deficiencia Visual",
-  "H44": "Deficiencia Visual",
-  "H46": "Deficiencia Visual",
-  "H47": "Deficiencia Visual",
-  "H48": "Deficiencia Visual",
-  "H49": "Deficiencia Visual",
-  "H50": "Deficiencia Visual",
-  "H51": "Deficiencia Visual",
-  "H52": "Deficiencia Visual",
-  "H53": "Deficiencia Visual",
-  "H54": "Cegueira/Baixa Visao",
-  "H55": "Deficiencia Visual",
-  "H57": "Deficiencia Visual",
-  "H59": "Deficiencia Visual",
-  "H60": "Deficiencia Auditiva",
-  "H66": "Deficiencia Auditiva",
-  "H71": "Deficiencia Auditiva",
-  "H72": "Deficiencia Auditiva",
-  "H73": "Deficiencia Auditiva",
-  "H74": "Deficiencia Auditiva",
-  "H75": "Deficiencia Auditiva",
-  "H80": "Deficiencia Auditiva",
-  "H81": "Deficiencia Auditiva",
-  "H83": "Deficiencia Auditiva",
-  "H90": "Surdez",
-  "H91": "Perda Auditiva",
-  "H92": "Deficiencia Auditiva",
-  "H93": "Deficiencia Auditiva",
-  "H95": "Deficiencia Auditiva",
-  "I10": "Deficiencia Fisica",
-  "I50": "Deficiencia Fisica",
-  "I63": "AVC",
-  "I69": "Deficiencia Fisica",
-  "I99": "Deficiencia Fisica",
-  "J43": "Deficiencia Fisica",
-  "J44": "DPOC",
-  "J45": "Deficiencia Fisica",
-  "J99": "Deficiencia Fisica",
-  "K95": "Deficiencia Fisica",
-  "L99": "Deficiencia Fisica",
-  "M06": "Artrite Reumatoide",
-  "M17": "Deficiencia Fisica",
-  "M19": "Deficiencia Fisica",
-  "M35": "Deficiencia Fisica",
-  "M99": "Deficiencia Fisica",
-  "N18": "Doenca Renal Cronica",
-  "N99": "Deficiencia Fisica",
-  "O99": "Sem Deficiencia",
-  "P96": "Deficiencia Multipla",
-  "Q05": "Espinha Bifida",
-  "Q10": "Deficiencia Visual",
-  "Q30": "Deficiencia Auditiva",
-  "Q99": "Deficiencia Intelectual",
-  "R99": "A Classificar",
-  "T88": "Deficiencia Fisica",
-  "Y89": "Deficiencia Fisica",
-  "Z99": "Dependencia de Equipamentos"
+  "6A02":"Transtorno do Espectro Autista","F84":"Transtorno Global do Desenvolvimento",
+  "F70":"Deficiência Intelectual Leve","F71":"Deficiência Intelectual Moderada",
+  "F72":"Deficiência Intelectual Grave","F73":"Deficiência Intelectual Profunda",
+  "F78":"Deficiência Intelectual","F79":"Deficiência Intelectual",
+  "G80":"Paralisia Cerebral","G82":"Paraplegia / Tetraplegia","G20":"Doença de Parkinson",
+  "H54":"Cegueira / Baixa Visão","H90":"Surdez","H91":"Perda Auditiva",
+  "F01":"Deficiência Intelectual","F20":"Transtorno Psicossocial",
+  "I63":"AVC","I69":"Sequela de AVC","Q05":"Espinha Bífida",
+  "G11":"Ataxia","M06":"Artrite Reumatoide","N18":"Doença Renal Crônica",
+  "J44":"DPOC","P96":"Deficiência Múltipla",
+  "H00":"Deficiência Visual","H10":"Deficiência Visual","H25":"Catarata","H40":"Glaucoma",
+  "H60":"Deficiência Auditiva","H66":"Deficiência Auditiva","H72":"Deficiência Auditiva",
+  "E10":"Diabetes Tipo 1","E11":"Diabetes Tipo 2","J43":"Enfisema","J45":"Asma Grave"
 };
 
-// Funcao para formatar data
-function formatDate(dateString) {
-  if (!dateString) return '-';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('pt-BR');
+function formatDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso + (iso.length === 10 ? 'T00:00:00' : ''));
+  return d.toLocaleDateString('pt-BR');
 }
 
-// Funcao para formatar CPF
-function formatCPF(cpf) {
-  if (!cpf) return '-';
-  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+function formatCPF(v) {
+  if (!v) return '—';
+  const n = v.replace(/\D/g,'');
+  if (n.length !== 11) return v;
+  return n.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
 }
 
-// Gerar numero de carteira
+function formatRG(v) {
+  if (!v) return '—';
+  const n = v.replace(/\D/g,'');
+  if (n.length < 7) return v;
+  if (n.length === 9) return n.replace(/(\d{2})(\d{3})(\d{3})(\d)/,'$1.$2.$3-$4');
+  if (n.length === 8) return n.replace(/(\d{2})(\d{3})(\d{3})/,'$1.$2.$3');
+  return n.replace(/(\d{1,2})(\d{3})(\d{3})/,'$1.$2.$3');
+}
+
+function formatTelefone(v) {
+  if (!v) return '—';
+  const n = v.replace(/\D/g,'');
+  if (n.length === 11) return `(${n.slice(0,2)}) ${n.slice(2,7)}-${n.slice(7)}`;
+  if (n.length === 10) return `(${n.slice(0,2)}) ${n.slice(2,6)}-${n.slice(6)}`;
+  return v;
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val || '—';
+}
+
 function generateCardNumber() {
-  return 'GC' + Date.now().toString().slice(-8);
+  const timestamp = Date.now().toString().slice(-8);
+  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+  return `GC${timestamp}${random}`;
 }
 
-// Carregar dados da carteira
-function loadWalletData() {
-  const userDataStr = localStorage.getItem('userRegistration');
+function generateVerifyCode(cpf, numero) {
+  const raw = (cpf || '') + (numero || '') + 'GOCARD2025';
+  let hash = 0;
+  for (let i = 0; i < raw.length; i++) {
+    hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+    hash |= 0;
+  }
+  return 'VER-' + Math.abs(hash).toString(36).toUpperCase().slice(0, 8);
+}
 
-  if (!userDataStr) {
-    alert('Nenhum cadastro encontrado. Redirecionando para o formulario...');
+function loadWalletData() {
+  const raw = localStorage.getItem('userRegistration');
+  if (!raw) {
+    alert('Nenhum cadastro encontrado. Redirecionando para o formulário...');
     window.location.href = 'index.html';
     return;
   }
 
-  const userData = JSON.parse(userDataStr);
+  const d = JSON.parse(raw);
 
-  // Preencher dados principais
-  document.getElementById('nomeWallet').textContent = userData.nome || '-';
-  
-  // Formatar data de nascimento
-  const dataNasc = userData.dataNascimento ? formatDate(userData.dataNascimento + 'T00:00:00') : '-';
-  document.getElementById('dataWallet').textContent = dataNasc;
+  // Gerar / recuperar metadados
+  if (!d.numeroCarteira) d.numeroCarteira = generateCardNumber();
+  if (!d.dataEmissao) d.dataEmissao = new Date().toISOString();
+  if (!d.validade) d.validade = new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString();
+  if (!d.codigoVerificacao) d.codigoVerificacao = generateVerifyCode(d.cpf, d.numeroCarteira);
+  localStorage.setItem('userRegistration', JSON.stringify(d));
 
-  // CPF formatado
-  document.getElementById('cpfWallet').textContent = formatCPF(userData.cpf);
-
-  // CID e Deficiencia
-  const cidUpper = (userData.cid || '').toUpperCase();
-  document.getElementById('cidWallet').textContent = cidUpper || '-';
-  
-  const deficiencia = validCIDs[cidUpper] || 'Nao especificada';
-  document.getElementById('deficienciaWallet').textContent = deficiencia;
-
-  // Cidade
-  document.getElementById('cidadeWallet').textContent = userData.cidade || '-';
-
-  // Carregar foto
-  if (userData.foto) {
-    document.getElementById('fotoWallet').style.backgroundImage = `url('${userData.foto}')`;
+  // Foto
+  if (d.foto) {
+    const el = document.getElementById('fotoWallet');
+    if (el) {
+      el.style.backgroundImage = `url('${d.foto}')`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+      el.innerHTML = '';
+    }
   }
 
-  // Datas de emissao e validade
-  const dataEmissao = userData.dataEmissao ? formatDate(userData.dataEmissao) : formatDate(new Date().toISOString());
-  document.getElementById('dataEmissao').textContent = dataEmissao;
+  // Dados pessoais
+  setText('nomeWallet', d.nome);
+  setText('dataWallet', formatDate(d.dataNascimento));
+  const sexoMap = { M: 'Masculino', F: 'Feminino', NB: 'Não Binário' };
+  setText('sexoWallet', sexoMap[d.sexo] || d.sexo);
+  setText('cpfWallet', formatCPF(d.cpf));
+  setText('rgWallet', formatRG(d.rg));
+  setText('cidadeWallet', d.cidade && d.estado ? `${d.cidade} / ${d.estado}` : (d.cidade || '—'));
+  setText('acompanhanteWallet', d.necessitaAcompanhante || '—');
 
-  const validade = userData.validade ? formatDate(userData.validade) : formatDate(new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString());
-  document.getElementById('dataValidade').textContent = validade;
+  // Deficiência
+  setText('tipoDefWallet', d.tipoDeficiencia || '—');
+  setText('grauDefWallet', d.grauDeficiencia || '—');
+  const cidUpper = (d.cid || '').toUpperCase();
+  const baseCode = cidUpper.split('.')[0];
+  const cidLabel = cidUpper ? `${cidUpper} — ${validCIDs[baseCode] || validCIDs[cidUpper] || 'Ver laudo'}` : '—';
+  setText('cidWallet', cidLabel);
+  setText('comunicacaoWallet', d.comunicacao || 'Nenhuma');
 
-  // Numero da carteira
-  const numeroCarteira = userData.numeroCarteira || generateCardNumber();
-  document.getElementById('numeroCarteira').textContent = numeroCarteira;
+  // Laudo
+  setText('laudoWallet', d.numeroLaudo || '—');
+  setText('dataLaudoWallet', formatDate(d.dataLaudo));
+  setText('medicoWallet', d.nomeMedico || '—');
+  setText('crmWallet', d.crmMedico || '—');
 
-  // Atualizar no localStorage se necessario
-  if (!userData.numeroCarteira || !userData.dataEmissao || !userData.validade) {
-    userData.numeroCarteira = numeroCarteira;
-    userData.dataEmissao = userData.dataEmissao || new Date().toISOString();
-    userData.validade = userData.validade || new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString();
-    localStorage.setItem('userRegistration', JSON.stringify(userData));
+  // Responsável legal
+  if (d.nomeResponsavel) {
+    const block = document.getElementById('responsavelBlock');
+    if (block) block.style.display = '';
+    setText('responsavelWallet', `${d.nomeResponsavel}${d.vinculoResponsavel ? ' (' + d.vinculoResponsavel + ')' : ''}`);
   }
 
-  // Informacoes de emergencia
-  document.getElementById('tipoSanguineoDisplay').textContent = userData.tipoSanguineo || 'Nao informado';
-  document.getElementById('contatoDisplay').textContent = userData.contatoEmergencia || 'Nao informado';
-  document.getElementById('alergiasDisplay').textContent = userData.alergias || 'Nenhuma informada';
-  document.getElementById('medicacoesDisplay').textContent = userData.medicacoes || 'Nenhuma informada';
+  // Rodapé oficial
+  setText('dataEmissao', formatDate(d.dataEmissao));
+  setText('dataValidade', formatDate(d.validade));
+  setText('numeroCarteira', d.numeroCarteira);
+  setText('codigoVerificacao', d.codigoVerificacao);
+
+  // Emergência
+  setText('tipoSanguineoDisplay', d.tipoSanguineo || 'Não informado');
+  setText('contatoDisplay', d.contatoEmergencia || 'Não informado');
+  setText('alergiasDisplay', d.alergias || 'Nenhuma informada');
+  setText('medicacoesDisplay', d.medicacoes || 'Nenhuma informada');
+  setText('comunicacaoDisplay', d.comunicacao || 'Nenhuma necessidade especial');
+  setText('acompanhanteDisplay', d.necessitaAcompanhante || '—');
 
   // Gerar QR Code
-  generateQRCode(userData);
+  generateQRCode(d);
 }
 
-// Gerar QR Code dinamico
-function generateQRCode(userData) {
-  const qrcodeContainer = document.getElementById('qrcodeWallet');
-  qrcodeContainer.innerHTML = '';
+function generateQRCode(d) {
+  const container = document.getElementById('qrcodeWallet');
+  if (!container) {
+    console.log('[v0] Container QR Code nao encontrado');
+    return;
+  }
+  container.innerHTML = '';
 
-  // Dados para o QR Code (informacoes vitais)
-  const qrData = {
-    nome: userData.nome,
-    cpf: userData.cpf,
-    cid: userData.cid,
-    deficiencia: validCIDs[userData.cid?.toUpperCase()] || 'Nao especificada',
-    tipoSanguineo: userData.tipoSanguineo || 'N/I',
-    alergias: userData.alergias || 'Nenhuma',
-    medicacoes: userData.medicacoes || 'Nenhuma',
-    contatoEmergencia: userData.contatoEmergencia || 'N/I',
-    numeroCarteira: userData.numeroCarteira,
-    validade: userData.validade
+  // Dados essenciais para o QR Code (sem a foto para reduzir tamanho)
+  const payload = {
+    n: d.nome,
+    dn: d.dataNascimento,
+    sx: d.sexo,
+    cpf: d.cpf,
+    rg: d.rg,
+    tel: d.telefone,
+    end: d.endereco,
+    cid: d.cidade,
+    uf: d.estado,
+    td: d.tipoDeficiencia,
+    gd: d.grauDeficiencia,
+    cd: d.cid,
+    na: d.necessitaAcompanhante,
+    com: d.comunicacao,
+    nl: d.numeroLaudo,
+    dl: d.dataLaudo,
+    nm: d.nomeMedico,
+    crm: d.crmMedico,
+    nr: d.nomeResponsavel,
+    vr: d.vinculoResponsavel,
+    ts: d.tipoSanguineo,
+    al: d.alergias,
+    med: d.medicacoes,
+    ce: d.contatoEmergencia,
+    nc: d.numeroCarteira,
+    de: d.dataEmissao,
+    val: d.validade,
+    cv: d.codigoVerificacao,
+    ft: d.foto ? d.foto.substring(0, 100) + '...' : '' // Apenas referencia
   };
 
-  // URL de verificacao ou dados JSON
-  const qrContent = JSON.stringify(qrData);
+  // Codifica em base64 compactado
+  const jsonStr = JSON.stringify(payload);
+  const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+  
+  // URL da pagina de verificacao
+  const baseUrl = window.location.origin + window.location.pathname.replace('carteira.html', '');
+  const verifyURL = `${baseUrl}verificar.html?d=${encoded}`;
+
+  console.log('[v0] QR Code URL length:', verifyURL.length);
+
+  // Verificar se a biblioteca QRCode esta disponivel
+  if (typeof QRCode === 'undefined') {
+    console.log('[v0] Biblioteca QRCode nao carregada, tentando fallback');
+    container.innerHTML = `
+      <div style="width:130px;height:130px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;border-radius:8px;">
+        <span style="color:#666;font-size:10px;text-align:center;">QR Code<br>Carregando...</span>
+      </div>
+    `;
+    // Tentar carregar a biblioteca novamente
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+    script.onload = () => generateQRCode(d);
+    document.head.appendChild(script);
+    return;
+  }
 
   try {
-    new QRCode(qrcodeContainer, {
-      text: qrContent,
-      width: 140,
-      height: 140,
+    new QRCode(container, {
+      text: verifyURL,
+      width: 130,
+      height: 130,
       colorDark: '#1e3a5f',
       colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.M
+      correctLevel: QRCode.CorrectLevel.L // L = menor redundancia = mais dados
     });
-  } catch (error) {
-    console.error('Erro ao gerar QR Code:', error);
-    qrcodeContainer.innerHTML = '<p style="color: #999; font-size: 12px;">QR Code</p>';
+    console.log('[v0] QR Code gerado com sucesso');
+  } catch (e) {
+    console.log('[v0] Erro ao gerar QR Code:', e);
+    container.innerHTML = `
+      <div style="width:130px;height:130px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px dashed #ccc;border-radius:8px;">
+        <span style="color:#999;font-size:10px;text-align:center;">Erro QR<br>${e.message}</span>
+      </div>
+    `;
   }
 }
 
-// Botao Imprimir
-document.getElementById('printBtn')?.addEventListener('click', () => {
-  window.print();
-});
+// Imprimir
+document.getElementById('printBtn')?.addEventListener('click', () => window.print());
 
-// Botao Baixar PNG
+// Baixar PNG
 document.getElementById('downloadBtn')?.addEventListener('click', async () => {
-  const walletCard = document.getElementById('walletCard');
-
+  const card = document.getElementById('walletCard');
+  if (!card) return;
+  
+  const btn = document.getElementById('downloadBtn');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<span>Gerando...</span>';
+  btn.disabled = true;
+  
   try {
-    const canvas = await html2canvas(walletCard, {
+    if (typeof html2canvas === 'undefined') {
+      throw new Error('Biblioteca html2canvas não carregada');
+    }
+    
+    const canvas = await html2canvas(card, {
       backgroundColor: null,
       scale: 2,
       useCORS: true,
-      allowTaint: true
+      allowTaint: true,
+      logging: false
     });
-
+    
     const link = document.createElement('a');
     link.href = canvas.toDataURL('image/png');
     link.download = `carteira-go-card-${Date.now()}.png`;
     link.click();
-  } catch (error) {
-    console.error('Erro ao baixar:', error);
-    alert('Erro ao baixar a carteira. Tente novamente.');
+  } catch (e) {
+    console.log('[v0] Erro ao baixar PNG:', e);
+    alert('Erro ao gerar imagem. Tente usar a opção "Imprimir" e salvar como PDF.');
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
   }
 });
 
-// ==================== MODAIS ====================
+// Baixar PDF
+document.getElementById('downloadPdfBtn')?.addEventListener('click', async () => {
+  const card = document.getElementById('walletCard');
+  if (!card) return;
+  
+  const btn = document.getElementById('downloadPdfBtn');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<span>Gerando PDF...</span>';
+  btn.disabled = true;
+  
+  try {
+    if (typeof html2canvas === 'undefined') {
+      throw new Error('Biblioteca html2canvas não carregada');
+    }
+    
+    const canvas = await html2canvas(card, {
+      backgroundColor: '#1e3a5f',
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      logging: false
+    });
+    
+    // Criar PDF usando jsPDF
+    if (typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined') {
+      // Fallback: baixar como imagem
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = `carteira-go-card-${Date.now()}.png`;
+      link.click();
+      alert('PDF não disponível. Imagem PNG baixada.');
+      return;
+    }
+    
+    const { jsPDF } = window.jspdf;
+    const imgData = canvas.toDataURL('image/png');
+    
+    // Calcular dimensoes do PDF (A4 ou tamanho customizado)
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
+    const ratio = imgWidth / imgHeight;
+    
+    // PDF em formato cartao (tamanho cartao de credito: 85.6mm x 53.98mm, mas maior para legibilidade)
+    const pdfWidth = 210; // A4 width em mm
+    const pdfHeight = pdfWidth / ratio;
+    
+    const pdf = new jsPDF({
+      orientation: pdfHeight > pdfWidth ? 'portrait' : 'landscape',
+      unit: 'mm',
+      format: [pdfWidth, pdfHeight]
+    });
+    
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`carteira-go-card-${Date.now()}.pdf`);
+    
+  } catch (e) {
+    console.log('[v0] Erro ao baixar PDF:', e);
+    alert('Erro ao gerar PDF. Use a opção "Imprimir" e selecione "Salvar como PDF".');
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+});
+
+// Modais
 const guiaLegalModal = document.getElementById('guiaLegalModal');
 const denunciaModal = document.getElementById('denunciaModal');
 
-// Guia Legal
-document.getElementById('guiaLegalBtn')?.addEventListener('click', () => {
-  guiaLegalModal?.classList.remove('hidden');
-});
-
-document.getElementById('closeGuiaLegal')?.addEventListener('click', () => {
-  guiaLegalModal?.classList.add('hidden');
-});
-
-// Denuncia
-document.getElementById('denunciaBtn')?.addEventListener('click', () => {
-  denunciaModal?.classList.remove('hidden');
-});
-
-document.getElementById('closeDenuncia')?.addEventListener('click', () => {
-  denunciaModal?.classList.add('hidden');
-});
-
-// Suporte
+document.getElementById('guiaLegalBtn')?.addEventListener('click', () => guiaLegalModal?.classList.remove('hidden'));
+document.getElementById('closeGuiaLegal')?.addEventListener('click', () => guiaLegalModal?.classList.add('hidden'));
+document.getElementById('denunciaBtn')?.addEventListener('click', () => denunciaModal?.classList.remove('hidden'));
+document.getElementById('closeDenuncia')?.addEventListener('click', () => denunciaModal?.classList.add('hidden'));
 document.getElementById('suporteBtn')?.addEventListener('click', () => {
-  alert('Conectando ao suporte... Em breve voce sera atendido por um de nossos especialistas.');
+  alert('Conectando ao suporte... Em breve você será atendido por um de nossos especialistas.');
 });
 
-// Fechar modais ao clicar fora
-guiaLegalModal?.addEventListener('click', (e) => {
-  if (e.target === guiaLegalModal) {
-    guiaLegalModal.classList.add('hidden');
-  }
-});
+guiaLegalModal?.addEventListener('click', e => { if (e.target === guiaLegalModal) guiaLegalModal.classList.add('hidden'); });
+denunciaModal?.addEventListener('click', e => { if (e.target === denunciaModal) denunciaModal.classList.add('hidden'); });
 
-denunciaModal?.addEventListener('click', (e) => {
-  if (e.target === denunciaModal) {
-    denunciaModal.classList.add('hidden');
-  }
-});
-
-// Formulario de Denuncia
-document.getElementById('denunciaForm')?.addEventListener('submit', (e) => {
+document.getElementById('denunciaForm')?.addEventListener('submit', e => {
   e.preventDefault();
-  
-  const local = document.getElementById('localDenuncia').value;
-  const tipo = document.getElementById('tipoDenuncia').value;
-  const descricao = document.getElementById('descricaoDenuncia').value;
-  
-  // Gerar protocolo
   const protocolo = 'DEN' + Date.now().toString().slice(-10);
-  
-  // Simular envio
-  alert(`Denuncia registrada com sucesso!\n\nProtocolo: ${protocolo}\n\nSua denuncia sera encaminhada aos orgaos competentes. Voce recebera atualizacoes sobre o andamento.`);
-  
+  alert(`Denúncia registrada!\n\nProtocolo: ${protocolo}\n\nSua denúncia será encaminhada ao MP, Defensoria Pública e ONGs parceiras.`);
   denunciaModal?.classList.add('hidden');
   e.target.reset();
 });
 
-// Inicializacao
-document.addEventListener('DOMContentLoaded', () => {
-  loadWalletData();
+// Visualizar Laudo
+document.getElementById('verLaudoBtn')?.addEventListener('click', () => {
+  const raw = localStorage.getItem('userRegistration');
+  if (!raw) return;
+  const d = JSON.parse(raw);
+  if (d.laudoArquivo) {
+    // Abrir em nova aba
+    const newWindow = window.open();
+    if (d.laudoArquivo.startsWith('data:application/pdf')) {
+      newWindow.document.write(`<iframe src="${d.laudoArquivo}" style="width:100%;height:100%;border:none;"></iframe>`);
+    } else {
+      newWindow.document.write(`<img src="${d.laudoArquivo}" style="max-width:100%;height:auto;">`);
+    }
+  } else {
+    alert('Nenhum laudo anexado.');
+  }
 });
+
+document.addEventListener('DOMContentLoaded', loadWalletData);
