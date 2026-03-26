@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - GO Card PCD</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="main-header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
+                </div>
+                <nav class="nav-links">
+                    <a href="index.html" class="nav-link active">Cadastro</a>
+                    <a href="carteira.html" class="nav-link">Minha Carteira</a>
+                    <a href="central-direitos.html" class="nav-link">Central de Direitos</a>
+                    <a href="comunidade.html" class="nav-link">Comunidade</a>
+                    <a href="#" class="nav-link" id="loginBtn">Entrar</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="container">
+                <div class="info-banner">
+                    <div class="banner-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4"></path>
+                            <path d="M12 8h.01"></path>
+                        </svg>
+                    </div>
+                    <div class="banner-content">
+                        <h3>Carteira Digital com Validade Legal</h3>
+                        <p>Documento emitido conforme a <strong>Lei 13.146/2015 (Estatuto da Pessoa com Deficiência)</strong>. Preencha todos os campos para garantir a validade em todo o território nacional.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h1>Cadastro GO Card PCD</h1>
+                        <p>Campos marcados com <span style="color:var(--error-500)">*</span> são obrigatórios pela Lei 13.146/2015</p>
+                    </div>
+
+                    <div class="card-content">
+                        <form id="registrationForm" class="form">
+
+                            <!-- ===== FOTO ===== -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                    Foto do Titular
+                                </h3>
+                            </div>
+                            <div class="form-group">
+                                <label>Foto 3x4 <span class="required">*</span></label>
+                                <div class="foto-section">
+                                    <div id="fotoPreview" class="foto-preview">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                    </div>
+                                    <label for="foto-input" class="upload-label">
+                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        Escolher Foto
+                                    </label>
+                                    <input id="foto-input" type="file" accept="image/*" hidden>
+                                </div>
+                                <span id="fotoError" class="error-message"></span>
+                            </div>
+
+                            <!-- ===== DADOS PESSOAIS ===== -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    Dados Pessoais
+                                </h3>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="nome">Nome Completo <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input id="nome" name="nome" type="text" placeholder="Ex: João da Silva" class="input-field">
+                                    <svg id="nomeCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </div>
+                                <span id="nomeError" class="error-message"></span>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="dataNascimento">Data de Nascimento <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="dataNascimento" name="dataNascimento" type="date" class="input-field">
+                                        <svg id="dataCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="dataError" class="error-message"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sexo">Sexo <span class="required">*</span></label>
+                                    <select id="sexo" class="input-field" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Feminino</option>
+                                        <option value="NB">Não Binário</option>
+                                    </select>
+                                    <span id="sexoError" class="error-message"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cpf">CPF <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="cpf" name="cpf" type="text" placeholder="000.000.000-00" maxlength="14" class="input-field">
+                                        <svg id="cpfCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="cpfError" class="error-message"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="rg">RG <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="rg" name="rg" type="text" placeholder="00.000.000-0" class="input-field">
+                                        <svg id="rgCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="rgError" class="error-message"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="telefone">Telefone <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="telefone" name="telefone" type="tel" placeholder="(11) 99999-9999" maxlength="15" class="input-field">
+                                        <svg id="telefoneCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="telefoneError" class="error-message"></span>
+                                </div>                                <div class="form-group">
+                                    <label for="email">E-mail <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="email" name="email" type="email" placeholder="seu@email.com" class="input-field">
+                                        <svg id="emailCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="emailError" class="error-message"></span>
+                                </div>
+                            </div>
+
+                            <!-- ===== CONTA DE USUÁRIO ===== -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    Conta de Usuário
+                                </h3>
+                                <p class="section-desc">Crie uma conta para acessar e gerenciar sua carteira digital.</p>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="userEmail">E-mail da Conta <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="userEmail" name="userEmail" type="email" placeholder="conta@email.com" class="input-field">
+                                        <svg id="userEmailCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="userEmailError" class="error-message"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Senha <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="password" name="password" type="password" placeholder="Mínimo 6 caracteres" class="input-field">
+                                        <svg id="passwordCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="passwordError" class="error-message"></span>
+                                </div>                                <div class="form-group">
+                                    <label for="cidade">Município <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="cidade" name="cidade" type="text" placeholder="Ex: São Paulo" class="input-field">
+                                        <svg id="cidadeCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="cidadeError" class="error-message"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="endereco">Endereço Completo</label>
+                                    <div class="input-wrapper">
+                                        <input id="endereco" name="endereco" type="text" placeholder="Rua, número, complemento" class="input-field">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="estado">Estado (UF) <span class="required">*</span></label>
+                                    <select id="estado" class="input-field" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="AC">AC - Acre</option>
+                                        <option value="AL">AL - Alagoas</option>
+                                        <option value="AP">AP - Amapá</option>
+                                        <option value="AM">AM - Amazonas</option>
+                                        <option value="BA">BA - Bahia</option>
+                                        <option value="CE">CE - Ceará</option>
+                                        <option value="DF">DF - Distrito Federal</option>
+                                        <option value="ES">ES - Espírito Santo</option>
+                                        <option value="GO">GO - Goiás</option>
+                                        <option value="MA">MA - Maranhão</option>
+                                        <option value="MT">MT - Mato Grosso</option>
+                                        <option value="MS">MS - Mato Grosso do Sul</option>
+                                        <option value="MG">MG - Minas Gerais</option>
+                                        <option value="PA">PA - Pará</option>
+                                        <option value="PB">PB - Paraíba</option>
+                                        <option value="PR">PR - Paraná</option>
+                                        <option value="PE">PE - Pernambuco</option>
+                                        <option value="PI">PI - Piauí</option>
+                                        <option value="RJ">RJ - Rio de Janeiro</option>
+                                        <option value="RN">RN - Rio Grande do Norte</option>
+                                        <option value="RS">RS - Rio Grande do Sul</option>
+                                        <option value="RO">RO - Rondônia</option>
+                                        <option value="RR">RR - Roraima</option>
+                                        <option value="SC">SC - Santa Catarina</option>
+                                        <option value="SP">SP - São Paulo</option>
+                                        <option value="SE">SE - Sergipe</option>
+                                        <option value="TO">TO - Tocantins</option>
+                                    </select>
+                                    <span id="estadoError" class="error-message"></span>
+                                </div>
+                            </div>
+
+                            <!-- ===== DEFICIÊNCIA ===== -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                                    Informações sobre a Deficiência
+                                </h3>
+                                <p class="section-desc">Conforme art. 2º da Lei 13.146/2015 — necessário para emissão do documento com validade legal.</p>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="tipoDeficiencia">Tipo de Deficiência <span class="required">*</span></label>
+                                    <select id="tipoDeficiencia" class="input-field" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Física">Física</option>
+                                        <option value="Auditiva">Auditiva</option>
+                                        <option value="Visual">Visual</option>
+                                        <option value="Intelectual">Intelectual</option>
+                                        <option value="Psicossocial">Psicossocial</option>
+                                        <option value="Múltipla">Múltipla</option>
+                                        <option value="TEA">Transtorno do Espectro Autista (TEA)</option>
+                                        <option value="Outra">Outra</option>
+                                    </select>
+                                    <span id="tipoDeficienciaError" class="error-message"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="grauDeficiencia">Grau da Deficiência <span class="required">*</span></label>
+                                    <select id="grauDeficiencia" class="input-field" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Leve">Leve</option>
+                                        <option value="Moderado">Moderado</option>
+                                        <option value="Grave">Grave</option>
+                                        <option value="Muito Grave">Muito Grave / Profundo</option>
+                                    </select>
+                                    <span id="grauDeficienciaError" class="error-message"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cid">CID-10 / CID-11 <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="cid" name="cid" type="text" placeholder="Ex: F84, H90, G80" class="input-field uppercase">
+                                        <svg id="cidCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="cidError" class="error-message"></span>
+                                    <span id="cidDesc" class="helper-text"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="necessitaAcompanhante">Necessita de Acompanhante? <span class="required">*</span></label>
+                                    <select id="necessitaAcompanhante" class="input-field" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Sim">Sim</option>
+                                        <option value="Não">Não</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- ===== LAUDO MÉDICO ===== -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                    Laudo Médico / Avaliação
+                                </h3>
+                                <p class="section-desc">Exigido pelo art. 2º §1º da Lei 13.146/2015 para comprovação e validade do documento.</p>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="numeroLaudo">Número do Laudo <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="numeroLaudo" name="numeroLaudo" type="text" placeholder="Ex: LAU-2024-001234" class="input-field">
+                                        <svg id="laudoCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="laudoError" class="error-message"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dataLaudo">Data do Laudo <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="dataLaudo" name="dataLaudo" type="date" class="input-field">
+                                        <svg id="dataLaudoCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="dataLaudoError" class="error-message"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="nomeMedico">Nome do Médico/Profissional <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="nomeMedico" name="nomeMedico" type="text" placeholder="Dr. Carlos Souza" class="input-field">
+                                        <svg id="medicoCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="medicoError" class="error-message"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="crmMedico">CRM / CRP / CRFa do Profissional <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input id="crmMedico" name="crmMedico" type="text" placeholder="CRM-SP 123456" class="input-field">
+                                        <svg id="crmCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <span id="crmError" class="error-message"></span>
+                                </div>
+                            </div>
+
+                            <!-- Upload do Laudo -->
+                            <div class="form-group">
+                                <label for="laudoFile">Anexar Laudo Médico (PDF ou imagem) <span class="required">*</span></label>
+                                <div class="upload-section">
+                                    <div id="laudoPreview" class="laudo-preview">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                            <polyline points="14 2 14 8 20 8"/>
+                                        </svg>
+                                        <span>Nenhum arquivo selecionado</span>
+                                    </div>
+                                    <label for="laudoFile" class="upload-label">
+                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        Selecionar Arquivo
+                                    </label>
+                                    <input id="laudoFile" type="file" accept=".pdf,image/*" hidden>
+                                </div>
+                                <span id="laudoFileError" class="error-message"></span>
+                                <span class="helper-text">O laudo comprova sua condição conforme art. 2º da Lei 13.146/2015</span>
+                            </div>
+
+                            <!-- ===== RESPONSÁVEL LEGAL ===== -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                    Responsável Legal (se aplicável)
+                                </h3>
+                                <p class="section-desc">Obrigatório para menores de 18 anos e pessoas com curatela. Conforme art. 84 e 85 da Lei 13.146/2015.</p>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="nomeResponsavel">Nome do Responsável Legal</label>
+                                    <div class="input-wrapper">
+                                        <input id="nomeResponsavel" name="nomeResponsavel" type="text" placeholder="Maria da Silva" class="input-field">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cpfResponsavel">CPF do Responsável</label>
+                                    <div class="input-wrapper">
+                                        <input id="cpfResponsavel" name="cpfResponsavel" type="text" placeholder="000.000.000-00" maxlength="14" class="input-field">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="vinculoResponsavel">Vínculo com o Titular</label>
+                                <select id="vinculoResponsavel" class="input-field">
+                                    <option value="">Selecione (se houver)...</option>
+                                    <option value="Pai/Mãe">Pai / Mãe</option>
+                                    <option value="Curador">Curador Judicial</option>
+                                    <option value="Tutor">Tutor</option>
+                                    <option value="Cônjuge">Cônjuge</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+
+                            <!-- ===== EMERGÊNCIA ===== -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                                    Informações de Emergência
+                                </h3>
+                                <p class="section-desc">Exibidas ao escanear o QR Code — acesso rápido para socorristas e profissionais de saúde.</p>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="tipoSanguineo">Tipo Sanguíneo</label>
+                                    <select id="tipoSanguineo" class="input-field">
+                                        <option value="">Selecione...</option>
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contatoEmergencia">Contato de Emergência</label>
+                                    <div class="input-wrapper">
+                                        <input id="contatoEmergencia" name="contatoEmergencia" type="text" placeholder="Nome - (11) 99999-9999" class="input-field">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="alergias">Alergias (separe por vírgulas)</label>
+                                <div class="input-wrapper">
+                                    <input id="alergias" name="alergias" type="text" placeholder="Ex: Dipirona, Látex, Amendoim" class="input-field">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="medicacoes">Medicações de Uso Contínuo</label>
+                                <textarea id="medicacoes" name="medicacoes" placeholder="Ex: Rivotril 2mg — 1 cp à noite; Insulina NPH 10UI" class="input-field textarea" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="comunicacao">Necessidades de Comunicação</label>
+                                <select id="comunicacao" class="input-field">
+                                    <option value="">Selecione...</option>
+                                    <option value="Nenhuma">Nenhuma necessidade especial</option>
+                                    <option value="Libras">Libras (Língua Brasileira de Sinais)</option>
+                                    <option value="Braile">Braille</option>
+                                    <option value="CAA">Comunicação Aumentativa e Alternativa (CAA)</option>
+                                    <option value="Leitura Labial">Leitura Labial</option>
+                                    <option value="Intérprete">Necessita de Intérprete</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" id="submitBtn" class="submit-btn" disabled>
+                                <span>Gerar Carteira GO Card PCD</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14"></path>
+                                    <path d="m12 5 7 7-7 7"></path>
+                                </svg>
+                            </button>
+
+                            <p class="form-note">Ao emitir a carteira, você declara que as informações são verdadeiras. Dados falsos podem acarretar sanções conforme o art. 171 do Código Penal.</p>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="support-card">
+                    <div class="support-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="support-content">
+                        <h3>Precisa de Ajuda?</h3>
+                        <p>Nossa equipe de suporte está disponível para auxiliar você no cadastro.</p>
+                        <a href="#" class="support-btn" id="chatbotBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <path d="M12 17h.01"></path>
+                            </svg>
+                            Falar com Atendente
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="main-footer">
+            <p>&copy; 2025 GO Card PCD — Garantindo Dignidade e Direitos | Lei 13.146/2015</p>
+        </footer>
+    </div>
+
+    <!-- Chatbot Modal -->
+    <div id="chatbotModal" class="modal hidden">
+        <div class="modal-content chatbot-modal">
+            <div class="modal-header">
+                <h3>Suporte GO Card</h3>
+                <button class="close-modal" id="closeChatbot">&times;</button>
+            </div>
+            <div class="chatbot-messages" id="chatMessages">
+                <div class="bot-message">
+                    <p>Olá! Sou o assistente virtual do GO Card. Como posso ajudar você hoje?</p>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatInput" placeholder="Digite sua mensagem...">
+                <button id="sendChat">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m22 2-7 20-4-9-9-4Z"></path>
+                        <path d="M22 2 11 13"></path>
+                    </svg>
+                </button>
+            </div>
+            <p class="chatbot-note">Se não conseguirmos resolver aqui, você será conectado a um atendente humano.</p>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal hidden">
+        <div class="modal-content login-modal">
+            <div class="modal-header">
+                <h3>Entrar na Conta</h3>
+                <button class="close-modal" id="closeLogin">&times;</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">E-mail</label>
+                    <input id="loginEmail" type="email" placeholder="seu@email.com" class="input-field" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Senha</label>
+                    <input id="loginPassword" type="password" placeholder="Sua senha" class="input-field" required>
+                </div>
+                <button type="submit" class="submit-btn">Entrar</button>
+            </form>
+            <p class="modal-note">Não tem conta? <a href="#" id="showRegister">Cadastre-se</a></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
