@@ -8,7 +8,25 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: [
+        "'self'",
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:3001'
+      ],
+      scriptSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
+      styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:', 'blob:'],
+      fontSrc: ["'self'", 'https:', 'data:']
+    }
+  },
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -43,8 +61,27 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+function startServer(port) {
+  const normalizedPort = Number(port) || 3000;
+  const server = app.listen(normalizedPort, () => {
+    console.log(`Server running at http://localhost:${normalizedPort}`);
+  });
+
+  server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+      const nextPort = normalizedPort + 1;
+      console.warn(`Port ${normalizedPort} is already in use. Trying http://localhost:${nextPort}...`);
+      startServer(nextPort);
+      return;
+    }
+
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  });
+
+  return server;
+}
+
+startServer(PORT);
 
 module.exports = app;

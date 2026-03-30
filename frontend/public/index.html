@@ -25,7 +25,6 @@
                     <a href="carteira.html" class="nav-link">Minha Carteira</a>
                     <a href="central-direitos.html" class="nav-link">Central de Direitos</a>
                     <a href="comunidade.html" class="nav-link">Comunidade</a>
-                    <a href="#" class="nav-link" id="loginBtn">Entrar</a>
                 </nav>
             </div>
         </header>
@@ -126,7 +125,7 @@
                                 <div class="form-group">
                                     <label for="cpf">CPF <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="cpf" name="cpf" type="text" placeholder="000.000.000-00" maxlength="14" class="input-field">
+                                        <input id="cpf" name="cpf" type="text" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" autocomplete="off" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" title="Digite um CPF no formato 000.000.000-00" class="input-field">
                                         <svg id="cpfCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="cpfError" class="error-message"></span>
@@ -145,7 +144,7 @@
                                 <div class="form-group">
                                     <label for="telefone">Telefone <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="telefone" name="telefone" type="tel" placeholder="(11) 99999-9999" maxlength="15" class="input-field">
+                                        <input id="telefone" name="telefone" type="tel" placeholder="(11) 99999-9999" maxlength="15" inputmode="numeric" autocomplete="tel" pattern="\(\d{2}\) \d{4,5}-\d{4}" title="Digite um telefone no formato (11) 99999-9999" class="input-field">
                                         <svg id="telefoneCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="telefoneError" class="error-message"></span>
@@ -159,32 +158,8 @@
                                 </div>
                             </div>
 
-                            <!-- ===== CONTA DE USUÁRIO ===== -->
-                            <div class="form-section">
-                                <h3 class="section-title">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                                    Conta de Usuário
-                                </h3>
-                                <p class="section-desc">Crie uma conta para acessar e gerenciar sua carteira digital.</p>
-                            </div>
-
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="userEmail">E-mail da Conta <span class="required">*</span></label>
-                                    <div class="input-wrapper">
-                                        <input id="userEmail" name="userEmail" type="email" placeholder="conta@email.com" class="input-field">
-                                        <svg id="userEmailCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                    <span id="userEmailError" class="error-message"></span>
-                                </div>
-                                <div class="form-group">
-                                    <label for="password">Senha <span class="required">*</span></label>
-                                    <div class="input-wrapper">
-                                        <input id="password" name="password" type="password" placeholder="Mínimo 6 caracteres" class="input-field">
-                                        <svg id="passwordCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                    <span id="passwordError" class="error-message"></span>
-                                </div>                                <div class="form-group">
                                     <label for="cidade">Município <span class="required">*</span></label>
                                     <div class="input-wrapper">
                                         <input id="cidade" name="cidade" type="text" placeholder="Ex: São Paulo" class="input-field">
@@ -386,7 +361,7 @@
                                 <div class="form-group">
                                     <label for="cpfResponsavel">CPF do Responsável</label>
                                     <div class="input-wrapper">
-                                        <input id="cpfResponsavel" name="cpfResponsavel" type="text" placeholder="000.000.000-00" maxlength="14" class="input-field">
+                                        <input id="cpfResponsavel" name="cpfResponsavel" type="text" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" autocomplete="off" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" title="Digite um CPF no formato 000.000.000-00" class="input-field">
                                     </div>
                                 </div>
                             </div>
@@ -460,7 +435,7 @@
                                 </select>
                             </div>
 
-                            <button type="submit" id="submitBtn" class="submit-btn" disabled>
+                            <button type="submit" id="submitBtn" class="submit-btn">
                                 <span>Gerar Carteira GO Card PCD</span>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M5 12h14"></path>

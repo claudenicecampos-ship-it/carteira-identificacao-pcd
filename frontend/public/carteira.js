@@ -1,31 +1,49 @@
 // GO Card PCD — carteira.js
 // Carrega dados da API e gera QR Code que aponta para verificar.html
 
-const API_BASE = 'http://localhost:3000/api';
+const API_BASES = Array.from(new Set([
+  window.location.protocol.startsWith('http') ? `${window.location.origin}/api` : null,
+  'http://localhost:3000/api',
+  'http://localhost:3001/api'
+].filter(Boolean)));
 let authToken = localStorage.getItem('authToken');
 
 async function apiRequest(endpoint, options = {}) {
-  const url = `${API_BASE}${endpoint}`;
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers
-    },
-    ...options
-  };
+  let lastNetworkError = null;
 
-  if (authToken) {
-    config.headers.Authorization = `Bearer ${authToken}`;
+  for (const apiBase of API_BASES) {
+    const url = `${apiBase}${endpoint}`;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      },
+      ...options
+    };
+
+    if (authToken) {
+      config.headers.Authorization = `Bearer ${authToken}`;
+    }
+
+    try {
+      const response = await fetch(url, config);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'API request failed');
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof TypeError) {
+        lastNetworkError = error;
+        continue;
+      }
+      throw error;
+    }
   }
 
-  const response = await fetch(url, config);
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || 'API request failed');
-  }
-
-  return data;
+  throw new Error('Não foi possível conectar ao servidor.');
 }
 
 async function getMyCard() {

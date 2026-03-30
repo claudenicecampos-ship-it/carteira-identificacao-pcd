@@ -1,26 +1,44 @@
 // GO Card PCD — verificar.js
 // Lê os dados da URL (QR Code) e renderiza a carteira completa
 
-const API_BASE = 'http://localhost:3000/api';
+const API_BASES = Array.from(new Set([
+  window.location.protocol.startsWith('http') ? `${window.location.origin}/api` : null,
+  'http://localhost:3000/api',
+  'http://localhost:3001/api'
+].filter(Boolean)));
 
 async function apiRequest(endpoint, options = {}) {
-  const url = `${API_BASE}${endpoint}`;
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers
-    },
-    ...options
-  };
+  let lastNetworkError = null;
 
-  const response = await fetch(url, config);
-  const data = await response.json();
+  for (const apiBase of API_BASES) {
+    const url = `${apiBase}${endpoint}`;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      },
+      ...options
+    };
 
-  if (!response.ok) {
-    throw new Error(data.error || 'API request failed');
+    try {
+      const response = await fetch(url, config);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'API request failed');
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof TypeError) {
+        lastNetworkError = error;
+        continue;
+      }
+      throw error;
+    }
   }
 
-  return data;
+  throw new Error('Não foi possível conectar ao servidor.');
 }
 
 async function verifyCard(code) {

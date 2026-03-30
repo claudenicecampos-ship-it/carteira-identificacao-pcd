@@ -1,7 +1,11 @@
 // GO Card PCD — script.js (Cadastro)
 // Validacoes completas para documento oficial brasileiro
 
-const API_BASE = 'http://localhost:3000/api';
+const API_BASES = Array.from(new Set([
+  window.location.protocol.startsWith('http') ? `${window.location.origin}/api` : null,
+  'http://localhost:3000/api',
+  'http://localhost:3001/api'
+].filter(Boolean)));
 
 let authToken = localStorage.getItem('authToken');
 
@@ -71,34 +75,61 @@ const chatbotResponses = {
 
 // API functions
 async function apiRequest(endpoint, options = {}) {
-  const url = `${API_BASE}${endpoint}`;
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers
-    },
-    ...options
+  const isFormData = options.body instanceof FormData;
+  const headers = {
+    ...(options.headers || {})
   };
 
+  if (!isFormData && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   if (authToken) {
-    config.headers.Authorization = `Bearer ${authToken}`;
+    headers.Authorization = `Bearer ${authToken}`;
   }
 
-  const response = await fetch(url, config);
-  const data = await response.json();
+  let lastNetworkError = null;
 
-  if (!response.ok) {
-    throw new Error(data.error || 'API request failed');
+  for (const apiBase of API_BASES) {
+    const url = `${apiBase}${endpoint}`;
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers
+      });
+
+      const contentType = response.headers.get('content-type') || '';
+      const data = contentType.includes('application/json')
+        ? await response.json()
+        : await response.text();
+
+      if (!response.ok) {
+        throw new Error(data?.error || data || 'API request failed');
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof TypeError) {
+        lastNetworkError = error;
+        continue;
+      }
+      throw error;
+    }
   }
 
-  return data;
+  throw new Error('Não foi possível conectar ao servidor. Verifique se o backend está aberto.');
 }
 
 async function registerUser(email, password) {
-  return apiRequest('/auth/register', {
+  const data = await apiRequest('/auth/register', {
     method: 'POST',
     body: JSON.stringify({ email, password })
   });
+
+  authToken = data.token;
+  localStorage.setItem('authToken', authToken);
+  return data;
 }
 
 async function loginUser(email, password) {
@@ -112,16 +143,18 @@ async function loginUser(email, password) {
 }
 
 async function createCard(cardData) {
-  const formData = new FormData();
-  Object.keys(cardData).forEach(key => {
-    if (cardData[key] !== null && cardData[key] !== undefined) {
-      formData.append(key, cardData[key]);
-    }
-  });
+  const formData = cardData instanceof FormData ? cardData : new FormData();
+
+  if (!(cardData instanceof FormData)) {
+    Object.keys(cardData).forEach(key => {
+      if (cardData[key] !== null && cardData[key] !== undefined) {
+        formData.append(key, cardData[key]);
+      }
+    });
+  }
 
   return apiRequest('/cards', {
     method: 'POST',
-    headers: {}, // Let browser set content-type for FormData
     body: formData
   });
 }
@@ -142,8 +175,6 @@ const fields = {
   rg: { input: document.getElementById('rg'), error: document.getElementById('rgError'), check: document.getElementById('rgCheck') },
   telefone: { input: document.getElementById('telefone'), error: document.getElementById('telefoneError'), check: document.getElementById('telefoneCheck') },
   email: { input: document.getElementById('email'), error: document.getElementById('emailError'), check: document.getElementById('emailCheck') },
-  userEmail: { input: document.getElementById('userEmail'), error: document.getElementById('userEmailError'), check: document.getElementById('userEmailCheck') },
-  password: { input: document.getElementById('password'), error: document.getElementById('passwordError'), check: document.getElementById('passwordCheck') },
   cidade: { input: document.getElementById('cidade'), error: document.getElementById('cidadeError'), check: document.getElementById('cidadeCheck') },
   estado: { input: document.getElementById('estado'), error: document.getElementById('estadoError') },
   tipoDeficiencia: { input: document.getElementById('tipoDeficiencia'), error: document.getElementById('tipoDeficienciaError') },
@@ -214,10 +245,6 @@ function isValidEmail(v) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
-function isValidPassword(v) {
-  return v.length >= 6;
-}
-
 function isValidCity(v) { 
   return v.trim().length >= 2 && /^[a-záéíóúàâêôãõçñ\s\-]+$/i.test(v.trim());
 }
@@ -242,15 +269,19 @@ function isValidCRM(v) {
 }
 
 // ===== MASCARAS =====
+function onlyDigits(value, maxDigits) {
+  return String(value || '').replace(/\D/g,'').slice(0, maxDigits);
+}
+
 function maskCPF(v) {
-  const n = v.replace(/\D/g,'').slice(0,11);
+  const n = onlyDigits(v, 11);
   return n.replace(/(\d{3})(\d)/, '$1.$2')
           .replace(/(\d{3})(\d)/, '$1.$2')
           .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
 }
 
 function maskRG(v) {
-  const n = v.replace(/\D/g,'').slice(0,9);
+  const n = onlyDigits(v, 9);
   if (n.length <= 2) return n;
   if (n.length <= 5) return n.replace(/(\d{2})(\d)/, '$1.$2');
   if (n.length <= 8) return n.replace(/(\d{2})(\d{3})(\d)/, '$1.$2.$3');
@@ -258,7 +289,7 @@ function maskRG(v) {
 }
 
 function maskTelefone(v) {
-  const n = v.replace(/\D/g,'').slice(0,11);
+  const n = onlyDigits(v, 11);
   if (n.length <= 2) return `(${n}`;
   if (n.length <= 6) return `(${n.slice(0,2)}) ${n.slice(2)}`;
   if (n.length <= 10) return `(${n.slice(0,2)}) ${n.slice(2,6)}-${n.slice(6)}`;
@@ -295,8 +326,6 @@ function errorMsg(f) {
     rg: 'RG inválido — deve ter entre 7 e 9 dígitos',
     telefone: 'Telefone inválido — use (DDD) + número',
     email: 'E-mail inválido',
-    userEmail: 'E-mail da conta inválido',
-    password: 'Senha deve ter pelo menos 6 caracteres',
     cidade: 'Informe o município corretamente',
     cid: 'CID não encontrado. Ex: F84, H90, G80',
     numeroLaudo: 'Informe o número do laudo',
@@ -340,14 +369,6 @@ fields.email.input?.addEventListener('input', e => {
   setValid('email', isValidEmail(e.target.value), e.target.value);
 });
 
-fields.userEmail.input?.addEventListener('input', e => {
-  setValid('userEmail', isValidEmail(e.target.value), e.target.value);
-});
-
-fields.password.input?.addEventListener('input', e => {
-  setValid('password', isValidPassword(e.target.value), e.target.value);
-});
-
 fields.cidade.input?.addEventListener('input', e => {
   setValid('cidade', isValidCity(e.target.value), e.target.value);
 });
@@ -381,6 +402,12 @@ document.getElementById('sexo')?.addEventListener('change', checkForm);
 document.getElementById('estado')?.addEventListener('change', checkForm);
 document.getElementById('tipoDeficiencia')?.addEventListener('change', checkForm);
 document.getElementById('grauDeficiencia')?.addEventListener('change', checkForm);
+document.getElementById('necessitaAcompanhante')?.addEventListener('change', checkForm);
+
+document.getElementById('cpfResponsavel')?.addEventListener('input', e => {
+  e.target.value = maskCPF(e.target.value);
+  checkForm();
+});
 
 // Foto
 fields.foto.input?.addEventListener('change', e => {
@@ -407,8 +434,8 @@ fields.foto.input?.addEventListener('change', e => {
 fields.laudoFile.input?.addEventListener('change', e => {
   const file = e.target.files?.[0];
   if (!file) return;
-  if (file.size > 10 * 1024 * 1024) {
-    fields.laudoFile.error.textContent = 'Arquivo muito grande. Máximo 10MB.';
+  if (file.size > 5 * 1024 * 1024) {
+    fields.laudoFile.error.textContent = 'Arquivo muito grande. Máximo 5MB.';
     fields.laudoFile.error.classList.add('show');
     return;
   }
@@ -437,39 +464,72 @@ fields.laudoFile.input?.addEventListener('change', e => {
   reader.readAsDataURL(file);
 });
 
-function checkForm() {
-  if (!submitBtn) return;
-  
+function getAccountCredentials() {
+  const email = (fields.email.input?.value || '').trim().toLowerCase();
+  const cpfDigits = (fields.cpf.input?.value || '').replace(/\D/g, '');
+  const password = `GoCard@${cpfDigits.slice(-6).padStart(6, '0')}`;
+
+  return { email, password };
+}
+
+function getFormIssues() {
   const fotoOk = fields.foto.preview?.classList.contains('has-image');
   const laudoOk = fields.laudoFile.preview?.classList.contains('has-file');
-  
-  const ok = fotoOk
-    && isValidName(fields.nome.input?.value || '')
-    && isValidDate(fields.dataNascimento.input?.value || '')
-    && !!document.getElementById('sexo')?.value
-    && isValidCPF(fields.cpf.input?.value || '')
-    && isValidRG(fields.rg.input?.value || '')
-    && isValidTelefone(fields.telefone.input?.value || '')    && isValidEmail(fields.email.input?.value || '')
-    && isValidEmail(fields.userEmail.input?.value || '')
-    && isValidPassword(fields.password.input?.value || '')    && isValidCity(fields.cidade.input?.value || '')
-    && !!document.getElementById('estado')?.value
-    && !!document.getElementById('tipoDeficiencia')?.value
-    && !!document.getElementById('grauDeficiencia')?.value
-    && isValidCID(fields.cid.input?.value || '')
-    && isValidLaudo(fields.numeroLaudo.input?.value || '')
-    && isValidDate(fields.dataLaudo.input?.value || '')
-    && isValidMedico(fields.nomeMedico.input?.value || '')
-    && isValidCRM(fields.crmMedico.input?.value || '')
-    && laudoOk;
+  const issues = [];
 
-  submitBtn.disabled = !ok;
+  if (!fotoOk) issues.push('adicione a foto 3x4');
+  if (!isValidName(fields.nome.input?.value || '')) issues.push('preencha o nome completo');
+  if (!isValidDate(fields.dataNascimento.input?.value || '')) issues.push('informe uma data de nascimento válida');
+  if (!document.getElementById('sexo')?.value) issues.push('selecione o sexo');
+  if (!isValidCPF(fields.cpf.input?.value || '')) issues.push('digite um CPF válido');
+  if (!isValidRG(fields.rg.input?.value || '')) issues.push('digite um RG válido');
+  if (!isValidTelefone(fields.telefone.input?.value || '')) issues.push('digite um telefone válido');
+  if (!isValidEmail(fields.email.input?.value || '')) issues.push('digite um e-mail válido');
+  if (!isValidCity(fields.cidade.input?.value || '')) issues.push('preencha o município');
+  if (!document.getElementById('estado')?.value) issues.push('selecione o estado');
+  if (!document.getElementById('tipoDeficiencia')?.value) issues.push('selecione o tipo de deficiência');
+  if (!document.getElementById('grauDeficiencia')?.value) issues.push('selecione o grau da deficiência');
+  if (!isValidCID(fields.cid.input?.value || '')) issues.push('informe um CID válido');
+  if (!document.getElementById('necessitaAcompanhante')?.value) issues.push('informe se necessita de acompanhante');
+  if (!isValidLaudo(fields.numeroLaudo.input?.value || '')) issues.push('informe o número do laudo');
+  if (!isValidDate(fields.dataLaudo.input?.value || '')) issues.push('informe a data do laudo');
+  if (!isValidMedico(fields.nomeMedico.input?.value || '')) issues.push('preencha o nome do profissional');
+  if (!isValidCRM(fields.crmMedico.input?.value || '')) issues.push('digite um CRM/CRP/CRFa válido');
+  if (!laudoOk) issues.push('anexe o laudo médico');
+
+  return issues;
+}
+
+function checkForm() {
+  if (!submitBtn) return false;
+
+  const ok = getFormIssues().length === 0;
+  submitBtn.style.opacity = ok ? '1' : '0.75';
+  submitBtn.style.cursor = ok ? 'pointer' : 'not-allowed';
+  submitBtn.title = ok ? 'Formulário pronto para envio' : 'Preencha todos os campos obrigatórios corretamente';
+  return ok;
 }
 
 // ===== SUBMIT =====
 document.getElementById('registrationForm')?.addEventListener('submit', async(e) => {
   e.preventDefault();
 
+  const issues = getFormIssues();
+  if (issues.length > 0) {
+    alert('Revise os campos obrigatórios antes de enviar:\n\n• ' + issues.join('\n• '));
+    checkForm();
+    return;
+  }
+
+  const originalButtonHtml = submitBtn?.innerHTML;
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span>Enviando...</span>';
+  }
+
   const fotoSrc = fields.foto.preview.style.backgroundImage.slice(5, -2);
+
+  const accountCredentials = getAccountCredentials();
 
   const data = {
     foto: fotoSrc,
@@ -479,6 +539,7 @@ document.getElementById('registrationForm')?.addEventListener('submit', async(e)
     cpf: fields.cpf.input.value.replace(/\D/g,''),
     rg: fields.rg.input.value.replace(/\D/g,''),
     telefone: fields.telefone.input.value.replace(/\D/g,''),
+    email: fields.email.input.value.trim(),
     endereco: document.getElementById('endereco')?.value.trim() || '',
     cidade: fields.cidade.input.value.trim(),
     estado: document.getElementById('estado').value,
@@ -503,54 +564,71 @@ document.getElementById('registrationForm')?.addEventListener('submit', async(e)
     validade: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString(),
   };
 
-  // Register user first
   try {
-    await registerUser(fields.userEmail.input.value, fields.password.input.value);
-  } catch (error) {
-    alert('Erro ao criar conta: ' + error.message);
-    return;
-  }
+    // Register user first (or login if the account already exists)
+    try {
+      await registerUser(accountCredentials.email, accountCredentials.password);
+    } catch (error) {
+      if (/already exists/i.test(error.message)) {
+        try {
+          await loginUser(accountCredentials.email, accountCredentials.password);
+        } catch (loginError) {
+          alert('Erro ao acessar a conta existente: ' + loginError.message);
+          return;
+        }
+      } else {
+        alert('Erro ao criar conta: ' + error.message);
+        return;
+      }
+    }
 
-  // Create card
-  const formData = new FormData();
-  formData.append('nome', data.nome);
-  formData.append('data_nascimento', data.dataNascimento);
-  formData.append('sexo', data.sexo);
-  formData.append('cpf', data.cpf);
-  formData.append('rg', data.rg);
-  formData.append('telefone', data.telefone);
-  formData.append('email', data.email || fields.email.input.value);
-  formData.append('endereco', data.endereco);
-  formData.append('cidade', data.cidade);
-  formData.append('estado', data.estado);
-  formData.append('tipo_deficiencia', data.tipoDeficiencia);
-  formData.append('grau_deficiencia', data.grauDeficiencia);
-  formData.append('cid', data.cid);
-  formData.append('numero_laudo', data.numeroLaudo);
-  formData.append('data_laudo', data.dataLaudo);
-  formData.append('nome_medico', data.nomeMedico);
-  formData.append('crm_medico', data.crmMedico);
-  formData.append('acompanhante', data.necessitaAcompanhante === 'Sim' ? '1' : '0');
+    // Create card
+    const formData = new FormData();
+    formData.append('nome', data.nome);
+    formData.append('data_nascimento', data.dataNascimento);
+    formData.append('sexo', data.sexo);
+    formData.append('cpf', data.cpf);
+    formData.append('rg', data.rg);
+    formData.append('telefone', data.telefone);
+    formData.append('email', data.email);
+    formData.append('endereco', data.endereco);
+    formData.append('cidade', data.cidade);
+    formData.append('estado', data.estado);
+    formData.append('tipo_deficiencia', data.tipoDeficiencia);
+    formData.append('grau_deficiencia', data.grauDeficiencia);
+    formData.append('cid', data.cid);
+    formData.append('numero_laudo', data.numeroLaudo);
+    formData.append('data_laudo', data.dataLaudo);
+    formData.append('nome_medico', data.nomeMedico);
+    formData.append('crm_medico', data.crmMedico);
+    formData.append('acompanhante', data.necessitaAcompanhante === 'Sim' ? '1' : '0');
 
-  if (fotoSrc) {
-    // Convert base64 to blob
-    const response = await fetch(fotoSrc);
-    const blob = await response.blob();
-    formData.append('foto', blob, 'foto.jpg');
-  }
+    const fotoFile = fields.foto.input?.files?.[0];
+    if (fotoFile) {
+      formData.append('foto', fotoFile, fotoFile.name || 'foto.jpg');
+    }
 
-  if (laudoFileData) {
-    formData.append('laudoFile', laudoFileData);
-  }
+    const laudoFile = fields.laudoFile.input?.files?.[0];
+    if (laudoFile) {
+      formData.append('laudoFile', laudoFile, laudoFile.name);
+    }
 
-  try {
-    await createCard(formData);
+    const createdCard = await createCard(formData);
+    localStorage.setItem('userRegistration', JSON.stringify({ ...data, card: createdCard }));
     alert('Carteira criada com sucesso!');
     window.location.href = 'carteira.html';
   } catch (error) {
     alert('Erro ao criar carteira: ' + error.message);
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalButtonHtml || '<span>Gerar Carteira GO Card PCD</span>';
+    }
+    checkForm();
   }
 });
+
+checkForm();
 
 // ===== CHATBOT =====
 const chatbotModal = document.getElementById('chatbotModal');
