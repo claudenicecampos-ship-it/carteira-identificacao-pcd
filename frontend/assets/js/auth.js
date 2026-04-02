@@ -42,88 +42,47 @@ function mostrarToast(mensagem, tipo = 'info', duracao = 3000) {
     }, duracao);
 }
 
+const API_BASE_URL = 'http://localhost:3000';
+
 /**
- * Simula requisicao de forma local (sem backend)
+ * Faz requisicao para o backend (API)
  */
 async function fazerRequisicao(endpoint, metodo = 'GET', dados = null) {
-    // Simular delay de rede
-    await new Promise(resolve => setTimeout(resolve, 500));
+    const url = `${API_BASE_URL}/api${endpoint}`;
 
-    // Registrar novo usuario
-    if (endpoint === '/auth/registrar' && metodo === 'POST') {
-        const usuarios = obterUsuariosDB();
-        
-        // Verificar se email ja existe
-        if (usuarios.find(u => u.email === dados.email)) {
-            throw new Error('Este email ja esta cadastrado');
-        }
-        
-        // Verificar se CPF ja existe
-        if (usuarios.find(u => u.cpf === dados.cpf)) {
-            throw new Error('Este CPF ja esta cadastrado');
-        }
-        
-        // Criar novo usuario
-        const novoUsuario = {
-            id: Date.now(),
-            nome: dados.nome,
-            email: dados.email,
-            cpf: dados.cpf,
-            telefone: dados.telefone,
-            data_nascimento: dados.data_nascimento,
-            senha: dados.senha, // Em producao seria hash
-            criadoEm: new Date().toISOString()
-        };
-        
-        usuarios.push(novoUsuario);
-        salvarUsuariosDB(usuarios);
-        
-        const token = gerarTokenLocal();
-        const refreshToken = gerarTokenLocal();
-        
-        return {
-            sucesso: true,
-            data: {
-                token: token,
-                refreshToken: refreshToken,
-                usuario: {
-                    id: novoUsuario.id,
-                    nome: novoUsuario.nome,
-                    email: novoUsuario.email,
-                    cpf: novoUsuario.cpf
-                }
-            }
-        };
+    let resposta;
+    try {
+        resposta = await fetch(url, {
+            method: metodo,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: dados ? JSON.stringify(dados) : null
+        });
+    } catch (erro) {
+        throw new Error(`Falha de requisição (network): ${erro.message}. URL: ${url}`);
     }
-    
-    // Login
-    if (endpoint === '/auth/login' && metodo === 'POST') {
-        const usuarios = obterUsuariosDB();
-        const usuario = usuarios.find(u => u.email === dados.email && u.senha === dados.senha);
-        
-        if (!usuario) {
-            throw new Error('Email ou senha incorretos');
-        }
-        
-        const token = gerarTokenLocal();
-        const refreshToken = gerarTokenLocal();
-        
-        return {
-            sucesso: true,
-            data: {
-                token: token,
-                refreshToken: refreshToken,
-                usuario: {
-                    id: usuario.id,
-                    nome: usuario.nome,
-                    email: usuario.email,
-                    cpf: usuario.cpf
-                }
-            }
-        };
+
+    const corpoTexto = await resposta.text();
+
+    let json;
+    try {
+        json = corpoTexto ? JSON.parse(corpoTexto) : null;
+    } catch (e) {
+        throw new Error(`Resposta inválida do servidor (não JSON): ${corpoTexto || 'sem conteúdo'}. Status: ${resposta.status}`);
     }
-    
-    throw new Error('Endpoint nao implementado no modo local');
+
+    if (!resposta.ok) {
+        const mensagem = json?.mensagem || `Erro ${resposta.status}: ${corpoTexto}`;
+        throw new Error(mensagem);
+    }
+
+    if (!json?.sucesso) {
+        const mensagem = json?.mensagem || 'Erro inesperado';
+        throw new Error(`${mensagem} (status ${resposta.status})`);
+    }
+
+    return json;
 }
 
 /**

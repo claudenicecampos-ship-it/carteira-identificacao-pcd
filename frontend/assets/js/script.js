@@ -88,6 +88,7 @@ const fields = {
 
 const submitBtn = document.getElementById('submitBtn');
 let laudoFileData = null;
+let fotoFileData = null;
 
 // ===== VALIDADORES =====
 function isValidName(v) { 
@@ -223,6 +224,7 @@ function errorMsg(f) {
     crmMedico: 'Formato inválido. Ex: CRM-SP 123456',
     dataLaudo: 'Data do laudo inválida',
     laudoFile: 'Anexe o laudo médico (PDF ou imagem)',
+    foto: 'Selecione uma foto 3x4',
   };
   return msgs[f] || 'Campo inválido';
 }
@@ -289,60 +291,122 @@ document.getElementById('estado')?.addEventListener('change', checkForm);
 document.getElementById('tipoDeficiencia')?.addEventListener('change', checkForm);
 document.getElementById('grauDeficiencia')?.addEventListener('change', checkForm);
 
-// Foto
-fields.foto.input?.addEventListener('change', e => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) {
-    fields.foto.error.textContent = 'Arquivo muito grande. Máximo 5MB.';
-    fields.foto.error.classList.add('show');
-    return;
-  }
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    fields.foto.preview.style.backgroundImage = `url('${reader.result}')`;
-    fields.foto.preview.classList.add('has-image');
-    fields.foto.preview.innerHTML = '';
-    fields.foto.error.textContent = '';
-    fields.foto.error.classList.remove('show');
-    checkForm();
-  };
-  reader.readAsDataURL(file);
-});
+// ===== UPLOAD DE FOTO - CORRIGIDO =====
+if (fields.foto.input) {
+  fields.foto.input.addEventListener('change', function(e) {
+    const file = e.target.files?.[0];
+    if (!file) {
+      console.log('Nenhum arquivo selecionado');
+      return;
+    }
+    
+    // Validar tipo de arquivo
+    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validImageTypes.includes(file.type)) {
+      if (fields.foto.error) {
+        fields.foto.error.textContent = 'Formato inválido. Use JPG, PNG ou GIF.';
+        fields.foto.error.classList.add('show');
+      }
+      e.target.value = ''; // Limpa o input
+      return;
+    }
+    
+    // Validar tamanho (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      if (fields.foto.error) {
+        fields.foto.error.textContent = 'Arquivo muito grande. Máximo 5MB.';
+        fields.foto.error.classList.add('show');
+      }
+      e.target.value = ''; // Limpa o input
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onloadend = function() {
+      fotoFileData = reader.result;
+      if (fields.foto.preview) {
+        fields.foto.preview.style.backgroundImage = `url('${reader.result}')`;
+        fields.foto.preview.classList.add('has-image');
+        // Esconde o ícone SVG dentro do preview
+        const svgIcon = fields.foto.preview.querySelector('svg');
+        if (svgIcon) {
+          svgIcon.style.display = 'none';
+        }
+      }
+      if (fields.foto.error) {
+        fields.foto.error.textContent = '';
+        fields.foto.error.classList.remove('show');
+      }
+      checkForm();
+    };
+    reader.onerror = function() {
+      if (fields.foto.error) {
+        fields.foto.error.textContent = 'Erro ao ler o arquivo. Tente novamente.';
+        fields.foto.error.classList.add('show');
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
-// Laudo File
-fields.laudoFile.input?.addEventListener('change', e => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-  if (file.size > 10 * 1024 * 1024) {
-    fields.laudoFile.error.textContent = 'Arquivo muito grande. Máximo 10MB.';
-    fields.laudoFile.error.classList.add('show');
-    return;
-  }
-  const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
-  if (!validTypes.includes(file.type)) {
-    fields.laudoFile.error.textContent = 'Formato inválido. Use PDF, JPG ou PNG.';
-    fields.laudoFile.error.classList.add('show');
-    return;
-  }
-  
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    laudoFileData = reader.result;
-    fields.laudoFile.preview.innerHTML = `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--success-500)">
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-        <polyline points="22 4 12 14.01 9 11.01"/>
-      </svg>
-      <span style="color: var(--success-600); font-weight: 500">${file.name}</span>
-    `;
-    fields.laudoFile.preview.classList.add('has-file');
-    fields.laudoFile.error.textContent = '';
-    fields.laudoFile.error.classList.remove('show');
-    checkForm();
-  };
-  reader.readAsDataURL(file);
-});
+// ===== UPLOAD DE LAUDO - CORRIGIDO =====
+if (fields.laudoFile.input) {
+  fields.laudoFile.input.addEventListener('change', function(e) {
+    const file = e.target.files?.[0];
+    if (!file) {
+      console.log('Nenhum arquivo de laudo selecionado');
+      return;
+    }
+    
+    // Validar tamanho (máximo 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      if (fields.laudoFile.error) {
+        fields.laudoFile.error.textContent = 'Arquivo muito grande. Máximo 10MB.';
+        fields.laudoFile.error.classList.add('show');
+      }
+      e.target.value = ''; // Limpa o input
+      return;
+    }
+    
+    // Validar tipo de arquivo
+    const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      if (fields.laudoFile.error) {
+        fields.laudoFile.error.textContent = 'Formato inválido. Use PDF, JPG ou PNG.';
+        fields.laudoFile.error.classList.add('show');
+      }
+      e.target.value = ''; // Limpa o input
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onloadend = function() {
+      laudoFileData = reader.result;
+      if (fields.laudoFile.preview) {
+        fields.laudoFile.preview.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--success-500); width: 24px; height: 24px;">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span style="color: var(--success-600); font-weight: 500">${file.name}</span>
+        `;
+        fields.laudoFile.preview.classList.add('has-file');
+      }
+      if (fields.laudoFile.error) {
+        fields.laudoFile.error.textContent = '';
+        fields.laudoFile.error.classList.remove('show');
+      }
+      checkForm();
+    };
+    reader.onerror = function() {
+      if (fields.laudoFile.error) {
+        fields.laudoFile.error.textContent = 'Erro ao ler o arquivo. Tente novamente.';
+        fields.laudoFile.error.classList.add('show');
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 function checkForm() {
   if (!submitBtn) return;
@@ -371,32 +435,32 @@ function checkForm() {
   submitBtn.disabled = !ok;
 }
 
-// ===== SUBMIT =====
-document.getElementById('registrationForm')?.addEventListener('submit', e => {
+// ===== SUBMIT - CORRIGIDO COM ASYNC =====
+document.getElementById('registrationForm')?.addEventListener('submit', async function(e) {
   e.preventDefault();
 
-  const fotoSrc = fields.foto.preview.style.backgroundImage.slice(5, -2);
+  const fotoSrc = fotoFileData || (fields.foto.preview?.style.backgroundImage.slice(5, -2) || '');
 
   const data = {
     foto: fotoSrc,
-    nome: fields.nome.input.value.trim(),
-    dataNascimento: fields.dataNascimento.input.value,
-    sexo: document.getElementById('sexo').value,
-    cpf: fields.cpf.input.value.replace(/\D/g,''),
-    rg: fields.rg.input.value.replace(/\D/g,''),
-    telefone: fields.telefone.input.value.replace(/\D/g,''),
+    nome: fields.nome.input?.value.trim() || '',
+    dataNascimento: fields.dataNascimento.input?.value || '',
+    sexo: document.getElementById('sexo')?.value || '',
+    cpf: fields.cpf.input?.value.replace(/\D/g,'') || '',
+    rg: fields.rg.input?.value.replace(/\D/g,'') || '',
+    telefone: fields.telefone.input?.value.replace(/\D/g,'') || '',
     endereco: document.getElementById('endereco')?.value.trim() || '',
-    cidade: fields.cidade.input.value.trim(),
-    estado: document.getElementById('estado').value,
-    tipoDeficiencia: document.getElementById('tipoDeficiencia').value,
-    grauDeficiencia: document.getElementById('grauDeficiencia').value,
-    cid: fields.cid.input.value.toUpperCase().trim(),
+    cidade: fields.cidade.input?.value.trim() || '',
+    estado: document.getElementById('estado')?.value || '',
+    tipoDeficiencia: document.getElementById('tipoDeficiencia')?.value || '',
+    grauDeficiencia: document.getElementById('grauDeficiencia')?.value || '',
+    cid: fields.cid.input?.value.toUpperCase().trim() || '',
     necessitaAcompanhante: document.getElementById('necessitaAcompanhante')?.value || '',
     comunicacao: document.getElementById('comunicacao')?.value || '',
-    numeroLaudo: fields.numeroLaudo.input.value.trim(),
-    dataLaudo: fields.dataLaudo.input.value,
-    nomeMedico: fields.nomeMedico.input.value.trim(),
-    crmMedico: fields.crmMedico.input.value.trim().toUpperCase(),
+    numeroLaudo: fields.numeroLaudo.input?.value.trim() || '',
+    dataLaudo: fields.dataLaudo.input?.value || '',
+    nomeMedico: fields.nomeMedico.input?.value.trim() || '',
+    crmMedico: fields.crmMedico.input?.value.trim().toUpperCase() || '',
     laudoArquivo: laudoFileData,
     nomeResponsavel: document.getElementById('nomeResponsavel')?.value.trim() || '',
     cpfResponsavel: document.getElementById('cpfResponsavel')?.value.trim() || '',
@@ -409,6 +473,28 @@ document.getElementById('registrationForm')?.addEventListener('submit', e => {
     validade: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString(),
   };
 
+  // Verifica se a função fazerRequisicao existe (do auth.js)
+  if (typeof fazerRequisicao === 'function') {
+    try {
+      const resposta = await fazerRequisicao('/carteiras', 'POST', data);
+      if (resposta.sucesso) {
+        localStorage.setItem('userRegistration', JSON.stringify(data));
+        if (typeof mostrarToast === 'function') {
+          mostrarToast('Carteira cadastrada com sucesso!', 'success');
+        }
+        window.location.href = 'carteira.html';
+        return;
+      }
+    } catch (erro) {
+      if (typeof mostrarToast === 'function') {
+        mostrarToast('Erro ao salvar carteira: ' + erro.message, 'error');
+      }
+      console.error(erro);
+      // Continua para salvar localmente como fallback
+    }
+  }
+
+  // Fallback: salvar localmente e redirecionar
   localStorage.setItem('userRegistration', JSON.stringify(data));
   window.location.href = 'carteira.html';
 });
@@ -443,23 +529,26 @@ function getBotReply(msg) {
   if (m.includes('direito') || m.includes('benefício')) return chatbotResponses.direitos;
   if (m.includes('laudo') || m.includes('médico') || m.includes('crm')) return chatbotResponses.laudo;
   if (m.includes('renov') || m.includes('validade') || m.includes('prazo')) return chatbotResponses.renovacao;
-  if (m.includes('acompanhante')) return chatbotResponses.acompanhante;
+  if (m.includes('acompanhante') || m.includes('assistente')) return chatbotResponses.acompanhante;
   return chatbotResponses.default;
 }
 
-function handleChat() {
+function sendChat() {
   const input = document.getElementById('chatInput');
   if (!input) return;
   const msg = input.value.trim();
   if (!msg) return;
   addMsg(msg, true);
   input.value = '';
-  setTimeout(() => addMsg(getBotReply(msg)), 700);
+  setTimeout(() => addMsg(getBotReply(msg)), 500);
 }
 
-document.getElementById('sendChat')?.addEventListener('click', handleChat);
-document.getElementById('chatInput')?.addEventListener('keypress', e => { 
-  if (e.key === 'Enter') handleChat(); 
+document.getElementById('sendChat')?.addEventListener('click', sendChat);
+document.getElementById('chatInput')?.addEventListener('keypress', e => {
+  if (e.key === 'Enter') sendChat();
 });
 
-document.addEventListener('DOMContentLoaded', checkForm);
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+  checkForm();
+});

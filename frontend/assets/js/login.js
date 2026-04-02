@@ -60,13 +60,48 @@ async function handleLogin(e) {
 
             mostrarToast('Login realizado com sucesso!', 'success');
             
-            // Redirecionar para a pagina de criar carteira apos 1 segundo
+            // Verificar se o usuário já tem carteira cadastrada
+            verificarCarteiraERedirect();
+        }
+    } catch (erro) {
+        mostrarToast(erro.message, 'error');
+        habilitarBotao('loginBtn');
+    }
+}
+
+// Verifica se o usuário já tem uma carteira e redireciona corretamente
+async function verificarCarteiraERedirect() {
+    try {
+        // Tentar buscar carteira do usuário na API
+        const resposta = await fazerRequisicao('/carteiras/minha', 'GET');
+        
+        if (resposta.sucesso && resposta.data) {
+            // Usuário já tem carteira - salva dados e vai para carteira.html
+            localStorage.setItem('userRegistration', JSON.stringify(resposta.data));
+            localStorage.setItem('carteira_cadastrada', 'true');
+            
+            setTimeout(() => {
+                window.location.href = 'carteira.html';
+            }, 1000);
+        } else {
+            // Usuário não tem carteira - vai para cadastro
             setTimeout(() => {
                 window.location.href = 'cadastro_carteira.html';
             }, 1000);
         }
     } catch (erro) {
-        mostrarToast(erro.message, 'error');
-        habilitarBotao('loginBtn');
+        // Fallback: verificar localStorage
+        const carteiraLocal = localStorage.getItem('userRegistration');
+        const carteiraCadastrada = localStorage.getItem('carteira_cadastrada');
+        
+        if (carteiraLocal && carteiraCadastrada === 'true') {
+            setTimeout(() => {
+                window.location.href = 'carteira.html';
+            }, 1000);
+        } else {
+            setTimeout(() => {
+                window.location.href = 'cadastro_carteira.html';
+            }, 1000);
+        }
     }
 }

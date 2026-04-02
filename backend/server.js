@@ -16,10 +16,14 @@ const PORT = process.env.PORT || 3000;
 // Middlewares de Segurança
 app.use(helmet());
 app.use(configurarSegurancaHeaders);
-app.use(cors({
-  origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5000',
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'development'
+    ? true
+    : process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5000'],
   credentials: true
-}));
+};
+
+app.use(cors(corsOptions));
 
 // Limitador de requisições
 app.use(limitadorGeral);

@@ -23,7 +23,7 @@
                     <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
                 </div>
                 <nav class="nav-links">
-                    <a href="cadastro_carteira" class="nav-link">Cadastro</a>
+                    <a href="cadastro_carteira.html" class="nav-link">Cadastro</a>
                     <a href="central-direitos.html" class="nav-link active">Central de Direitos</a>
                     <a href="comunidade.html" class="nav-link">Comunidade</a>
                 </nav>
@@ -377,12 +377,27 @@
         });
 
         // Formulario de Denuncia
-        document.getElementById('denunciaForm')?.addEventListener('submit', (e) => {
+        document.getElementById('denunciaForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const protocolo = 'DEN' + Date.now().toString().slice(-10);
-            alert('Denuncia registrada com sucesso!\n\nProtocolo: ' + protocolo + '\n\nSua denuncia sera encaminhada aos orgaos competentes.');
-            denunciaModal?.classList.add('hidden');
-            e.target.reset();
+            const dados = {
+                localidade: document.getElementById('localDenuncia').value.trim(),
+                tipo_denuncia: document.getElementById('tipoDenuncia').value,
+                titulo: document.getElementById('tipoDenuncia').value,
+                descricao: document.getElementById('descricaoDenuncia').value.trim(),
+                data_ocorrido: document.getElementById('dataDenuncia').value,
+                usuario_id: null
+            };
+
+            try {
+                const resposta = await fazerRequisicao('/denuncias', 'POST', dados);
+                if (resposta.sucesso) {
+                    alert('Denúncia registrada com sucesso! Protocolo: DEN' + Date.now().toString().slice(-10));
+                    denunciaModal?.classList.add('hidden');
+                    e.target.reset();
+                }
+            } catch (erro) {
+                alert('Erro ao registrar denúncia: ' + erro.message);
+            }
         });
     </script>
 </body>

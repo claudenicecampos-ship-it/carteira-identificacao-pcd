@@ -138,6 +138,7 @@ export class AutenticacaoController {
    */
   static async recuperarSenha(req, res) {
     try {
+      
       const { email } = req.body;
 
       if (!email) {
