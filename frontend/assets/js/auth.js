@@ -52,11 +52,18 @@ async function fazerRequisicao(endpoint, metodo = 'GET', dados = null) {
 
     let resposta;
     try {
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+
         resposta = await fetch(url, {
             method: metodo,
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers,
             body: dados ? JSON.stringify(dados) : null
         });
     } catch (erro) {

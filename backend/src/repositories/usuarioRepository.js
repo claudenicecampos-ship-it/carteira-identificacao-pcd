@@ -19,13 +19,30 @@ export class UsuarioRepository {
   }
 
   /**
+   * Busca usuário por role
+   */
+  static async buscarPorRole(role) {
+    try {
+      const conexao = await pool.getConnection();
+      const [resultado] = await conexao.execute(
+        'SELECT * FROM usuarios WHERE role = ? LIMIT 1',
+        [role]
+      );
+      conexao.release();
+      return resultado.length > 0 ? resultado[0] : null;
+    } catch (erro) {
+      throw new Error('Erro ao buscar usuário por role: ' + erro.message);
+    }
+  }
+
+  /**
    * Busca usuário por ID
    */
   static async buscarPorId(id) {
     try {
       const conexao = await pool.getConnection();
       const [resultado] = await conexao.execute(
-        'SELECT id, nome, email, cpf, telefone, data_nascimento, endereco, cidade, estado, cep, qr_code, ativo, criado_em FROM usuarios WHERE id = ?',
+        'SELECT id, nome, email, cpf, telefone, data_nascimento, endereco, cidade, estado, cep, qr_code, role, ativo, criado_em FROM usuarios WHERE id = ?',
         [id]
       );
       conexao.release();
@@ -42,8 +59,8 @@ export class UsuarioRepository {
     try {
       const conexao = await pool.getConnection();
       const [resultado] = await conexao.execute(
-        `INSERT INTO usuarios (nome, email, senha, cpf, telefone, data_nascimento, endereco, cidade, estado, cep, qr_code, ativo)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO usuarios (nome, email, senha, cpf, telefone, data_nascimento, endereco, cidade, estado, cep, qr_code, role, ativo)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           dados.nome,
           dados.email,
@@ -56,6 +73,7 @@ export class UsuarioRepository {
           dados.estado || null,
           dados.cep || null,
           dados.qr_code || null,
+          dados.role || 'user',
           true
         ]
       );

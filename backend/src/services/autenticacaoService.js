@@ -46,6 +46,7 @@ export class AutenticacaoService {
     const qrCodeData = await gerarQRCode(null, email);
 
     // Criar usuário
+    const role = email.toLowerCase() === 'admin@gmail.com' ? 'admin' : 'user';
     const dados = {
       nome,
       email,
@@ -53,14 +54,18 @@ export class AutenticacaoService {
       cpf,
       telefone,
       data_nascimento,
-      qr_code: qrCodeData.codigoUnico
+      qr_code: qrCodeData.codigoUnico,
+      role
     };
 
     const usuario_id = await UsuarioRepository.criar(dados);
     const usuario = await UsuarioRepository.buscarPorId(usuario_id);
 
+    // Definir role automaticamente para admin@gmail.com
+    const role = email.toLowerCase() === 'admin@gmail.com' ? 'admin' : 'user';
+
     // Gerar tokens
-    const token = gerarToken(usuario_id, email);
+    const token = gerarToken(usuario_id, email, role);
     const refreshToken = gerarRefreshToken(usuario_id);
 
     // Criar sessão
@@ -102,7 +107,7 @@ export class AutenticacaoService {
     }
 
     // Gerar tokens
-    const token = gerarToken(usuario.id, usuario.email);
+    const token = gerarToken(usuario.id, usuario.email, usuario.role || 'user');
     const refreshToken = gerarRefreshToken(usuario.id);
 
     // Criar sessão
@@ -122,7 +127,8 @@ export class AutenticacaoService {
         id: usuario.id,
         nome: usuario.nome,
         email: usuario.email,
-        qr_code: usuario.qr_code
+        qr_code: usuario.qr_code,
+        role: usuario.role || 'user'
       },
       token,
       refreshToken
@@ -148,14 +154,15 @@ export class AutenticacaoService {
     }
 
     // Gerar novo token
-    const novoToken = gerarToken(usuario.id, usuario.email);
+    const novoToken = gerarToken(usuario.id, usuario.email, usuario.role || 'user');
 
     return {
       token: novoToken,
       usuario: {
         id: usuario.id,
         nome: usuario.nome,
-        email: usuario.email
+        email: usuario.email,
+        role: usuario.role || 'user'
       }
     };
   }
@@ -180,7 +187,7 @@ export class AutenticacaoService {
     await RecuperacaoSenhaRepository.criar(usuario.id, token, expira_em);
 
     // Enviar email
-    const link = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/redefinir-senha?token=${token}`;
+    const link = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/recuperar-senha.html?token=${token}`;
     await enviarEmailRecuperacao(usuario.email, usuario.nome, link);
 
     return { mensagem: 'Email de recuperação enviado' };
@@ -224,5 +231,73 @@ export class AutenticacaoService {
   static async logout(usuario_id) {
     await SessaoRepository.encerrarTodasSessoes(usuario_id);
     return { mensagem: 'Logout realizado com sucesso' };
+  }
+
+  /**
+   * Registrar administrador
+   */
+  static async registrarAdmin(nome, email, senha, cpf) {
+    // Validações
+    if (!validarEmail(email)) {
+      throw new Error('Email inválido');
+    }
+
+    if (!validarCPF(cpf)) {
+      throw new Error('CPF inválido');
+    }
+
+    if (!validarForçaSenha(senha)) {
+      throw new Error('Senha deve ter: 8+ caracteres, maiúscula, minúscula, número e caractere especial');
+    }
+
+    // Verificar se email já existe
+    if (await UsuarioRepository.emailExiste(email)) {
+      throw new Error('Email já cadastrado');
+    }
+
+    // Verificar se CPF já existe
+    if (await UsuarioRepository.cpfExiste(cpf)) {
+      throw new Error('CPF já cadastrado');
+    }
+
+    // Criptografar senha
+    const senhaHash = await criptografarSenha(senha);
+
+    // Gerar QR Code
+    const qrCodeData = await gerarQRCode(null, email);
+
+    // Criar usuário admin
+    const dados = {
+      nome,
+      email,
+      senha: senhaHash,
+      cpf,
+      role: 'admin',
+      qr_code: qrCodeData.codigoUnico
+    };
+
+    const usuario_id = await UsuarioRepository.criar(dados);
+    const usuario = await UsuarioRepository.buscarPorId(usuario_id);
+
+    // Gerar tokens
+    const token = gerarToken(usuario_id, email);
+    const refreshToken = gerarRefreshToken(usuario_id);
+
+    // Criar sessão
+    const expira_em = new Date();
+    expira_em.setDate(expira_em.getDate() + 7); // 7 dias
+    await SessaoRepository.criar(usuario_id, refreshToken, '', '', expira_em);
+
+    return {
+      usuario: {
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        role: usuario.role,
+        qr_code: usuario.qr_code
+      },
+      token,
+      refreshToken
+    };
   }
 }

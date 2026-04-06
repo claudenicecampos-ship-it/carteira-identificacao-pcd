@@ -9,9 +9,9 @@ dotenv.config();
  * @param {string} email - Email do usuário
  * @returns {string} - Token JWT
  */
-export const gerarToken = (usuario_id, email) => {
+export const gerarToken = (usuario_id, email, role = 'user') => {
   return jwt.sign(
-    { usuario_id, email },
+    { usuario_id, email, role },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRY || '15m' }
   );

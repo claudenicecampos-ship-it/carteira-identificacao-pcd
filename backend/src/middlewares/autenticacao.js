@@ -25,6 +25,7 @@ export const verificarToken = (req, res, next) => {
 
       req.usuario_id = decoded.usuario_id;
       req.email = decoded.email;
+      req.role = decoded.role || 'user';
       next();
     });
   } catch (erro) {
@@ -33,6 +34,16 @@ export const verificarToken = (req, res, next) => {
       mensagem: 'Erro ao verificar token'
     });
   }
+};
+
+export const verificarAdmin = (req, res, next) => {
+  if (req.email !== 'admin@gmail.com' && req.role !== 'admin') {
+    return res.status(403).json({
+      sucesso: false,
+      mensagem: 'Acesso negado: apenas administrador'
+    });
+  }
+  next();
 };
 
 export const verificarTokenRefresh = (req, res, next) => {

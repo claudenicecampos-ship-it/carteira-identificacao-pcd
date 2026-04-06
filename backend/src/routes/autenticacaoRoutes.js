@@ -41,10 +41,10 @@ router.post('/recuperar-senha', limitadorRecuperacaoSenha, AutenticacaoControlle
 router.post('/redefinir-senha', AutenticacaoController.redefinirSenha);
 
 /**
- * @route POST /api/auth/logout
- * @desc Realiza logout
- * @access Private
+ * @route POST /api/auth/criar-admin
+ * @desc Criar usuário administrador (apenas se não existir)
+ * @access Public (temporário)
  */
-router.post('/logout', verificarToken, AutenticacaoController.logout);
+router.post('/criar-admin', AutenticacaoController.criarAdmin);
 
 export default router;

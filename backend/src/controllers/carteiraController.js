@@ -4,7 +4,7 @@ export class CarteiraController {
   static async criar(req, res) {
     try {
       const dados = {
-        usuario_id: req.body.usuario_id || null,
+        usuario_id: req.usuario_id,
         tipo: req.body.tipo,
         descricao: req.body.descricao,
         data_nascimento: req.body.data_nascimento,
@@ -35,6 +35,19 @@ export class CarteiraController {
 
       const carteira = await CarteiraService.criarCarteira(dados);
       res.status(201).json({ sucesso: true, mensagem: 'Carteira criada com sucesso', data: carteira });
+    } catch (erro) {
+      res.status(400).json({ sucesso: false, mensagem: erro.message });
+    }
+  }
+
+  static async buscarMinha(req, res) {
+    try {
+      const carteira = await CarteiraService.buscarPorUsuario(req.usuario_id);
+      if (carteira) {
+        res.status(200).json({ sucesso: true, data: carteira });
+      } else {
+        res.status(404).json({ sucesso: false, mensagem: 'Carteira não encontrada' });
+      }
     } catch (erro) {
       res.status(400).json({ sucesso: false, mensagem: erro.message });
     }

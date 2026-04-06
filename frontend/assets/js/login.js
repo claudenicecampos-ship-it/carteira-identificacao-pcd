@@ -59,7 +59,15 @@ async function handleLogin(e) {
             }
 
             mostrarToast('Login realizado com sucesso!', 'success');
-            
+
+            // Se for administrador, ir para a tela de admin
+            if (resposta.data.usuario?.email?.toLowerCase() === 'admin@gmail.com') {
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 1000);
+                return;
+            }
+
             // Verificar se o usuário já tem carteira cadastrada
             verificarCarteiraERedirect();
         }

@@ -6,7 +6,7 @@ import rateLimit from 'express-rate-limit';
 export const limitadorGeral = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
   max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
-  message: 'Muitas requisições deste IP, tente novamente mais tarde',
+  message: { sucesso: false, mensagem: 'Muitas requisições deste IP, tente novamente mais tarde' },
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -17,7 +17,7 @@ export const limitadorGeral = rateLimit({
 export const limitadorLogin = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 5, // 5 tentativas
-  message: 'Muitas tentativas de login. Tente novamente em 15 minutos',
+  message: { sucesso: false, mensagem: 'Muitas tentativas de login. Tente novamente em 15 minutos' },
   skipSuccessfulRequests: true,
 });
 
@@ -26,8 +26,8 @@ export const limitadorLogin = rateLimit({
  */
 export const limitadorRegistro = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hora
-  max: 3, // 3 registros por hora
-  message: 'Muitas tentativas de registro. Tente novamente em uma hora',
+  max: 10, // 10 registros por hora
+  message: { sucesso: false, mensagem: 'Muitas tentativas de registro. Tente novamente em uma hora' },
 });
 
 /**
@@ -36,5 +36,5 @@ export const limitadorRegistro = rateLimit({
 export const limitadorRecuperacaoSenha = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hora
   max: 3, // 3 tentativas por hora
-  message: 'Muitas tentativas de recuperação de senha. Tente novamente em uma hora',
+  message: { sucesso: false, mensagem: 'Muitas tentativas de recuperação de senha. Tente novamente em uma hora' },
 });

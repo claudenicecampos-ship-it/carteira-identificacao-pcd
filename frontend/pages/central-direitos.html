@@ -322,6 +322,10 @@
                         <input type="text" id="enderecoDenuncia" class="input-field" placeholder="Rua, numero, bairro">
                     </div>
                     <div class="form-group">
+                        <label for="evidenciaDenuncia">Foto de Evidência</label>
+                        <input type="file" id="evidenciaDenuncia" class="input-field" accept="image/*">
+                    </div>
+                    <div class="form-group">
                         <label for="tipoDenuncia">Tipo de Violacao</label>
                         <select id="tipoDenuncia" class="input-field" required>
                             <option value="">Selecione...</option>
@@ -376,27 +380,59 @@
             }
         });
 
+        async function obterArquivoBase64(id) {
+            const input = document.getElementById(id);
+            if (!input || !input.files || !input.files[0]) {
+                return null;
+            }
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Erro ao ler arquivo de evidência'));
+                reader.readAsDataURL(input.files[0]);
+            });
+        }
+
         // Formulario de Denuncia
         document.getElementById('denunciaForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            if (!estaAutenticado()) {
+                mostrarToast('Faça login para registrar uma denúncia', 'error');
+                return;
+            }
+
+            const tipo = document.getElementById('tipoDenuncia').value;
+            const titulos = {
+                'fila': 'Negaram Fila Prioritaria',
+                'acesso': 'Falta de Acessibilidade',
+                'atendimento': 'Atendimento Discriminatorio',
+                'transporte': 'Problema em Transporte',
+                'estacionamento': 'Vaga Reservada Ocupada',
+                'outro': 'Outra Violacao'
+            };
+            const evidenciaBase64 = await obterArquivoBase64('evidenciaDenuncia');
             const dados = {
                 localidade: document.getElementById('localDenuncia').value.trim(),
-                tipo_denuncia: document.getElementById('tipoDenuncia').value,
-                titulo: document.getElementById('tipoDenuncia').value,
-                descricao: document.getElementById('descricaoDenuncia').value.trim(),
-                data_ocorrido: document.getElementById('dataDenuncia').value,
-                usuario_id: null
+                endereco: document.getElementById('enderecoDenuncia').value.trim(),
+                evidencia_url: evidenciaBase64,
+                tipo_denuncia: tipo,
+                titulo: titulos[tipo] || 'Denuncia',
+                descricao: document.getElementById('descricaoDenuncia').value.trim()
             };
 
             try {
                 const resposta = await fazerRequisicao('/denuncias', 'POST', dados);
                 if (resposta.sucesso) {
-                    alert('Denúncia registrada com sucesso! Protocolo: DEN' + Date.now().toString().slice(-10));
+                    const protocolo = resposta.data?.id ? 'DEN' + String(resposta.data.id).padStart(6, '0') : '';
+                    mostrarToast(`Denúncia registrada com sucesso! ${protocolo}`, 'success', 5000);
                     denunciaModal?.classList.add('hidden');
                     e.target.reset();
+                    document.getElementById('evidenciaDenuncia').value = '';
                 }
             } catch (erro) {
-                alert('Erro ao registrar denúncia: ' + erro.message);
+                mostrarToast('Erro ao registrar denúncia: ' + erro.message, 'error');
             }
         });
     </script>

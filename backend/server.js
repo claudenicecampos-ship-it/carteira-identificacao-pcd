@@ -11,7 +11,7 @@ import { configurarSegurancaHeaders } from './src/middlewares/segurancaHeaders.j
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Middlewares de Segurança
 app.use(helmet());

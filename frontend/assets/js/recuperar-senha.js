@@ -256,8 +256,7 @@ async function redefinirSenha() {
         // Tentar via API
         try {
             const resposta = await fazerRequisicao('/auth/redefinir-senha', 'POST', {
-                token: token || null,
-                email: emailRecuperacao,
+                token: token,
                 novaSenha
             });
 

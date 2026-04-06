@@ -50,4 +50,18 @@ export class CarteiraRepository {
       throw new Error('Erro ao criar carteira: ' + erro.message);
     }
   }
+
+  static async buscarPorUsuarioId(usuario_id) {
+    try {
+      const conexao = await pool.getConnection();
+      const [resultado] = await conexao.execute(
+        'SELECT * FROM carteiras WHERE usuario_id = ? AND ativa = 1 LIMIT 1',
+        [usuario_id]
+      );
+      conexao.release();
+      return resultado.length > 0 ? resultado[0] : null;
+    } catch (erro) {
+      throw new Error('Erro ao buscar carteira: ' + erro.message);
+    }
+  }
 }

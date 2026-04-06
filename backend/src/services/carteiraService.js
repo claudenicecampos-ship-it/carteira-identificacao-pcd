@@ -12,4 +12,8 @@ export class CarteiraService {
     const carteiraId = await CarteiraRepository.criar(dados);
     return { id: carteiraId, ...dados };
   }
+
+  static async buscarPorUsuario(usuario_id) {
+    return await CarteiraRepository.buscarPorUsuarioId(usuario_id);
+  }
 }

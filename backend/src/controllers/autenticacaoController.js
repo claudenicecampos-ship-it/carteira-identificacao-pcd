@@ -232,4 +232,36 @@ export class AutenticacaoController {
       });
     }
   }
+
+  /**
+   * POST /api/auth/criar-admin
+   */
+  static async criarAdmin(req, res) {
+    try {
+      const { nome, email, senha, cpf } = req.body;
+
+      // Verificar se já existe admin
+      const adminExistente = await UsuarioRepository.buscarPorRole('admin');
+      if (adminExistente) {
+        return res.status(400).json({
+          sucesso: false,
+          mensagem: 'Administrador já existe'
+        });
+      }
+
+      const resultado = await AutenticacaoService.registrarAdmin(nome, email, senha, cpf);
+
+      res.status(201).json({
+        sucesso: true,
+        mensagem: 'Administrador criado com sucesso',
+        data: resultado
+      });
+    } catch (erro) {
+      console.error('Erro ao criar admin:', erro);
+      res.status(400).json({
+        sucesso: false,
+        mensagem: erro.message
+      });
+    }
+  }
 }
