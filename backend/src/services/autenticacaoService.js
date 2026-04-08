@@ -61,9 +61,6 @@ export class AutenticacaoService {
     const usuario_id = await UsuarioRepository.criar(dados);
     const usuario = await UsuarioRepository.buscarPorId(usuario_id);
 
-    // Definir role automaticamente para admin@gmail.com
-    const role = email.toLowerCase() === 'admin@gmail.com' ? 'admin' : 'user';
-
     // Gerar tokens
     const token = gerarToken(usuario_id, email, role);
     const refreshToken = gerarRefreshToken(usuario_id);
