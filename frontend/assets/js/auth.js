@@ -42,13 +42,51 @@ function mostrarToast(mensagem, tipo = 'info', duracao = 3000) {
     }, duracao);
 }
 
-const API_BASE_URL = 'http://localhost:3000';
+const POSSIBLE_BACKEND_PORTS = [3005, 3006, 3007, 3008, 3009];
+const BACKEND_HOST = 'localhost';
+let API_BASE_URL = `http://${BACKEND_HOST}:${POSSIBLE_BACKEND_PORTS[0]}`;
+let backendResolved = false;
+
+async function resolveApiBaseUrl() {
+    if (backendResolved && API_BASE_URL) {
+        return API_BASE_URL;
+    }
+
+    for (const port of POSSIBLE_BACKEND_PORTS) {
+        const origin = `http://${BACKEND_HOST}:${port}`;
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
+            const resposta = await fetch(`${origin}/health`, {
+                method: 'GET',
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            if (resposta.ok) {
+                API_BASE_URL = origin;
+                backendResolved = true;
+                return origin;
+            }
+        } catch (erro) {
+            // continua para a próxima porta
+        }
+    }
+
+    API_BASE_URL = `http://${BACKEND_HOST}:${POSSIBLE_BACKEND_PORTS[0]}`;
+    backendResolved = false;
+    return API_BASE_URL;
+}
 
 /**
  * Faz requisicao para o backend (API)
  */
 async function fazerRequisicao(endpoint, metodo = 'GET', dados = null) {
-    const url = `${API_BASE_URL}/api${endpoint}`;
+    const baseUrl = await resolveApiBaseUrl();
+    const url = `${baseUrl}/api${endpoint}`;
+    const timeoutMs = 5000;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
     let resposta;
     try {
@@ -64,10 +102,16 @@ async function fazerRequisicao(endpoint, metodo = 'GET', dados = null) {
         resposta = await fetch(url, {
             method: metodo,
             headers,
-            body: dados ? JSON.stringify(dados) : null
+            body: dados ? JSON.stringify(dados) : null,
+            signal: controller.signal
         });
     } catch (erro) {
+        if (erro.name === 'AbortError') {
+            throw new Error('Tempo de resposta excedido. Tente novamente.');
+        }
         throw new Error(`Falha de requisição (network): ${erro.message}. URL: ${url}`);
+    } finally {
+        clearTimeout(timeoutId);
     }
 
     const corpoTexto = await resposta.text();
@@ -79,9 +123,18 @@ async function fazerRequisicao(endpoint, metodo = 'GET', dados = null) {
         throw new Error(`Resposta inválida do servidor (não JSON): ${corpoTexto || 'sem conteúdo'}. Status: ${resposta.status}`);
     }
 
+    const retryAfter = resposta.headers.get('retry-after');
+    const remaining = resposta.headers.get('x-ratelimit-remaining');
+
     if (!resposta.ok) {
         const mensagem = json?.mensagem || `Erro ${resposta.status}: ${corpoTexto}`;
-        throw new Error(mensagem);
+        const erro = new Error(mensagem);
+        erro.status = resposta.status;
+        erro.headers = {
+            retryAfter: retryAfter ? parseInt(retryAfter, 10) : null,
+            remaining: remaining ? parseInt(remaining, 10) : null
+        };
+        throw erro;
     }
 
     if (!json?.sucesso) {

@@ -37,7 +37,7 @@ export const verificarToken = (req, res, next) => {
 };
 
 export const verificarAdmin = (req, res, next) => {
-  if (req.email !== 'admin@gmail.com' && req.role !== 'admin') {
+  if (req.role !== 'admin' && req.email?.toLowerCase() !== 'admin@carteira.com') {
     return res.status(403).json({
       sucesso: false,
       mensagem: 'Acesso negado: apenas administrador'

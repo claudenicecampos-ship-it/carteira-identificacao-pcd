@@ -1,0 +1,126 @@
+import pool from '../config/database.js';
+
+export class LoginBloqueioRepository {
+  static async buscarPorEmail(email) {
+    try {
+      const conexao = await pool.getConnection();
+      const [resultado] = await conexao.execute(
+        'SELECT * FROM login_bloqueios WHERE email = ?',
+        [email]
+      );
+      conexao.release();
+      return resultado.length > 0 ? resultado[0] : null;
+    } catch (erro) {
+      throw new Error('Erro ao buscar bloqueio de login: ' + erro.message);
+    }
+  }
+
+  static async criarOuAtualizar(email, dados) {
+    try {
+      const conexao = await pool.getConnection();
+      const bloqueioExistente = await this.buscarPorEmail(email);
+
+      if (bloqueioExistente) {
+        const campos = [];
+        const valores = [];
+
+        Object.keys(dados).forEach(chave => {
+          campos.push(`${chave} = ?`);
+          valores.push(dados[chave]);
+        });
+
+        valores.push(email);
+
+        await conexao.execute(
+          `UPDATE login_bloqueios SET ${campos.join(', ')}, atualizado_em = CURRENT_TIMESTAMP WHERE email = ?`,
+          valores
+        );
+      } else {
+        await conexao.execute(
+          `INSERT INTO login_bloqueios (email, tentativas, bloqueado_ate, codigo_desbloqueio, ultima_tentativa)
+           VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+          [
+            email,
+            dados.tentativas || 0,
+            dados.bloqueado_ate || null,
+            dados.codigo_desbloqueio || null
+          ]
+        );
+      }
+
+      conexao.release();
+      return true;
+    } catch (erro) {
+      throw new Error('Erro ao criar/atualizar bloqueio de login: ' + erro.message);
+    }
+  }
+
+  static async resetarBloqueio(email) {
+    try {
+      const conexao = await pool.getConnection();
+      await conexao.execute(
+        `UPDATE login_bloqueios SET tentativas = 0, bloqueado_ate = NULL, codigo_desbloqueio = NULL, ultima_tentativa = CURRENT_TIMESTAMP, atualizado_em = CURRENT_TIMESTAMP WHERE email = ?`,
+        [email]
+      );
+      conexao.release();
+      return true;
+    } catch (erro) {
+      throw new Error('Erro ao resetar bloqueio de login: ' + erro.message);
+    }
+  }
+
+  static async registrarFalha(email, maxTentativas = 3, minutosBloqueio = 5) {
+    try {
+      const conexao = await pool.getConnection();
+      const bloqueioExistente = await this.buscarPorEmail(email);
+      const agora = new Date();
+      let tentativas = 1;
+      let bloqueadoAte = null;
+      let codigoDesbloqueio = null;
+
+      if (bloqueioExistente) {
+        tentativas = (bloqueioExistente.tentativas || 0) + 1;
+      }
+
+      if (tentativas >= maxTentativas) {
+        bloqueadoAte = new Date(agora.getTime() + minutosBloqueio * 60000);
+        codigoDesbloqueio = `UNLOCK-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+        tentativas = 0;
+      }
+
+      await this.criarOuAtualizar(email, {
+        tentativas,
+        bloqueado_ate: bloqueadoAte ? bloqueadoAte.toISOString().slice(0, 19).replace('T', ' ') : null,
+        codigo_desbloqueio: codigoDesbloqueio
+      });
+
+      conexao.release();
+
+      return {
+        tentativas,
+        bloqueadoAte,
+        codigoDesbloqueio,
+        restantes: tentativas > 0 ? maxTentativas - tentativas : 0
+      };
+    } catch (erro) {
+      throw new Error('Erro ao registrar falha de login: ' + erro.message);
+    }
+  }
+
+  static async desbloquearPorCodigo(email, codigo) {
+    try {
+      const bloqueio = await this.buscarPorEmail(email);
+      if (!bloqueio || !bloqueio.codigo_desbloqueio) {
+        return false;
+      }
+      if (bloqueio.codigo_desbloqueio !== codigo) {
+        return false;
+      }
+
+      await this.resetarBloqueio(email);
+      return true;
+    } catch (erro) {
+      throw new Error('Erro ao desbloquear login por código: ' + erro.message);
+    }
+  }
+}

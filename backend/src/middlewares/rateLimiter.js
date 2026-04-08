@@ -15,26 +15,40 @@ export const limitadorGeral = rateLimit({
  * Limitador específico para login (mais restritivo)
  */
 export const limitadorLogin = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 5, // 5 tentativas
-  message: { sucesso: false, mensagem: 'Muitas tentativas de login. Tente novamente em 15 minutos' },
+  windowMs: 5 * 60 * 1000, // 5 minutos
+  max: 3, // 3 tentativas
+  message: { sucesso: false, mensagem: 'Muitas tentativas de login. Tente novamente em 5 minutos' },
   skipSuccessfulRequests: true,
-});
-
-/**
- * Limitador para registro (mais restritivo)
- */
-export const limitadorRegistro = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hora
-  max: 10, // 10 registros por hora
-  message: { sucesso: false, mensagem: 'Muitas tentativas de registro. Tente novamente em uma hora' },
+  keyGenerator: (req) => {
+    const email = req.body?.email;
+    return email && typeof email === 'string' ? email.toLowerCase() : req.ip;
+  },
+  handler: (req, res) => {
+    const retryAfter = Math.ceil(5 * 60);
+    res.setHeader('Retry-After', retryAfter);
+    return res.status(429).json({
+      sucesso: false,
+      mensagem: 'Muitas tentativas de login. Tente novamente em 5 minutos',
+      tentativasRestantes: 0,
+      retryAfter
+    });
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 /**
  * Limitador para recuperação de senha
  */
 export const limitadorRecuperacaoSenha = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hora
-  max: 3, // 3 tentativas por hora
-  message: { sucesso: false, mensagem: 'Muitas tentativas de recuperação de senha. Tente novamente em uma hora' },
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 3, // 3 tentativas
+  message: { sucesso: false, mensagem: 'Muitas tentativas de recuperação de senha. Tente novamente em 15 minutos' },
+  skipSuccessfulRequests: true,
+  keyGenerator: (req) => {
+    const email = req.body?.email;
+    return email && typeof email === 'string' ? email.toLowerCase() : req.ip;
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });

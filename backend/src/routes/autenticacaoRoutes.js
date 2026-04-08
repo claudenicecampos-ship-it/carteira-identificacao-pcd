@@ -1,7 +1,7 @@
 import express from 'express';
 import { AutenticacaoController } from '../controllers/autenticacaoController.js';
 import { verificarToken } from '../middlewares/autenticacao.js';
-import { limitadorLogin, limitadorRegistro, limitadorRecuperacaoSenha } from '../middlewares/rateLimiter.js';
+import { limitadorRecuperacaoSenha } from '../middlewares/rateLimiter.js';
 
 const router = express.Router();
 
@@ -10,14 +10,15 @@ const router = express.Router();
  * @desc Registra novo usuário
  * @access Public
  */
-router.post('/registrar', limitadorRegistro, AutenticacaoController.registrar);
+router.post('/registrar', AutenticacaoController.registrar);
 
 /**
  * @route POST /api/auth/login
  * @desc Realiza login
  * @access Public
  */
-router.post('/login', limitadorLogin, AutenticacaoController.login);
+router.post('/login', AutenticacaoController.login);
+router.post('/desbloquear', AutenticacaoController.desbloquear);
 
 /**
  * @route POST /api/auth/renovar-token

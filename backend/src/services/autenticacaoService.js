@@ -1,6 +1,8 @@
 import { UsuarioRepository } from '../repositories/usuarioRepository.js';
 import { SessaoRepository } from '../repositories/sessaoRepository.js';
 import { RecuperacaoSenhaRepository } from '../repositories/recuperacaoSenhaRepository.js';
+import { CarteiraRepository } from '../repositories/carteiraRepository.js';
+import { LoginBloqueioRepository } from '../repositories/loginBloqueioRepository.js';
 import { criptografarSenha, compararSenha, validarForçaSenha } from '../utils/criptografia.js';
 import { gerarToken, gerarRefreshToken } from '../utils/token.js';
 import { gerarQRCode, validarQRCode } from '../utils/qrcode.js';
@@ -16,7 +18,7 @@ export class AutenticacaoService {
    * Registra novo usuário
    */
   static async registrar(nome, email, senha, cpf, telefone, data_nascimento) {
-    // Validações
+    // Validações básicas
     if (!validarEmail(email)) {
       throw new Error('Email inválido');
     }
@@ -46,14 +48,14 @@ export class AutenticacaoService {
     const qrCodeData = await gerarQRCode(null, email);
 
     // Criar usuário
-    const role = email.toLowerCase() === 'admin@gmail.com' ? 'admin' : 'user';
+    const role = email.toLowerCase() === 'admin@carteira.com' ? 'admin' : 'user';
     const dados = {
       nome,
       email,
       senha: senhaHash,
       cpf,
-      telefone,
-      data_nascimento,
+      telefone: telefone || null,
+      data_nascimento: data_nascimento || null,
       qr_code: qrCodeData.codigoUnico,
       role
     };
@@ -61,16 +63,11 @@ export class AutenticacaoService {
     const usuario_id = await UsuarioRepository.criar(dados);
     const usuario = await UsuarioRepository.buscarPorId(usuario_id);
 
-    // Definir role automaticamente para admin@gmail.com
-    const role = email.toLowerCase() === 'admin@gmail.com' ? 'admin' : 'user';
-
-    // Gerar tokens
-    const token = gerarToken(usuario_id, email, role);
+    const token = gerarToken(usuario_id, usuario.email, usuario.role || role);
     const refreshToken = gerarRefreshToken(usuario_id);
 
-    // Criar sessão
     const expira_em = new Date();
-    expira_em.setDate(expira_em.getDate() + 7); // 7 dias
+    expira_em.setDate(expira_em.getDate() + 7);
     await SessaoRepository.criar(usuario_id, refreshToken, '', '', expira_em);
 
     return {
@@ -78,7 +75,8 @@ export class AutenticacaoService {
         id: usuario.id,
         nome: usuario.nome,
         email: usuario.email,
-        qr_code: usuario.qr_code
+        qr_code: usuario.qr_code,
+        role: usuario.role || role
       },
       token,
       refreshToken
@@ -89,11 +87,36 @@ export class AutenticacaoService {
    * Login de usuário
    */
   static async login(email, senha, endereco_ip = '', user_agent = '') {
+    // Verificar bloqueio prévio
+    const bloqueio = await LoginBloqueioRepository.buscarPorEmail(email);
+    if (bloqueio?.bloqueado_ate) {
+      const bloqueadoAte = new Date(bloqueio.bloqueado_ate);
+      if (bloqueadoAte > new Date()) {
+        const segundosRestantes = Math.ceil((bloqueadoAte.getTime() - Date.now()) / 1000);
+        const erro = new Error(`Conta bloqueada. Tente novamente em ${Math.ceil(segundosRestantes / 60)} minuto(s).`);
+        erro.status = 429;
+        erro.retryAfter = segundosRestantes;
+        erro.codigoDesbloqueio = bloqueio.codigo_desbloqueio;
+        throw erro;
+      }
+    }
+
     // Buscar usuário
     const usuario = await UsuarioRepository.buscarPorEmail(email);
-    
     if (!usuario) {
-      throw new Error('Email ou senha incorretos');
+      const falha = await LoginBloqueioRepository.registrarFalha(email);
+      if (falha.bloqueadoAte) {
+        const erro = new Error('Muitas tentativas de login. Tente novamente em 5 minutos.');
+        erro.status = 429;
+        erro.retryAfter = Math.ceil((falha.bloqueadoAte.getTime() - Date.now()) / 1000);
+        erro.codigoDesbloqueio = falha.codigoDesbloqueio;
+        throw erro;
+      }
+
+      const erro = new Error(`Email ou senha incorretos. Você tem ${falha.restantes} tentativa(s) restante(s).`);
+      erro.status = 401;
+      erro.remaining = falha.restantes;
+      throw erro;
     }
 
     if (!usuario.ativo) {
@@ -103,8 +126,22 @@ export class AutenticacaoService {
     // Comparar senha
     const senhaValida = await compararSenha(senha, usuario.senha);
     if (!senhaValida) {
-      throw new Error('Email ou senha incorretos');
+      const falha = await LoginBloqueioRepository.registrarFalha(email);
+      if (falha.bloqueadoAte) {
+        const erro = new Error('Muitas tentativas de login. Tente novamente em 5 minutos.');
+        erro.status = 429;
+        erro.retryAfter = Math.ceil((falha.bloqueadoAte.getTime() - Date.now()) / 1000);
+        erro.codigoDesbloqueio = falha.codigoDesbloqueio;
+        throw erro;
+      }
+
+      const erro = new Error(`Email ou senha incorretos. Você tem ${falha.restantes} tentativa(s) restante(s).`);
+      erro.status = 401;
+      erro.remaining = falha.restantes;
+      throw erro;
     }
+
+    await LoginBloqueioRepository.resetarBloqueio(email);
 
     // Gerar tokens
     const token = gerarToken(usuario.id, usuario.email, usuario.role || 'user');
@@ -115,12 +152,44 @@ export class AutenticacaoService {
     expira_em.setDate(expira_em.getDate() + 7); // 7 dias
     await SessaoRepository.criar(usuario.id, refreshToken, endereco_ip, user_agent, expira_em);
 
-    // Enviar notificação de login
-    try {
-      await enviarEmailLogin(usuario.email, usuario.nome, endereco_ip);
-    } catch (erro) {
-      console.error('Erro ao enviar email de notificação:', erro);
-    }
+    // Verificar se o usuário já tem carteira
+    const carteira = await CarteiraRepository.buscarPorUsuarioId(usuario.id);
+    const carteiraFormatada = carteira ? {
+      id: carteira.id,
+      usuario_id: carteira.usuario_id,
+      tipo: carteira.tipo,
+      numeroCarteira: carteira.numero_carteira,
+      descricao: carteira.descricao,
+      ativa: Boolean(carteira.ativa),
+      dataNascimento: carteira.data_nascimento,
+      endereco: carteira.endereco,
+      cidade: carteira.cidade,
+      estado: carteira.estado,
+      cep: carteira.cep,
+      telefone: carteira.telefone,
+      tipoDeficiencia: carteira.tipo_deficiencia,
+      grauDeficiencia: carteira.grau_deficiencia,
+      cid: carteira.cid,
+      necessitaAcompanhante: Boolean(carteira.necessita_acompanhante),
+      numeroLaudo: carteira.numero_laudo,
+      dataLaudo: carteira.data_laudo,
+      nomeMedico: carteira.nome_medico,
+      crmMedico: carteira.crm_medico,
+      foto: carteira.foto,
+      laudoUrl: carteira.laudo_url,
+      tipoSanguineo: carteira.tipo_sanguineo,
+      contatoEmergencia: carteira.contato_emergencia,
+      alergias: carteira.alergias,
+      medicacoes: carteira.medicacoes,
+      comunicacao: carteira.comunicacao,
+      nomeResponsavel: carteira.nome_responsavel,
+      cpfResponsavel: carteira.cpf_responsavel,
+      vinculoResponsavel: carteira.vinculo_responsavel
+    } : null;
+
+    // Enviar notificação de login em segundo plano, sem atrasar a resposta
+    enviarEmailLogin(usuario.email, usuario.nome, endereco_ip)
+      .catch(erro => console.error('Erro ao enviar email de notificação:', erro));
 
     return {
       usuario: {
@@ -128,8 +197,10 @@ export class AutenticacaoService {
         nome: usuario.nome,
         email: usuario.email,
         qr_code: usuario.qr_code,
-        role: usuario.role || 'user'
+        role: usuario.role || 'user',
+        possuiCarteira: Boolean(carteiraFormatada)
       },
+      carteira: carteiraFormatada,
       token,
       refreshToken
     };
@@ -170,6 +241,19 @@ export class AutenticacaoService {
   /**
    * Solicita recuperação de senha
    */
+  static async desbloquearLogin(email, codigo) {
+    if (!email || !codigo) {
+      throw new Error('Email e código de desbloqueio são obrigatórios');
+    }
+
+    const sucesso = await LoginBloqueioRepository.desbloquearPorCodigo(email, codigo);
+    if (!sucesso) {
+      throw new Error('Código inválido ou bloqueio não encontrado');
+    }
+
+    return { mensagem: 'Bloqueio removido com sucesso' };
+  }
+
   static async solicitarRecuperacaoSenha(email) {
     const usuario = await UsuarioRepository.buscarPorEmail(email);
     

@@ -7,6 +7,115 @@
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="stylesheet" href="../assets/css/carteira.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-summary-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-summary-card {
+            background: #ffffff;
+            border: 1px solid #e6e8f0;
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+        }
+
+        .admin-summary-card h3 {
+            margin: 0 0 0.5rem;
+            font-size: 0.95rem;
+            color: #717faa;
+        }
+
+        .admin-summary-card p {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .admin-section {
+            margin-bottom: 2rem;
+        }
+
+        .admin-section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .admin-section-title h2 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f2f7;
+            text-align: left;
+            font-size: 0.92rem;
+            color: #334155;
+        }
+
+        .admin-table th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .admin-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .admin-empty {
+            padding: 1rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            color: #334155;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .status-badge.ativo { background: #16a34a; }
+        .status-badge.inativo { background: #ef4444; }
+        .status-badge.pendente { background: #f59e0b; }
+        .status-badge.resolvida { background: #0ea5e9; }
+
+        .admin-card-actions .btn {
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .admin-table th,
+            .admin-table td {
+                padding: 0.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -22,8 +131,6 @@
                     <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
                 </div>
                 <nav class="nav-links">
-                    <a href="../pages/central-direitos.html" class="nav-link">Central de Direitos</a>
-                    <a href="../pages/comunidade.html" class="nav-link">Comunidade</a>
                     <button class="btn btn-secondary" id="logoutAdmin">Sair</button>
                 </nav>
             </div>
@@ -33,13 +140,49 @@
             <div class="container-wide">
                 <div class="page-header">
                     <h1>Painel do Administrador</h1>
-                    <p>Aqui você pode revisar denúncias e marcar casos como resolvidos.</p>
+                    <p>Gerencie todos os usuários, carteiras e denúncias em um único lugar.</p>
                 </div>
 
-                <section class="section">
-                    <div id="adminLoading" class="info-box">Carregando denúncias...</div>
-                    <div id="adminEmpty" class="info-box hidden">Nenhuma denúncia cadastrada até o momento.</div>
-                    <div id="adminList" class="admin-list"></div>
+                <div class="admin-summary-grid">
+                    <div class="admin-summary-card">
+                        <h3>Usuários cadastrados</h3>
+                        <p id="totalUsers">0</p>
+                    </div>
+                    <div class="admin-summary-card">
+                        <h3>Carteiras registradas</h3>
+                        <p id="totalCarteiras">0</p>
+                    </div>
+                    <div class="admin-summary-card">
+                        <h3>Denúncias</h3>
+                        <p id="totalDenuncias">0</p>
+                    </div>
+                </div>
+
+                <section class="admin-section">
+                    <div class="admin-section-title">
+                        <h2>Usuários</h2>
+                    </div>
+                    <div id="usuariosLoading" class="info-box">Carregando usuários...</div>
+                    <div id="usuariosEmpty" class="admin-empty hidden">Nenhum usuário encontrado.</div>
+                    <div id="usuariosList"></div>
+                </section>
+
+                <section class="admin-section">
+                    <div class="admin-section-title">
+                        <h2>Carteiras</h2>
+                    </div>
+                    <div id="carteirasLoading" class="info-box">Carregando carteiras...</div>
+                    <div id="carteirasEmpty" class="admin-empty hidden">Nenhuma carteira encontrada.</div>
+                    <div id="carteirasList"></div>
+                </section>
+
+                <section class="admin-section">
+                    <div class="admin-section-title">
+                        <h2>Denúncias</h2>
+                    </div>
+                    <div id="denunciasLoading" class="info-box">Carregando denúncias...</div>
+                    <div id="denunciasEmpty" class="admin-empty hidden">Nenhuma denúncia encontrada.</div>
+                    <div id="denunciasList"></div>
                 </section>
             </div>
         </main>

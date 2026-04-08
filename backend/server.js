@@ -11,7 +11,7 @@ import { configurarSegurancaHeaders } from './src/middlewares/segurancaHeaders.j
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = parseInt(process.env.PORT, 10) || 3001;
 
 // Middlewares de Segurança
 app.use(helmet());
@@ -24,6 +24,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Limitador de requisições
 app.use(limitadorGeral);
@@ -69,9 +70,24 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
-  console.log(`📝 Health check: http://localhost:${PORT}/health`);
-  console.log(`🔐 Segurança: JWT, XSS Protection, Rate Limiting, SQL Injection Prevention`);
-});
+function iniciarServidor(port, tentativas = 0) {
+  const server = app.listen(port, () => {
+    console.log(`✅ Servidor rodando em http://localhost:${port}`);
+    console.log(`📝 Health check: http://localhost:${port}/health`);
+    console.log(`🔐 Segurança: JWT, XSS Protection, Rate Limiting, SQL Injection Prevention`);
+  });
+
+  server.on('error', (erro) => {
+    if (erro.code === 'EADDRINUSE' && tentativas < 5) {
+      const proximaPorta = port + 1;
+      console.warn(`Porta ${port} ocupada. Tentando iniciar em ${proximaPorta}...`);
+      iniciarServidor(proximaPorta, tentativas + 1);
+      return;
+    }
+
+    console.error('Erro ao iniciar o servidor:', erro);
+    process.exit(1);
+  });
+}
+
+iniciarServidor(PORT);

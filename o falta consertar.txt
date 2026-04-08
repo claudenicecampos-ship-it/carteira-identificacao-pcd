@@ -1,0 +1,6 @@
+2 fazer o processo de esqueceu a senha funcionar corretamente
+3 o processo de carregamento do login esta muito devagar temos que faze-lo um pouco mais rápido
+4 depois que a pessoa criou a carteira, e ao fazer login novamente com o mesmo email, a opção de cadastrar irá sumir e só irá ter a opção de verificar a carteira, central de direitos e comunidade
+5 fazer o adiministrator gerenciar a carteira
+6 as informações de carteira e denuncias não estão sendo salvas no banco de dados
+7 fazer com que o limitador figue apenas na tela de login e nao na tela que cria a conta do login 

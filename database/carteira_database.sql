@@ -140,7 +140,58 @@ CREATE TABLE sessoes (
     INDEX idx_expira_em (expira_em)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
--- Inserir dados de teste (opcional)
-INSERT INTO usuarios (nome, email, senha, cpf, telefone, data_nascimento) VALUES
-('Administrador', 'admin@carteira.com', '$2b$10$example_hash', '12345678901', '1111111111', '1990-01-01');
+-- Tabela de Administradores
+CREATE TABLE administradores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL UNIQUE,
+    permissoes TEXT,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    INDEX idx_usuario_id (usuario_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+-- Inserir dados de teste (opcional)
+INSERT INTO usuarios (nome, email, senha, cpf, telefone, data_nascimento, role) VALUES
+('Administrador', 'admin@carteira.com', '$2a$10$iW6VJy5EzmpcC535JcL9rehDIZ2pAYD2LDIjf8NU53xu1VD4RHSHS', '12345678901', '1111111111', '1990-01-01', 'admin');
+
+INSERT INTO administradores (usuario_id, permissoes) VALUES
+(1, 'gerenciar_denuncias,gerenciar_usuarios');
+
+-- Tabela de bloqueio de login para controlar tentativas e desbloqueio manual
+CREATE TABLE IF NOT EXISTS login_bloqueios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    tentativas INT DEFAULT 0,
+    bloqueado_ate TIMESTAMP NULL,
+    codigo_desbloqueio VARCHAR(191),
+    ultima_tentativa TIMESTAMP NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Código de desbloqueio de exemplo para uso manual
+INSERT INTO login_bloqueios (email, tentativas, bloqueado_ate, codigo_desbloqueio) VALUES
+('admin@carteira.com', 0, NULL, 'DESBLOQUEIO123');
+
+-- Consultas úteis para verificar todas as tabelas do banco
+SELECT * FROM usuarios;
+SELECT * FROM carteiras;
+SELECT * FROM denuncias;
+SELECT * FROM recuperacao_senha;
+SELECT * FROM auditoria;
+SELECT * FROM sessoes;
+SELECT * FROM administradores;
+SELECT * FROM login_bloqueios;
+
+-- Use este SQL no banco carteira para desbloquear manualmente:
+
+-- Se quiser desbloquear pelo código de desbloqueio:
+UPDATE login_bloqueios
+SET tentativas = 0,
+    bloqueado_ate = NULL,
+    codigo_desbloqueio = NULL,
+    ultima_tentativa = NOW(),
+    atualizado_em = NOW()
+WHERE codigo_desbloqueio = 'DESBLOQUEIO123';

@@ -272,10 +272,10 @@ async function handleCadastro(e) {
             stepAtual = 3;
             mostrarStep();
 
-            // Redirecionar após 3 segundos
+            // Redirecionar após 1 segundo
             setTimeout(() => {
                 window.location.href = 'index.html';
-            }, 3000);
+            }, 1000);
         }
     } catch (erro) {
         mostrarToast(erro.message, 'error');

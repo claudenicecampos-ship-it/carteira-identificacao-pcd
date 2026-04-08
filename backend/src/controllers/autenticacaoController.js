@@ -92,7 +92,44 @@ export class AutenticacaoController {
       });
     } catch (erro) {
       console.error('Erro ao fazer login:', erro);
-      res.status(401).json({
+      const status = erro.status === 429 ? 429 : 401;
+
+      if (erro.retryAfter) {
+        res.setHeader('Retry-After', erro.retryAfter);
+      }
+      if (erro.remaining != null) {
+        res.setHeader('X-RateLimit-Remaining', erro.remaining);
+      }
+
+      res.status(status).json({
+        sucesso: false,
+        mensagem: erro.message,
+        retryAfter: erro.retryAfter || null,
+        remaining: erro.remaining != null ? erro.remaining : null
+      });
+    }
+  }
+
+  static async desbloquear(req, res) {
+    try {
+      const { email, codigo } = req.body;
+
+      if (!email || !codigo) {
+        return res.status(400).json({
+          sucesso: false,
+          mensagem: 'Email e código de desbloqueio são obrigatórios'
+        });
+      }
+
+      const resultado = await AutenticacaoService.desbloquearLogin(email, codigo);
+
+      res.status(200).json({
+        sucesso: true,
+        mensagem: resultado.mensagem
+      });
+    } catch (erro) {
+      console.error('Erro ao desbloquear login:', erro);
+      res.status(400).json({
         sucesso: false,
         mensagem: erro.message
       });
