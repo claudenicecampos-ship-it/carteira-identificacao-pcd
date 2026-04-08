@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Carteira - GO Card PCD</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/carteira.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="main-header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
+                </div>
+                <nav class="nav-links">
+                    <a href="verificar.html" class="nav-link">Verificar Carteira</a>
+                    <a href="central-direitos.html" class="nav-link">Central de Direitos</a>
+                    <a href="comunidade.html" class="nav-link">Comunidade</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="wallet-container">
+
+                <!-- ===== CARTEIRA DIGITAL OFICIAL ===== -->
+                <div class="wallet-card" id="walletCard">
+
+                    <!-- Topo oficial -->
+                    <div class="wallet-top-bar">
+                        <div class="wallet-top-left">
+                            <div class="wallet-gov-logo">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="wallet-republic">REPÚBLICA FEDERATIVA DO BRASIL</div>
+                                <div class="wallet-subtitle-gov">Ministério dos Direitos Humanos e da Cidadania</div>
+                            </div>
+                        </div>
+                        <div class="wallet-top-right">
+                            <div class="wallet-lei-badge">Lei 13.146/2015</div>
+                        </div>
+                    </div>
+
+                    <!-- Título da carteira -->
+                    <div class="wallet-title-bar">
+                        <div class="wallet-isa-symbol" title="Símbolo Internacional de Acesso">
+                            <svg viewBox="0 0 50 50" width="40" height="40">
+                                <circle cx="25" cy="8" r="6" fill="white"/>
+                                <path d="M16 18 L25 16 L34 18 L32 28 L38 38 L34 36 L29 28 L26 38 L21 38 L24 28 L20 28 L17 38 L13 36 L18 26 Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <div class="wallet-title-text">
+                            <h1>CARTEIRA DE IDENTIFICAÇÃO</h1>
+                            <h2>DA PESSOA COM DEFICIÊNCIA</h2>
+                            <p class="wallet-title-sub">Documento Oficial — Válido em Todo o Território Nacional</p>
+                        </div>
+                        <div class="wallet-status-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            ATIVO
+                        </div>
+                    </div>
+
+                    <!-- Corpo da carteira -->
+                    <div class="wallet-body">
+
+                        <!-- Foto + Dados principais -->
+                        <div class="wallet-main-row">
+                            <div class="wallet-photo-col">
+                                <div id="fotoWallet" class="foto-wallet">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" width="48" height="48">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                </div>
+                                <div class="wallet-photo-label">FOTO DO TITULAR</div>
+                            </div>
+
+                            <div class="wallet-info-col">
+                                <div class="wallet-field wide">
+                                    <span class="wf-label">NOME COMPLETO</span>
+                                    <span id="nomeWallet" class="wf-value name-value">—</span>
+                                </div>
+                                <div class="wallet-fields-row">
+                                    <div class="wallet-field">
+                                        <span class="wf-label">DATA DE NASCIMENTO</span>
+                                        <span id="dataWallet" class="wf-value">—</span>
+                                    </div>
+                                    <div class="wallet-field">
+                                        <span class="wf-label">SEXO</span>
+                                        <span id="sexoWallet" class="wf-value">—</span>
+                                    </div>
+                                </div>
+                                <div class="wallet-fields-row">
+                                    <div class="wallet-field">
+                                        <span class="wf-label">CPF</span>
+                                        <span id="cpfWallet" class="wf-value">—</span>
+                                    </div>
+                                    <div class="wallet-field">
+                                        <span class="wf-label">RG</span>
+                                        <span id="rgWallet" class="wf-value">—</span>
+                                    </div>
+                                </div>
+                                <div class="wallet-fields-row">
+                                    <div class="wallet-field">
+                                        <span class="wf-label">MUNICÍPIO / UF</span>
+                                        <span id="cidadeWallet" class="wf-value">—</span>
+                                    </div>
+                                    <div class="wallet-field">
+                                        <span class="wf-label">ACOMPANHANTE</span>
+                                        <span id="acompanhanteWallet" class="wf-value">—</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Divisor -->
+                        <div class="wallet-divider"></div>
+
+                        <!-- Deficiência + CID + Laudo -->
+                        <div class="wallet-deficiencia-row">
+                            <div class="wallet-def-block">
+                                <div class="wallet-field">
+                                    <span class="wf-label">TIPO DE DEFICIÊNCIA</span>
+                                    <span id="tipoDefWallet" class="wf-value wf-accent">—</span>
+                                </div>
+                            </div>
+                            <div class="wallet-def-block">
+                                <div class="wallet-field">
+                                    <span class="wf-label">GRAU</span>
+                                    <span id="grauDefWallet" class="wf-value">—</span>
+                                </div>
+                            </div>
+                            <div class="wallet-def-block">
+                                <div class="wallet-field">
+                                    <span class="wf-label">CID-10 / CID-11</span>
+                                    <span id="cidWallet" class="wf-value wf-cid">—</span>
+                                </div>
+                            </div>
+                            <div class="wallet-def-block">
+                                <div class="wallet-field">
+                                    <span class="wf-label">COMUNICAÇÃO</span>
+                                    <span id="comunicacaoWallet" class="wf-value">—</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Divisor -->
+                        <div class="wallet-divider"></div>
+
+                        <!-- Laudo + QR Code -->
+                        <div class="wallet-laudo-qr-row">
+                            <div class="wallet-laudo-col">
+                                <div class="wallet-fields-row">
+                                    <div class="wallet-field">
+                                        <span class="wf-label">Nº DO LAUDO</span>
+                                        <span id="laudoWallet" class="wf-value">—</span>
+                                    </div>
+                                    <div class="wallet-field">
+                                        <span class="wf-label">DATA DO LAUDO</span>
+                                        <span id="dataLaudoWallet" class="wf-value">—</span>
+                                    </div>
+                                </div>
+                                <div class="wallet-fields-row">
+                                    <div class="wallet-field">
+                                        <span class="wf-label">PROFISSIONAL RESPONSÁVEL</span>
+                                        <span id="medicoWallet" class="wf-value">—</span>
+                                    </div>
+                                    <div class="wallet-field">
+                                        <span class="wf-label">CRM / CRP / CRFa</span>
+                                        <span id="crmWallet" class="wf-value">—</span>
+                                    </div>
+                                </div>
+                                <div class="wallet-field" id="responsavelBlock" style="display:none">
+                                    <span class="wf-label">RESPONSÁVEL LEGAL</span>
+                                    <span id="responsavelWallet" class="wf-value">—</span>
+                                </div>
+                            </div>
+
+                            <div class="wallet-qr-col">
+                                <div class="qrcode-container" id="qrcodeWallet"></div>
+                                <span class="qrcode-label">Escaneie para verificar</span>
+                                <span class="qrcode-sublabel">Abre carteira completa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rodapé oficial -->
+                    <div class="wallet-footer-bar">
+                        <div class="validity-grid">
+                            <div class="validity-item">
+                                <span class="vl-label">Nº DA CARTEIRA</span>
+                                <span id="numeroCarteira" class="vl-value">—</span>
+                            </div>
+                            <div class="validity-item">
+                                <span class="vl-label">DATA DE EMISSÃO</span>
+                                <span id="dataEmissao" class="vl-value">—</span>
+                            </div>
+                            <div class="validity-item">
+                                <span class="vl-label">VÁLIDA ATÉ</span>
+                                <span id="dataValidade" class="vl-value">—</span>
+                            </div>
+                            <div class="validity-item">
+                                <span class="vl-label">CÓDIGO DE VERIFICAÇÃO</span>
+                                <span id="codigoVerificacao" class="vl-value">—</span>
+                            </div>
+                        </div>
+                        <p class="wallet-footer-legal">
+                            Documento emitido com base na Lei nº 13.146, de 6 de julho de 2015 (Estatuto da Pessoa com Deficiência).
+                            Válido em todo o território nacional para acesso a direitos, benefícios e serviços públicos e privados.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Botões de ação -->
+                <div class="action-buttons">
+                    <button id="printBtn" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 6 2 18 2 18 9"/>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                            <rect x="6" y="14" width="12" height="8"/>
+                        </svg>
+                        Imprimir Carteira
+                    </button>
+                    <button id="downloadBtn" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Baixar PNG
+                    </button>
+                    <a href="index.html" class="btn btn-secondary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        Editar Dados
+                    </a>
+                </div>
+
+                <!-- Informações de Emergência -->
+                <div class="emergency-card">
+                    <div class="emergency-header">
+                        <div class="emergency-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>Informações de Emergência</h3>
+                            <p class="emergency-subtitle">Visíveis ao escanear o QR Code — acesso rápido para socorristas</p>
+                        </div>
+                    </div>
+                    <div class="emergency-grid">
+                        <div class="emergency-item">
+                            <span class="label">Tipo Sanguíneo</span>
+                            <span id="tipoSanguineoDisplay" class="value blood-type">—</span>
+                        </div>
+                        <div class="emergency-item">
+                            <span class="label">Contato de Emergência</span>
+                            <span id="contatoDisplay" class="value">—</span>
+                        </div>
+                        <div class="emergency-item">
+                            <span class="label">Necessidades de Comunicação</span>
+                            <span id="comunicacaoDisplay" class="value">—</span>
+                        </div>
+                        <div class="emergency-item">
+                            <span class="label">Necessita de Acompanhante</span>
+                            <span id="acompanhanteDisplay" class="value">—</span>
+                        </div>
+                        <div class="emergency-item full-width">
+                            <span class="label">Alergias</span>
+                            <span id="alergiasDisplay" class="value alergias-value">—</span>
+                        </div>
+                        <div class="emergency-item full-width">
+                            <span class="label">Medicações de Uso Contínuo</span>
+                            <span id="medicacoesDisplay" class="value">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Socorro ao Direito -->
+                <div class="socorro-card">
+                    <div class="socorro-header">
+                        <div class="socorro-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>Socorro ao Direito</h3>
+                            <p class="socorro-subtitle">Seu direito foi negado? Estamos aqui para ajudar!</p>
+                        </div>
+                    </div>
+                    <div class="socorro-actions">
+                        <button class="socorro-btn" id="guiaLegalBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                            Guia Legal Rápido
+                        </button>
+                        <button class="socorro-btn" id="denunciaBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                <line x1="12" y1="9" x2="12" y2="13"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                            Fazer Denúncia
+                        </button>
+                        <button class="socorro-btn" id="suporteBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Falar com Suporte
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Central de Alertas -->
+                <div class="alerts-section">
+                    <h3 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        Central de Alertas
+                    </h3>
+                    <div class="alerts-list">
+                        <div class="alert-card success">
+                            <div class="alert-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                            </div>
+                            <div class="alert-content">
+                                <h4>Carteira Emitida com Sucesso</h4>
+                                <p>Sua carteira digital GO Card está pronta e tem validade legal conforme a Lei 13.146/2015.</p>
+                            </div>
+                        </div>
+                        <div class="alert-card info">
+                            <div class="alert-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 16v-4"/>
+                                    <path d="M12 8h.01"/>
+                                </svg>
+                            </div>
+                            <div class="alert-content">
+                                <h4>Nova Lei Municipal</h4>
+                                <p>Desconto de 50% em eventos culturais para PCDs. Clique para saber mais.</p>
+                            </div>
+                        </div>
+                        <div class="alert-card warning">
+                            <div class="alert-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                            </div>
+                            <div class="alert-content">
+                                <h4>Campanha de Vacinação Prioritária</h4>
+                                <p>Vacinação prioritária contra gripe disponível nos postos de saúde para PCDs.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="main-footer">
+            <p>&copy; 2025 GO Card PCD — Garantindo Dignidade e Direitos | Lei 13.146/2015</p>
+        </footer>
+    </div>
+
+    <!-- Toast para mensagens -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/carteira.js"></script>
+
+    <!-- Modal Guia Legal -->
+    <div id="guiaLegalModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Guia Legal Rápido — Lei 13.146/2015</h3>
+                <button class="close-modal" id="closeGuiaLegal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="legal-item">
+                    <h4>Atendimento Prioritário</h4>
+                    <p><strong>Lei 10.048/2000 + Art. 9º LBI</strong> — Garante atendimento prioritário em estabelecimentos públicos e privados, sem necessidade de justificativa adicional além da apresentação desta carteira.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Direito ao Acompanhante</h4>
+                    <p><strong>Art. 22 da Lei 13.146/2015</strong> — Direito a acompanhante durante internações e procedimentos hospitalares. O acompanhante não pode ser cobrado por acomodação.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Passe Livre Interestadual</h4>
+                    <p><strong>Lei 8.899/1994</strong> — Gratuidade no transporte coletivo interestadual para PCDs comprovadamente carentes. Apresente esta carteira + comprovante de renda.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Vagas de Estacionamento Reservadas</h4>
+                    <p><strong>Art. 47 da Lei 13.146/2015</strong> — 2% das vagas em estacionamentos públicos e privados devem ser reservadas para PCDs ou idosos, próximas ao acesso.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Isenção de IPI em Veículos</h4>
+                    <p><strong>Lei 8.989/1995</strong> — Isenção de IPI na compra de veículos adaptados para PCD. Válido a cada 2 anos.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>BPC — Benefício de Prestação Continuada</h4>
+                    <p><strong>Art. 94 da Lei 13.146/2015</strong> — Benefício de 1 salário mínimo para PCD sem renda familiar per capita acima de 1/4 do salário mínimo.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Acesso à Educação Inclusiva</h4>
+                    <p><strong>Art. 27 a 30 da Lei 13.146/2015</strong> — Direito à educação inclusiva em todos os níveis. Escolas não podem recusar matrícula de PCD nem cobrar valores adicionais.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Acessibilidade em Locais Públicos</h4>
+                    <p><strong>Art. 53 da Lei 13.146/2015</strong> — Direito a acessibilidade plena em edificações públicas, transportes, comunicação e serviços. Denuncie barreiras ao MP ou Defensoria.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Denúncia -->
+    <div id="denunciaModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header denuncia-header">
+                <h3>Canal de Denúncia</h3>
+                <button class="close-modal" id="closeDenuncia">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="denunciaForm" class="denuncia-form">
+                    <div class="form-group">
+                        <label for="localDenuncia">Local do Ocorrido <span class="required">*</span></label>
+                        <input type="text" id="localDenuncia" class="input-field" placeholder="Nome do estabelecimento / endereço" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipoDenuncia">Tipo de Violação <span class="required">*</span></label>
+                        <select id="tipoDenuncia" class="input-field" required>
+                            <option value="">Selecione...</option>
+                            <option value="Negaram Atendimento Prioritário">Negaram Atendimento Prioritário</option>
+                            <option value="Falta de Acessibilidade">Falta de Acessibilidade</option>
+                            <option value="Atendimento Discriminatório">Atendimento Discriminatório</option>
+                            <option value="Negaram Acompanhante">Negaram Direito ao Acompanhante</option>
+                            <option value="Problema em Transporte">Problema em Transporte</option>
+                            <option value="Negaram Benefício">Negaram Benefício Previsto em Lei</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataDenuncia">Data do Ocorrido <span class="required">*</span></label>
+                        <input type="date" id="dataDenuncia" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="descricaoDenuncia">Descrição do Ocorrido <span class="required">*</span></label>
+                        <textarea id="descricaoDenuncia" class="input-field textarea" rows="4" placeholder="Descreva com detalhes o que aconteceu..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m22 2-7 20-4-9-9-4Z"/>
+                            <path d="M22 2 11 13"/>
+                        </svg>
+                        Enviar Denúncia
+                    </button>
+                </form>
+                <p class="denuncia-note">Sua denúncia será encaminhada para o Ministério Público, Defensoria Pública e ONGs parceiras. Você receberá um protocolo por e-mail.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
