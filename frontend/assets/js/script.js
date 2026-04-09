@@ -65,30 +65,11 @@ const chatbotResponses = {
   default: "Entendi! Posso ajudar com: cadastro, CID, direitos, laudo médico, renovação ou acompanhante. Se preferir, posso conectar você a um atendente humano."
 };
 
-// ===== CAMPOS =====
-const fields = {
-  foto: { input: document.getElementById('foto-input'), error: document.getElementById('fotoError'), preview: document.getElementById('fotoPreview') },
-  nome: { input: document.getElementById('nome'), error: document.getElementById('nomeError'), check: document.getElementById('nomeCheck') },
-  dataNascimento: { input: document.getElementById('dataNascimento'), error: document.getElementById('dataError'), check: document.getElementById('dataCheck') },
-  sexo: { input: document.getElementById('sexo'), error: document.getElementById('sexoError') },
-  cpf: { input: document.getElementById('cpf'), error: document.getElementById('cpfError'), check: document.getElementById('cpfCheck') },
-  rg: { input: document.getElementById('rg'), error: document.getElementById('rgError'), check: document.getElementById('rgCheck') },
-  telefone: { input: document.getElementById('telefone'), error: document.getElementById('telefoneError'), check: document.getElementById('telefoneCheck') },
-  cidade: { input: document.getElementById('cidade'), error: document.getElementById('cidadeError'), check: document.getElementById('cidadeCheck') },
-  estado: { input: document.getElementById('estado'), error: document.getElementById('estadoError') },
-  tipoDeficiencia: { input: document.getElementById('tipoDeficiencia'), error: document.getElementById('tipoDeficienciaError') },
-  grauDeficiencia: { input: document.getElementById('grauDeficiencia'), error: document.getElementById('grauDeficienciaError') },
-  cid: { input: document.getElementById('cid'), error: document.getElementById('cidError'), check: document.getElementById('cidCheck') },
-  numeroLaudo: { input: document.getElementById('numeroLaudo'), error: document.getElementById('laudoError'), check: document.getElementById('laudoCheck') },
-  dataLaudo: { input: document.getElementById('dataLaudo'), error: document.getElementById('dataLaudoError'), check: document.getElementById('dataLaudoCheck') },
-  nomeMedico: { input: document.getElementById('nomeMedico'), error: document.getElementById('medicoError'), check: document.getElementById('medicoCheck') },
-  crmMedico: { input: document.getElementById('crmMedico'), error: document.getElementById('crmError'), check: document.getElementById('crmCheck') },
-  laudoFile: { input: document.getElementById('laudoFile'), error: document.getElementById('laudoFileError'), preview: document.getElementById('laudoPreview') },
-};
-
-const submitBtn = document.getElementById('submitBtn');
+// Variáveis globais
 let laudoFileData = null;
 let fotoFileData = null;
+let fields = {};
+let submitBtn = null;
 
 // ===== VALIDADORES =====
 function isValidName(v) { 
@@ -229,190 +210,11 @@ function errorMsg(f) {
   return msgs[f] || 'Campo inválido';
 }
 
-// ===== EVENTOS DE VALIDACAO =====
-fields.nome.input?.addEventListener('input', e => {
-  setValid('nome', isValidName(e.target.value), e.target.value);
-});
-
-fields.dataNascimento.input?.addEventListener('input', e => {
-  setValid('dataNascimento', isValidDate(e.target.value), e.target.value);
-});
-
-fields.dataLaudo.input?.addEventListener('input', e => {
-  setValid('dataLaudo', isValidDate(e.target.value), e.target.value);
-});
-
-fields.cpf.input?.addEventListener('input', e => {
-  e.target.value = maskCPF(e.target.value);
-  setValid('cpf', isValidCPF(e.target.value), e.target.value);
-});
-
-fields.rg.input?.addEventListener('input', e => {
-  e.target.value = maskRG(e.target.value);
-  setValid('rg', isValidRG(e.target.value), e.target.value);
-});
-
-fields.telefone.input?.addEventListener('input', e => {
-  e.target.value = maskTelefone(e.target.value);
-  setValid('telefone', isValidTelefone(e.target.value), e.target.value);
-});
-
-fields.cidade.input?.addEventListener('input', e => {
-  setValid('cidade', isValidCity(e.target.value), e.target.value);
-});
-
-fields.cid.input?.addEventListener('input', e => {
-  e.target.value = e.target.value.toUpperCase();
-  const valid = isValidCID(e.target.value);
-  setValid('cid', valid, e.target.value);
-  const desc = document.getElementById('cidDesc');
-  if (desc) {
-    const baseCode = e.target.value.split('.')[0].toUpperCase();
-    desc.textContent = valid ? (validCIDs[baseCode] || validCIDs[e.target.value.toUpperCase()] || '') : '';
-  }
-});
-
-fields.numeroLaudo.input?.addEventListener('input', e => {
-  setValid('numeroLaudo', isValidLaudo(e.target.value), e.target.value);
-});
-
-fields.nomeMedico.input?.addEventListener('input', e => {
-  setValid('nomeMedico', isValidMedico(e.target.value), e.target.value);
-});
-
-fields.crmMedico.input?.addEventListener('input', e => {
-  e.target.value = e.target.value.toUpperCase();
-  setValid('crmMedico', isValidCRM(e.target.value), e.target.value);
-});
-
-// Selects
-document.getElementById('sexo')?.addEventListener('change', checkForm);
-document.getElementById('estado')?.addEventListener('change', checkForm);
-document.getElementById('tipoDeficiencia')?.addEventListener('change', checkForm);
-document.getElementById('grauDeficiencia')?.addEventListener('change', checkForm);
-
-// ===== UPLOAD DE FOTO - CORRIGIDO =====
-if (fields.foto.input) {
-  fields.foto.input.addEventListener('change', function(e) {
-    const file = e.target.files?.[0];
-    if (!file) {
-      console.log('Nenhum arquivo selecionado');
-      return;
-    }
-    
-    // Validar tipo de arquivo
-    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-    if (!validImageTypes.includes(file.type)) {
-      if (fields.foto.error) {
-        fields.foto.error.textContent = 'Formato inválido. Use JPG, PNG ou GIF.';
-        fields.foto.error.classList.add('show');
-      }
-      e.target.value = ''; // Limpa o input
-      return;
-    }
-    
-    // Validar tamanho (máximo 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      if (fields.foto.error) {
-        fields.foto.error.textContent = 'Arquivo muito grande. Máximo 5MB.';
-        fields.foto.error.classList.add('show');
-      }
-      e.target.value = ''; // Limpa o input
-      return;
-    }
-    
-    const reader = new FileReader();
-    reader.onloadend = function() {
-      fotoFileData = reader.result;
-      if (fields.foto.preview) {
-        fields.foto.preview.style.backgroundImage = `url('${reader.result}')`;
-        fields.foto.preview.classList.add('has-image');
-        // Esconde o ícone SVG dentro do preview
-        const svgIcon = fields.foto.preview.querySelector('svg');
-        if (svgIcon) {
-          svgIcon.style.display = 'none';
-        }
-      }
-      if (fields.foto.error) {
-        fields.foto.error.textContent = '';
-        fields.foto.error.classList.remove('show');
-      }
-      checkForm();
-    };
-    reader.onerror = function() {
-      if (fields.foto.error) {
-        fields.foto.error.textContent = 'Erro ao ler o arquivo. Tente novamente.';
-        fields.foto.error.classList.add('show');
-      }
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-// ===== UPLOAD DE LAUDO - CORRIGIDO =====
-if (fields.laudoFile.input) {
-  fields.laudoFile.input.addEventListener('change', function(e) {
-    const file = e.target.files?.[0];
-    if (!file) {
-      console.log('Nenhum arquivo de laudo selecionado');
-      return;
-    }
-    
-    // Validar tamanho (máximo 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      if (fields.laudoFile.error) {
-        fields.laudoFile.error.textContent = 'Arquivo muito grande. Máximo 10MB.';
-        fields.laudoFile.error.classList.add('show');
-      }
-      e.target.value = ''; // Limpa o input
-      return;
-    }
-    
-    // Validar tipo de arquivo
-    const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
-    if (!validTypes.includes(file.type)) {
-      if (fields.laudoFile.error) {
-        fields.laudoFile.error.textContent = 'Formato inválido. Use PDF, JPG ou PNG.';
-        fields.laudoFile.error.classList.add('show');
-      }
-      e.target.value = ''; // Limpa o input
-      return;
-    }
-    
-    const reader = new FileReader();
-    reader.onloadend = function() {
-      laudoFileData = reader.result;
-      if (fields.laudoFile.preview) {
-        fields.laudoFile.preview.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--success-500); width: 24px; height: 24px;">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-          <span style="color: var(--success-600); font-weight: 500">${file.name}</span>
-        `;
-        fields.laudoFile.preview.classList.add('has-file');
-      }
-      if (fields.laudoFile.error) {
-        fields.laudoFile.error.textContent = '';
-        fields.laudoFile.error.classList.remove('show');
-      }
-      checkForm();
-    };
-    reader.onerror = function() {
-      if (fields.laudoFile.error) {
-        fields.laudoFile.error.textContent = 'Erro ao ler o arquivo. Tente novamente.';
-        fields.laudoFile.error.classList.add('show');
-      }
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
 function checkForm() {
   if (!submitBtn) return;
   
-  const fotoOk = fields.foto.preview?.classList.contains('has-image');
-  const laudoOk = fields.laudoFile.preview?.classList.contains('has-file');
+  const fotoOk = fields.foto?.preview?.classList.contains('has-image');
+  const laudoOk = fields.laudoFile?.preview?.classList.contains('has-file');
   
   const ok = fotoOk
     && isValidName(fields.nome.input?.value || '')
@@ -435,83 +237,7 @@ function checkForm() {
   submitBtn.disabled = !ok;
 }
 
-// ===== SUBMIT - CORRIGIDO COM ASYNC =====
-document.getElementById('registrationForm')?.addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  const fotoSrc = fotoFileData || (fields.foto.preview?.style.backgroundImage.slice(5, -2) || '');
-
-  const data = {
-    foto: fotoSrc,
-    nome: fields.nome.input?.value.trim() || '',
-    dataNascimento: fields.dataNascimento.input?.value || '',
-    sexo: document.getElementById('sexo')?.value || '',
-    cpf: fields.cpf.input?.value.replace(/\D/g,'') || '',
-    rg: fields.rg.input?.value.replace(/\D/g,'') || '',
-    telefone: fields.telefone.input?.value.replace(/\D/g,'') || '',
-    endereco: document.getElementById('endereco')?.value.trim() || '',
-    cidade: fields.cidade.input?.value.trim() || '',
-    estado: document.getElementById('estado')?.value || '',
-    tipoDeficiencia: document.getElementById('tipoDeficiencia')?.value || '',
-    grauDeficiencia: document.getElementById('grauDeficiencia')?.value || '',
-    cid: fields.cid.input?.value.toUpperCase().trim() || '',
-    necessitaAcompanhante: document.getElementById('necessitaAcompanhante')?.value || '',
-    comunicacao: document.getElementById('comunicacao')?.value || '',
-    numeroLaudo: fields.numeroLaudo.input?.value.trim() || '',
-    dataLaudo: fields.dataLaudo.input?.value || '',
-    nomeMedico: fields.nomeMedico.input?.value.trim() || '',
-    crmMedico: fields.crmMedico.input?.value.trim().toUpperCase() || '',
-    laudoArquivo: laudoFileData,
-    nomeResponsavel: document.getElementById('nomeResponsavel')?.value.trim() || '',
-    cpfResponsavel: document.getElementById('cpfResponsavel')?.value.trim() || '',
-    vinculoResponsavel: document.getElementById('vinculoResponsavel')?.value || '',
-    tipoSanguineo: document.getElementById('tipoSanguineo')?.value || '',
-    alergias: document.getElementById('alergias')?.value.trim() || '',
-    medicacoes: document.getElementById('medicacoes')?.value.trim() || '',
-    contatoEmergencia: document.getElementById('contatoEmergencia')?.value.trim() || '',
-    dataEmissao: new Date().toISOString(),
-    validade: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString(),
-  };
-
-  // Verifica se a função fazerRequisicao existe (do auth.js)
-  if (typeof fazerRequisicao === 'function') {
-    try {
-      const resposta = await fazerRequisicao('/carteiras', 'POST', data);
-      if (resposta.sucesso) {
-        localStorage.setItem('userRegistration', JSON.stringify(data));
-        if (typeof mostrarToast === 'function') {
-          mostrarToast('Carteira cadastrada com sucesso!', 'success');
-        }
-        window.location.href = 'carteira.html';
-        return;
-      }
-    } catch (erro) {
-      if (typeof mostrarToast === 'function') {
-        mostrarToast('Erro ao salvar carteira: ' + erro.message, 'error');
-      }
-      console.error(erro);
-      // Continua para salvar localmente como fallback
-    }
-  }
-
-  // Fallback: salvar localmente e redirecionar
-  localStorage.setItem('userRegistration', JSON.stringify(data));
-  window.location.href = 'carteira.html';
-});
-
-// ===== CHATBOT =====
-const chatbotModal = document.getElementById('chatbotModal');
-document.getElementById('chatbotBtn')?.addEventListener('click', e => { 
-  e.preventDefault(); 
-  chatbotModal?.classList.remove('hidden'); 
-});
-document.getElementById('closeChatbot')?.addEventListener('click', () => {
-  chatbotModal?.classList.add('hidden');
-});
-chatbotModal?.addEventListener('click', e => { 
-  if (e.target === chatbotModal) chatbotModal.classList.add('hidden'); 
-});
-
+// ===== CHATBOT HELPERS =====
 function addMsg(text, isUser = false) {
   const msgs = document.getElementById('chatMessages');
   if (!msgs) return;
@@ -543,12 +269,478 @@ function sendChat() {
   setTimeout(() => addMsg(getBotReply(msg)), 500);
 }
 
-document.getElementById('sendChat')?.addEventListener('click', sendChat);
-document.getElementById('chatInput')?.addEventListener('keypress', e => {
-  if (e.key === 'Enter') sendChat();
+// Inicializar quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🔧 Inicializando Script - DOMContentLoaded disparado');
+  
+  // ===== CAMPOS =====
+  fields = {
+    foto: { input: document.getElementById('foto-input'), error: document.getElementById('fotoError'), preview: document.getElementById('fotoPreview') },
+    nome: { input: document.getElementById('nome'), error: document.getElementById('nomeError'), check: document.getElementById('nomeCheck') },
+    dataNascimento: { input: document.getElementById('dataNascimento'), error: document.getElementById('dataError'), check: document.getElementById('dataCheck') },
+    sexo: { input: document.getElementById('sexo'), error: document.getElementById('sexoError') },
+    cpf: { input: document.getElementById('cpf'), error: document.getElementById('cpfError'), check: document.getElementById('cpfCheck') },
+    rg: { input: document.getElementById('rg'), error: document.getElementById('rgError'), check: document.getElementById('rgCheck') },
+    telefone: { input: document.getElementById('telefone'), error: document.getElementById('telefoneError'), check: document.getElementById('telefoneCheck') },
+    cidade: { input: document.getElementById('cidade'), error: document.getElementById('cidadeError'), check: document.getElementById('cidadeCheck') },
+    estado: { input: document.getElementById('estado'), error: document.getElementById('estadoError') },
+    tipoDeficiencia: { input: document.getElementById('tipoDeficiencia'), error: document.getElementById('tipoDeficienciaError') },
+    grauDeficiencia: { input: document.getElementById('grauDeficiencia'), error: document.getElementById('grauDeficienciaError') },
+    cid: { input: document.getElementById('cid'), error: document.getElementById('cidError'), check: document.getElementById('cidCheck') },
+    numeroLaudo: { input: document.getElementById('numeroLaudo'), error: document.getElementById('laudoError'), check: document.getElementById('laudoCheck') },
+    dataLaudo: { input: document.getElementById('dataLaudo'), error: document.getElementById('dataLaudoError'), check: document.getElementById('dataLaudoCheck') },
+    nomeMedico: { input: document.getElementById('nomeMedico'), error: document.getElementById('medicoError'), check: document.getElementById('medicoCheck') },
+    crmMedico: { input: document.getElementById('crmMedico'), error: document.getElementById('crmError'), check: document.getElementById('crmCheck') },
+    laudoFile: { input: document.getElementById('laudoFile'), error: document.getElementById('laudoFileError'), preview: document.getElementById('laudoPreview') },
+  };
+
+  submitBtn = document.getElementById('submitBtn');
+  
+  console.log('✅ Campos inicializados:', {
+    foto_input: fields.foto.input ? '✓' : '✗',
+    submitBtn: submitBtn ? '✓' : '✗'
+  });
+
+  // Adicionar todos os event listeners aqui
+  inicializarEventListeners();
 });
 
-// Inicialização
-document.addEventListener('DOMContentLoaded', function() {
+function inicializarEventListeners() {
+  console.log('🎯 Inicializando Event Listeners');
+
+// ===== EVENTOS DE VALIDACAO =====
+  fields.nome.input?.addEventListener('input', e => {
+    setValid('nome', isValidName(e.target.value), e.target.value);
+  });
+
+  fields.dataNascimento.input?.addEventListener('input', e => {
+    setValid('dataNascimento', isValidDate(e.target.value), e.target.value);
+  });
+
+  fields.dataLaudo.input?.addEventListener('input', e => {
+    setValid('dataLaudo', isValidDate(e.target.value), e.target.value);
+  });
+
+  fields.cpf.input?.addEventListener('input', e => {
+    e.target.value = maskCPF(e.target.value);
+    setValid('cpf', isValidCPF(e.target.value), e.target.value);
+  });
+
+  fields.rg.input?.addEventListener('input', e => {
+    e.target.value = maskRG(e.target.value);
+    setValid('rg', isValidRG(e.target.value), e.target.value);
+  });
+
+  fields.telefone.input?.addEventListener('input', e => {
+    e.target.value = maskTelefone(e.target.value);
+    setValid('telefone', isValidTelefone(e.target.value), e.target.value);
+  });
+
+  fields.cidade.input?.addEventListener('input', e => {
+    setValid('cidade', isValidCity(e.target.value), e.target.value);
+  });
+
+  fields.cid.input?.addEventListener('input', e => {
+    e.target.value = e.target.value.toUpperCase();
+    const valid = isValidCID(e.target.value);
+    setValid('cid', valid, e.target.value);
+    const desc = document.getElementById('cidDesc');
+    if (desc) {
+      const baseCode = e.target.value.split('.')[0].toUpperCase();
+      desc.textContent = valid ? (validCIDs[baseCode] || validCIDs[e.target.value.toUpperCase()] || '') : '';
+    }
+  });
+
+  fields.numeroLaudo.input?.addEventListener('input', e => {
+    setValid('numeroLaudo', isValidLaudo(e.target.value), e.target.value);
+  });
+
+  fields.nomeMedico.input?.addEventListener('input', e => {
+    setValid('nomeMedico', isValidMedico(e.target.value), e.target.value);
+  });
+
+  fields.crmMedico.input?.addEventListener('input', e => {
+    e.target.value = e.target.value.toUpperCase();
+    setValid('crmMedico', isValidCRM(e.target.value), e.target.value);
+  });
+
+  // Selects
+  document.getElementById('sexo')?.addEventListener('change', checkForm);
+  document.getElementById('estado')?.addEventListener('change', checkForm);
+  document.getElementById('tipoDeficiencia')?.addEventListener('change', checkForm);
+  document.getElementById('grauDeficiencia')?.addEventListener('change', checkForm);
+
+  // ===== UPLOAD DE FOTO - CORRIGIDO COM LOGGING =====
+  if (fields.foto.input) {
+    console.log('📷 Foto input encontrado, adicionando listener');
+    fields.foto.input.addEventListener('change', function(e) {
+      console.log('📸 Mudança no input de foto detectada');
+      const file = e.target.files?.[0];
+      if (!file) {
+        console.log('❌ Nenhum arquivo selecionado');
+        return;
+      }
+      
+      console.log('📄 Arquivo selecionado:', {
+        nome: file.name,
+        tipo: file.type,
+        tamanho: (file.size / 1024 / 1024).toFixed(2) + ' MB'
+      });
+      
+      // Validar tipo de arquivo
+      const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!validImageTypes.includes(file.type)) {
+        console.error('❌ Tipo de arquivo inválido:', file.type);
+        if (fields.foto.error) {
+          fields.foto.error.textContent = 'Formato inválido. Use JPG, PNG ou GIF.';
+          fields.foto.error.classList.add('show');
+        }
+        e.target.value = '';
+        return;
+      }
+      
+      // Validar tamanho (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        console.error('❌ Arquivo muito grande:', file.size);
+        if (fields.foto.error) {
+          fields.foto.error.textContent = 'Arquivo muito grande. Máximo 5MB.';
+          fields.foto.error.classList.add('show');
+        }
+        e.target.value = '';
+        return;
+      }
+      
+      console.log('🔄 Iniciando FileReader...');
+      const reader = new FileReader();
+      reader.onloadstart = function() {
+        console.log('▶️ FileReader iniciado');
+      };
+      reader.onloadend = function() {
+        console.log('✅ FileReader concluído');
+        fotoFileData = reader.result;
+        console.log('💾 FotoFileData definido, tamanho:', (fotoFileData.length / 1024).toFixed(2) + ' KB');
+        
+        if (fields.foto.preview) {
+          console.log('🖼️ Atualizando preview da foto');
+          fields.foto.preview.style.backgroundImage = `url('${reader.result}')`;
+          fields.foto.preview.classList.add('has-image');
+          console.log('✓ Classe has-image adicionada');
+          
+          // Esconde o ícone SVG dentro do preview
+          const svgIcon = fields.foto.preview.querySelector('svg');
+          if (svgIcon) {
+            svgIcon.style.display = 'none';
+            console.log('✓ SVG icon escondido');
+          }
+        } else {
+          console.error('❌ fields.foto.preview é null');
+        }
+        
+        if (fields.foto.error) {
+          fields.foto.error.textContent = '';
+          fields.foto.error.classList.remove('show');
+        }
+        checkForm();
+      };
+      reader.onerror = function() {
+        console.error('❌ Erro no FileReader:', reader.error);
+        if (fields.foto.error) {
+          fields.foto.error.textContent = 'Erro ao ler o arquivo. Tente novamente.';
+          fields.foto.error.classList.add('show');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  } else {
+    console.error('❌ Element foto-input não encontrado!');
+  }
+
+  // ===== UPLOAD DE LAUDO - CORRIGIDO =====
+  if (fields.laudoFile.input) {
+    console.log('📋 Laudo input encontrado, adicionando listener');
+    fields.laudoFile.input.addEventListener('change', function(e) {
+      console.log('📄 Mudança no input de laudo detectada');
+      const file = e.target.files?.[0];
+      if (!file) {
+        console.log('❌ Nenhum arquivo de laudo selecionado');
+        return;
+      }
+      
+      // Validar tamanho (máximo 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        if (fields.laudoFile.error) {
+          fields.laudoFile.error.textContent = 'Arquivo muito grande. Máximo 10MB.';
+          fields.laudoFile.error.classList.add('show');
+        }
+        e.target.value = '';
+        return;
+      }
+      
+      // Validar tipo de arquivo
+      const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+      if (!validTypes.includes(file.type)) {
+        if (fields.laudoFile.error) {
+          fields.laudoFile.error.textContent = 'Formato inválido. Use PDF, JPG ou PNG.';
+          fields.laudoFile.error.classList.add('show');
+        }
+        e.target.value = '';
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = function() {
+        laudoFileData = reader.result;
+        if (fields.laudoFile.preview) {
+          fields.laudoFile.preview.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--success-500); width: 24px; height: 24px;">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span style="color: var(--success-600); font-weight: 500">${file.name}</span>
+          `;
+          fields.laudoFile.preview.classList.add('has-file');
+        }
+        if (fields.laudoFile.error) {
+          fields.laudoFile.error.textContent = '';
+          fields.laudoFile.error.classList.remove('show');
+        }
+        checkForm();
+      };
+      reader.onerror = function() {
+        if (fields.laudoFile.error) {
+          fields.laudoFile.error.textContent = 'Erro ao ler o arquivo. Tente novamente.';
+          fields.laudoFile.error.classList.add('show');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  } else {
+    console.error('❌ Element laudoFile não encontrado!');
+  }
+
+  // Permitir clique na área de preview para abrir o seletor de arquivo
+  if (fields.foto.preview && fields.foto.input) {
+    fields.foto.preview.addEventListener('click', () => fields.foto.input.click());
+  }
+  if (fields.laudoFile.preview && fields.laudoFile.input) {
+    fields.laudoFile.preview.addEventListener('click', () => fields.laudoFile.input.click());
+  }
+
+  // ===== SUBMIT - INTEGRADO COM BANCO DE DADOS =====
+
+  const registrationForm = document.getElementById('registrationForm');
+  if (registrationForm) {
+    registrationForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      // Desabilita o botao durante o envio
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        submitBtn.innerHTML = '<span class="spinner"></span> Salvando...';
+      }
+
+      const fotoSrc = fotoFileData || (fields.foto.preview?.style.backgroundImage.slice(5, -2) || '');
+
+      // Mapeia os campos do formulario para os campos do banco de dados (tabela carteiras)
+      const dadosCarteira = {
+        // Campos principais da carteira
+        tipo: document.getElementById('tipoDeficiencia')?.value || 'PCD',
+        descricao: validCIDs[fields.cid.input?.value.toUpperCase().split('.')[0]] || 'Pessoa com Deficiencia',
+        ativa: true,
+        
+        // Dados pessoais
+        data_nascimento: fields.dataNascimento.input?.value || null,
+        endereco: document.getElementById('endereco')?.value.trim() || null,
+        cidade: fields.cidade.input?.value.trim() || '',
+        estado: document.getElementById('estado')?.value || '',
+        cep: document.getElementById('cep')?.value?.replace(/\D/g,'') || null,
+        telefone: fields.telefone.input?.value.replace(/\D/g,'') || '',
+        
+        // Dados da deficiencia
+        tipo_deficiencia: document.getElementById('tipoDeficiencia')?.value || '',
+        grau_deficiencia: document.getElementById('grauDeficiencia')?.value || '',
+        cid: fields.cid.input?.value.toUpperCase().trim() || '',
+        necessita_acompanhante: document.getElementById('necessitaAcompanhante')?.value === 'Sim',
+        comunicacao: document.getElementById('comunicacao')?.value || null,
+        
+        // Dados do laudo
+        numero_laudo: fields.numeroLaudo.input?.value.trim() || '',
+        data_laudo: fields.dataLaudo.input?.value || null,
+        nome_medico: fields.nomeMedico.input?.value.trim() || '',
+        crm_medico: fields.crmMedico.input?.value.trim().toUpperCase() || '',
+        
+        // Arquivos
+        foto: fotoSrc,
+        laudo_url: laudoFileData || null,
+        
+        // Dados de emergencia
+        tipo_sanguineo: document.getElementById('tipoSanguineo')?.value || null,
+        contato_emergencia: document.getElementById('contatoEmergencia')?.value.trim() || null,
+        alergias: document.getElementById('alergias')?.value.trim() || null,
+        medicacoes: document.getElementById('medicacoes')?.value.trim() || null,
+        
+        // Dados do responsavel
+        nome_responsavel: document.getElementById('nomeResponsavel')?.value.trim() || null,
+        cpf_responsavel: document.getElementById('cpfResponsavel')?.value?.replace(/\D/g,'') || null,
+        vinculo_responsavel: document.getElementById('vinculoResponsavel')?.value || null,
+        
+        // Dados extras para exibicao local (nao vao para o banco)
+        nome: fields.nome.input?.value.trim() || '',
+        cpf: fields.cpf.input?.value.replace(/\D/g,'') || '',
+        rg: fields.rg.input?.value.replace(/\D/g,'') || '',
+        sexo: document.getElementById('sexo')?.value || '',
+      };
+
+      console.log('[v0] Iniciando salvamento da carteira...');
+      console.log('[v0] Dados da carteira:', dadosCarteira);
+      console.log('[v0] Usuario logado:', typeof obterUsuario === 'function' ? obterUsuario() : 'funcao nao disponivel');
+      
+      try {
+        // Usa a funcao salvarCarteiraBackend do auth.js se disponivel
+        if (typeof salvarCarteiraBackend === 'function') {
+          console.log('[v0] Usando salvarCarteiraBackend...');
+          const resultado = await salvarCarteiraBackend(dadosCarteira);
+          console.log('[v0] Resultado salvarCarteiraBackend:', resultado);
+          
+          if (resultado.sucesso) {
+            // Salva dados completos no localStorage para exibicao
+            const dadosCompletos = {
+              ...dadosCarteira,
+              numero_carteira: resultado.carteira?.numero_carteira || dadosCarteira.numero_carteira,
+              data_emissao: resultado.carteira?.data_emissao || new Date().toISOString().split('T')[0],
+              data_validade: resultado.carteira?.data_validade || new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            };
+            console.log('[v0] Salvando no localStorage:', dadosCompletos);
+            localStorage.setItem('carteira_dados', JSON.stringify(dadosCompletos));
+            localStorage.setItem('carteira_cadastrada', 'true');
+            
+            // Mostra notificacao de sucesso
+            if (typeof mostrarNotificacao === 'function') {
+              mostrarNotificacao('Carteira cadastrada com sucesso!', 'success');
+            } else if (typeof mostrarToast === 'function') {
+              mostrarToast('Carteira cadastrada com sucesso!', 'success');
+            }
+            
+            // Redireciona apos 1.5 segundos
+            setTimeout(() => {
+              window.location.href = 'carteira.html';
+            }, 1500);
+            return;
+          }
+        } else {
+          console.log('[v0] salvarCarteiraBackend nao disponivel, usando fazerRequisicao diretamente...');
+          // Fallback: tenta enviar diretamente via fazerRequisicao
+          if (typeof fazerRequisicao === 'function') {
+            // Gera numero da carteira
+            const timestamp = Date.now().toString(36).toUpperCase();
+            const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+            dadosCarteira.numero_carteira = `GO-PCD-${timestamp}-${random}`;
+            
+            // Obtem usuario logado
+            const usuario = typeof obterUsuario === 'function' ? obterUsuario() : null;
+            if (usuario) {
+              dadosCarteira.usuario_id = usuario.id;
+            }
+            
+            console.log('[v0] Enviando para API /carteiras:', dadosCarteira);
+            const resposta = await fazerRequisicao('/carteiras', 'POST', dadosCarteira);
+            console.log('[v0] Resposta da API:', resposta);
+            
+            if (resposta.sucesso) {
+              const carteiraCriada = resposta.data || dadosCarteira;
+              localStorage.setItem('carteira_dados', JSON.stringify({
+                ...dadosCarteira,
+                ...carteiraCriada
+              }));
+              localStorage.setItem('carteira_cadastrada', 'true');
+              
+              if (typeof mostrarNotificacao === 'function') {
+                mostrarNotificacao('Carteira cadastrada com sucesso!', 'success');
+              }
+              
+              setTimeout(() => {
+                window.location.href = 'carteira.html';
+              }, 1500);
+              return;
+            }
+          }
+        }
+      } catch (erro) {
+        console.error('[v0] Erro ao salvar carteira:', erro);
+        console.error('[v0] Stack:', erro.stack);
+        
+        // Fallback: salva localmente
+        const timestamp = Date.now().toString(36).toUpperCase();
+        const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+        dadosCarteira.numero_carteira = `GO-PCD-${timestamp}-${random}`;
+        dadosCarteira.data_emissao = new Date().toISOString().split('T')[0];
+        dadosCarteira.data_validade = new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        
+        localStorage.setItem('carteira_dados', JSON.stringify(dadosCarteira));
+        localStorage.setItem('carteira_cadastrada', 'true');
+        
+        if (typeof mostrarNotificacao === 'function') {
+          mostrarNotificacao('Carteira salva localmente. Sera sincronizada quando o servidor estiver disponivel.', 'warning');
+        }
+        
+        setTimeout(() => {
+          window.location.href = 'carteira.html';
+        }, 2000);
+        return;
+      } finally {
+        // Reabilita o botao
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('loading');
+          submitBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            Gerar Carteira Digital
+          `;
+        }
+      }
+
+      // Fallback final: salva localmente
+      const timestamp = Date.now().toString(36).toUpperCase();
+      const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+      dadosCarteira.numero_carteira = `GO-PCD-${timestamp}-${random}`;
+      dadosCarteira.data_emissao = new Date().toISOString().split('T')[0];
+      dadosCarteira.data_validade = new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      
+      localStorage.setItem('carteira_dados', JSON.stringify(dadosCarteira));
+      localStorage.setItem('carteira_cadastrada', 'true');
+      
+      setTimeout(() => {
+        window.location.href = 'carteira.html';
+      }, 1000);
+    });
+  } else {
+    console.error('registrationForm nao encontrado!');
+  }
+
+  console.log('✅ Todos os event listeners inicializados');
+  
+  // ===== CHATBOT =====
+  const chatbotModal = document.getElementById('chatbotModal');
+  document.getElementById('chatbotBtn')?.addEventListener('click', e => { 
+    e.preventDefault(); 
+    chatbotModal?.classList.remove('hidden'); 
+  });
+  document.getElementById('closeChatbot')?.addEventListener('click', () => {
+    chatbotModal?.classList.add('hidden');
+  });
+  chatbotModal?.addEventListener('click', e => { 
+    if (e.target === chatbotModal) chatbotModal.classList.add('hidden'); 
+  });
+  
+  document.getElementById('sendChat')?.addEventListener('click', sendChat);
+  document.getElementById('chatInput')?.addEventListener('keypress', e => {
+    if (e.key === 'Enter') sendChat();
+  });
+
+  // Inicializar validação do formulário
   checkForm();
-});
+}

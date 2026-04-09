@@ -1,5 +1,5 @@
 // GO Card PCD — carteira.js
-// Carrega dados do localStorage e gera QR Code que aponta para verificar.html
+// Carrega dados do localStorage e gera QR Code que aponta para carteira.html?d=<token>
 
 const validCIDs = {
   "6A02":"Transtorno do Espectro Autista","F84":"Transtorno Global do Desenvolvimento",
@@ -52,6 +52,52 @@ function setText(id, val) {
   if (el) el.textContent = val || '—';
 }
 
+function parseEncodedData(encoded) {
+  if (!encoded) return null;
+  try {
+    return JSON.parse(decodeURIComponent(escape(atob(encoded))));
+  } catch (e) {
+    console.error('Erro ao decodificar dados codificados:', e);
+    return null;
+  }
+}
+
+function setVerifyModeUI(enabled) {
+  const banner = document.getElementById('verificacaoBanner');
+  const tabs = document.querySelector('.wallet-card-tabs');
+  const editLink = document.querySelector('.action-buttons .btn-secondary');
+  const qrcodeSection = document.querySelector('.qrcode-column');
+  const stampSection = document.querySelector('.verify-stamp-column');
+
+  if (banner) banner.style.display = enabled ? 'flex' : 'none';
+  if (tabs) tabs.style.display = enabled ? 'none' : '';
+  if (editLink) editLink.style.display = enabled ? 'none' : '';
+  if (qrcodeSection) qrcodeSection.style.display = enabled ? 'none' : '';
+  if (stampSection) stampSection.style.display = enabled ? 'flex' : 'none';
+
+  document.body.classList.toggle('verify-mode', enabled);
+}
+
+function loadVerificationData() {
+  const params = new URLSearchParams(window.location.search);
+  const encoded = params.get('d');
+
+  if (!encoded) {
+    loadWalletData();
+    return;
+  }
+
+  const data = parseEncodedData(encoded);
+  if (!data) {
+    alert('Erro ao ler os dados do QR Code. O código pode estar danificado.');
+    setVerifyModeUI(true);
+    return;
+  }
+
+  renderCard(data);
+  setVerifyModeUI(true);
+}
+
 function generateCardNumber() {
   const timestamp = Date.now().toString().slice(-8);
   const random = Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -68,22 +114,130 @@ function generateVerifyCode(cpf, numero) {
   return 'VER-' + Math.abs(hash).toString(36).toUpperCase().slice(0, 8);
 }
 
-function loadWalletData() {
-  const raw = localStorage.getItem('userRegistration');
-  if (!raw) {
-    alert('Nenhum cadastro encontrado. Redirecionando para o formulário...');
-    window.location.href = 'index.html';
+/**
+ * Normaliza os dados da carteira, mapeando campos do banco para campos de exibicao
+ */
+function normalizarDadosCarteira(dados) {
+  const d = { ...dados };
+  
+  // Mapeia campos do banco (snake_case) para campos de exibicao (camelCase)
+  const mapeamento = {
+    'data_nascimento': 'dataNascimento',
+    'tipo_deficiencia': 'tipoDeficiencia',
+    'grau_deficiencia': 'grauDeficiencia',
+    'necessita_acompanhante': 'necessitaAcompanhante',
+    'numero_laudo': 'numeroLaudo',
+    'data_laudo': 'dataLaudo',
+    'nome_medico': 'nomeMedico',
+    'crm_medico': 'crmMedico',
+    'tipo_sanguineo': 'tipoSanguineo',
+    'contato_emergencia': 'contatoEmergencia',
+    'nome_responsavel': 'nomeResponsavel',
+    'cpf_responsavel': 'cpfResponsavel',
+    'vinculo_responsavel': 'vinculoResponsavel',
+    'numero_carteira': 'numeroCarteira',
+    'data_emissao': 'dataEmissao',
+    'data_validade': 'validade',
+    'laudo_url': 'laudoArquivo',
+  };
+  
+  for (const [snakeCase, camelCase] of Object.entries(mapeamento)) {
+    if (d[snakeCase] !== undefined && d[camelCase] === undefined) {
+      d[camelCase] = d[snakeCase];
+    }
+  }
+  
+  // Normaliza necessitaAcompanhante para texto
+  if (typeof d.necessitaAcompanhante === 'boolean') {
+    d.necessitaAcompanhante = d.necessitaAcompanhante ? 'Sim' : 'Nao';
+  }
+  
+  return d;
+}
+
+async function loadWalletData() {
+  setVerifyModeUI(false);
+  
+  let d = null;
+  
+  // 1. Primeiro tenta buscar do banco de dados via API
+  try {
+    if (typeof buscarCarteiraUsuario === 'function') {
+      const carteiraBackend = await buscarCarteiraUsuario();
+      if (carteiraBackend) {
+        d = carteiraBackend;
+      }
+    }
+  } catch (erro) {
+    // Continua para tentar localStorage
+  }
+  
+  // 2. Se nao encontrou no backend, tenta carteira_dados (novo formato)
+  if (!d) {
+    const carteiraDados = localStorage.getItem('carteira_dados');
+    if (carteiraDados) {
+      try {
+        d = JSON.parse(carteiraDados);
+      } catch (e) {
+        // Continua
+      }
+    }
+  }
+  
+  // 3. Fallback para userRegistration (formato antigo)
+  if (!d) {
+    const raw = localStorage.getItem('userRegistration');
+    if (raw) {
+      try {
+        d = JSON.parse(raw);
+      } catch (e) {
+        // Continua
+      }
+    }
+  }
+  
+  // Se nenhum dado encontrado, redireciona
+  if (!d) {
+    // Verifica se usuario esta logado
+    if (typeof estaAutenticado === 'function' && estaAutenticado()) {
+      // Usuario logado mas sem carteira - redireciona para cadastro
+      window.location.href = 'cadastro_carteira.html';
+    } else {
+      // Usuario nao logado - redireciona para login
+      window.location.href = 'index.html';
+    }
     return;
   }
 
-  const d = JSON.parse(raw);
+  // Normaliza campos que podem vir com nomes diferentes do banco
+  d = normalizarDadosCarteira(d);
 
   // Gerar / recuperar metadados
-  if (!d.numeroCarteira) d.numeroCarteira = generateCardNumber();
-  if (!d.dataEmissao) d.dataEmissao = new Date().toISOString();
-  if (!d.validade) d.validade = new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString();
-  if (!d.codigoVerificacao) d.codigoVerificacao = generateVerifyCode(d.cpf, d.numeroCarteira);
-  localStorage.setItem('userRegistration', JSON.stringify(d));
+  if (!d.numeroCarteira && !d.numero_carteira) {
+    d.numeroCarteira = generateCardNumber();
+  } else if (d.numero_carteira && !d.numeroCarteira) {
+    d.numeroCarteira = d.numero_carteira;
+  }
+  
+  if (!d.dataEmissao && !d.data_emissao) {
+    d.dataEmissao = new Date().toISOString();
+  } else if (d.data_emissao && !d.dataEmissao) {
+    d.dataEmissao = d.data_emissao;
+  }
+  
+  if (!d.validade && !d.data_validade) {
+    d.validade = new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString();
+  } else if (d.data_validade && !d.validade) {
+    d.validade = d.data_validade;
+  }
+  
+  if (!d.codigoVerificacao) {
+    d.codigoVerificacao = generateVerifyCode(d.cpf, d.numeroCarteira);
+  }
+  
+  // Salva dados atualizados no localStorage
+  localStorage.setItem('carteira_dados', JSON.stringify(d));
+  localStorage.setItem('userRegistration', JSON.stringify(d)); // Compatibilidade
 
   // Foto
   if (d.foto) {
@@ -144,6 +298,26 @@ function loadWalletData() {
 
   // Gerar QR Code
   generateQRCode(d);
+  initWalletTabs();
+}
+
+function initWalletTabs() {
+  const walletCard = document.getElementById('walletCard');
+  const btnCarteira = document.getElementById('tabCarteira');
+  const btnQRCode = document.getElementById('tabQRCode');
+  if (!walletCard || !btnCarteira || !btnQRCode) return;
+
+  btnCarteira.addEventListener('click', () => {
+    walletCard.classList.remove('flipped');
+    btnCarteira.classList.add('active');
+    btnQRCode.classList.remove('active');
+  });
+
+  btnQRCode.addEventListener('click', () => {
+    walletCard.classList.add('flipped');
+    btnQRCode.classList.add('active');
+    btnCarteira.classList.remove('active');
+  });
 }
 
 function generateQRCode(d) {
@@ -193,7 +367,7 @@ function generateQRCode(d) {
   
   // URL da pagina de verificacao
   const baseUrl = window.location.origin + window.location.pathname.replace('carteira.html', '');
-  const verifyURL = `${baseUrl}verificar.html?d=${encoded}`;
+  const verifyURL = `${baseUrl}carteira.html?d=${encoded}`;
 
   console.log('[v0] QR Code URL length:', verifyURL.length);
 
@@ -273,6 +447,19 @@ document.getElementById('downloadBtn')?.addEventListener('click', async () => {
 });
 
 // Baixar PDF
+function showWalletFront() {
+  const walletCard = document.getElementById('walletCard');
+  const btnCarteira = document.getElementById('tabCarteira');
+  const btnQRCode = document.getElementById('tabQRCode');
+  if (!walletCard || !btnCarteira || !btnQRCode) return;
+  walletCard.classList.remove('flipped');
+  btnCarteira.classList.add('active');
+  btnQRCode.classList.remove('active');
+}
+
+// Certifica que a carteira abre sempre pelo lado correto
+showWalletFront();
+
 document.getElementById('downloadPdfBtn')?.addEventListener('click', async () => {
   const card = document.getElementById('walletCard');
   if (!card) return;
@@ -377,4 +564,11 @@ document.getElementById('verLaudoBtn')?.addEventListener('click', () => {
   }
 });
 
-document.addEventListener('DOMContentLoaded', loadWalletData);
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('d')) {
+    loadVerificationData();
+  } else {
+    loadWalletData();
+  }
+});

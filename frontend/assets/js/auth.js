@@ -42,7 +42,7 @@ function mostrarToast(mensagem, tipo = 'info', duracao = 3000) {
     }, duracao);
 }
 
-const POSSIBLE_BACKEND_PORTS = [3005, 3006, 3007, 3008, 3009];
+const POSSIBLE_BACKEND_PORTS = [3001, 3005, 3006, 3007, 3008, 3009];
 const BACKEND_HOST = 'localhost';
 let API_BASE_URL = `http://${BACKEND_HOST}:${POSSIBLE_BACKEND_PORTS[0]}`;
 let backendResolved = false;
@@ -320,4 +320,197 @@ function habilitarBotao(botaoId) {
             spinner.classList.remove('active');
         }
     }
+}
+
+/**
+ * Gera numero unico da carteira
+ */
+function gerarNumeroCarteira() {
+    const timestamp = Date.now().toString(36).toUpperCase();
+    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `GO-PCD-${timestamp}-${random}`;
+}
+
+/**
+ * Verifica se usuario ja tem carteira cadastrada
+ * @param {number|string} usuarioId - ID do usuario
+ * @returns {Promise<{temCarteira: boolean, carteira: object|null}>}
+ */
+async function verificarCarteiraExistente(usuarioId) {
+    try {
+        // Busca a carteira do usuário autenticado via endpoint protegido
+        const resposta = await fazerRequisicao('/carteiras/minha', 'GET');
+        if (resposta.sucesso && resposta.data) {
+            return { temCarteira: true, carteira: resposta.data };
+        }
+        return { temCarteira: false, carteira: null };
+    } catch (erro) {
+        // Se backend nao disponivel, verifica localStorage
+        const carteiraLocal = localStorage.getItem('carteira_dados');
+        if (carteiraLocal) {
+            const dados = JSON.parse(carteiraLocal);
+            const usuario = obterUsuario();
+            if (usuario && dados.email === usuario.email) {
+                return { temCarteira: true, carteira: dados };
+            }
+        }
+        return { temCarteira: false, carteira: null };
+    }
+}
+
+/**
+ * Redireciona usuario baseado se tem carteira ou nao
+ */
+async function redirecionarUsuario() {
+    const usuario = obterUsuario();
+    if (!usuario) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    const { temCarteira, carteira } = await verificarCarteiraExistente(usuario.id || usuario.email);
+    
+    if (temCarteira && carteira) {
+        // Salva a carteira no localStorage para exibicao rapida
+        localStorage.setItem('carteira_dados', JSON.stringify(carteira));
+        window.location.href = 'carteira.html';
+    } else {
+        window.location.href = 'cadastro_carteira.html';
+    }
+}
+
+/**
+ * Salva carteira no banco de dados
+ * @param {object} dadosCarteira - Dados da carteira
+ * @returns {Promise<{sucesso: boolean, carteira?: object, mensagem?: string}>}
+ */
+async function salvarCarteiraBackend(dadosCarteira) {
+    console.log('[v0] salvarCarteiraBackend chamado');
+    
+    const usuario = obterUsuario();
+    console.log('[v0] Usuario obtido:', usuario);
+    
+    if (!usuario) {
+        console.error('[v0] Usuario nao autenticado!');
+        throw new Error('Usuario nao autenticado');
+    }
+
+    // Gera numero da carteira se nao existir
+    if (!dadosCarteira.numero_carteira) {
+        dadosCarteira.numero_carteira = gerarNumeroCarteira();
+        console.log('[v0] Numero da carteira gerado:', dadosCarteira.numero_carteira);
+    }
+
+    // Adiciona dados do usuario
+    dadosCarteira.usuario_id = usuario.id;
+    dadosCarteira.email = usuario.email;
+
+    // Define datas
+    const hoje = new Date();
+    const validade = new Date();
+    validade.setFullYear(validade.getFullYear() + 5); // 5 anos de validade
+
+    dadosCarteira.data_emissao = hoje.toISOString().split('T')[0];
+    dadosCarteira.data_validade = validade.toISOString().split('T')[0];
+    dadosCarteira.status = 'ativa';
+
+    console.log('[v0] Dados completos para enviar:', dadosCarteira);
+
+    try {
+        console.log('[v0] Tentando enviar para API /carteiras...');
+        const resposta = await fazerRequisicao('/carteiras', 'POST', dadosCarteira);
+        console.log('[v0] Resposta da API:', resposta);
+        
+        if (resposta.sucesso) {
+            // Salva tambem no localStorage como cache
+            const carteiraFinal = resposta.data || dadosCarteira;
+            localStorage.setItem('carteira_dados', JSON.stringify(carteiraFinal));
+            console.log('[v0] Carteira salva no banco e localStorage');
+            return { sucesso: true, carteira: carteiraFinal };
+        }
+        throw new Error(resposta.mensagem || 'Erro ao salvar carteira');
+    } catch (erro) {
+        console.warn('[v0] Erro ao enviar para API:', erro.message);
+        console.log('[v0] Salvando apenas no localStorage como fallback...');
+        
+        // Se backend nao disponivel, salva apenas no localStorage
+        localStorage.setItem('carteira_dados', JSON.stringify(dadosCarteira));
+        return { 
+            sucesso: true, 
+            carteira: dadosCarteira,
+            mensagem: 'Carteira salva localmente. Sera sincronizada quando o servidor estiver disponivel.'
+        };
+    }
+}
+
+/**
+ * Busca carteira do usuario do banco de dados
+ * @returns {Promise<object|null>}
+ */
+async function buscarCarteiraUsuario() {
+    const usuario = obterUsuario();
+    if (!usuario) {
+        return null;
+    }
+
+    try {
+        const resposta = await fazerRequisicao('/carteiras/minha', 'GET');
+        if (resposta.sucesso && resposta.data) {
+            // Atualiza cache local
+            localStorage.setItem('carteira_dados', JSON.stringify(resposta.data));
+            return resposta.data;
+        }
+        return null;
+    } catch (erro) {
+        // Retorna dados do localStorage se backend nao disponivel
+        const carteiraLocal = localStorage.getItem('carteira_dados');
+        if (carteiraLocal) {
+            return JSON.parse(carteiraLocal);
+        }
+        return null;
+    }
+}
+
+/**
+ * Mostra toast de notificacao moderna
+ */
+function mostrarNotificacao(mensagem, tipo = 'info', duracao = 4000) {
+    // Remove toasts anteriores
+    const containerExistente = document.querySelector('.toast-container');
+    if (containerExistente) {
+        containerExistente.remove();
+    }
+
+    // Cria container
+    const container = document.createElement('div');
+    container.className = 'toast-container';
+    
+    // Cria toast
+    const toast = document.createElement('div');
+    toast.className = `toast ${tipo}`;
+    
+    // Icone baseado no tipo
+    const icones = {
+        success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+        error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',
+        warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+        info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>'
+    };
+
+    toast.innerHTML = `
+        ${icones[tipo] || icones.info}
+        <span>${mensagem}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+    `;
+
+    container.appendChild(toast);
+    document.body.appendChild(container);
+
+    // Remove automaticamente
+    setTimeout(() => {
+        toast.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => container.remove(), 300);
+    }, duracao);
 }

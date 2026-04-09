@@ -7,8 +7,8 @@ USE carteira;
 
 SET NAMES utf8;
 
--- Tabela de Usuários
-CREATE TABLE usuarios (
+
+CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -16,19 +16,14 @@ CREATE TABLE usuarios (
     cpf VARCHAR(11) UNIQUE NOT NULL,
     telefone VARCHAR(15),
     data_nascimento DATE,
-    endereco TEXT,
-    cidade VARCHAR(100),
-    estado VARCHAR(2),
-    cep VARCHAR(10),
     qr_code VARCHAR(191) UNIQUE,
-    refreshToken VARCHAR(191),
     role VARCHAR(20) DEFAULT 'user',
     ativo BOOLEAN DEFAULT TRUE,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_email (email),
     INDEX idx_cpf (cpf),
-    INDEX idx_ativo (ativo)
+    INDEX idx_ativa (ativo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Tabela de Carteiras
@@ -63,12 +58,23 @@ CREATE TABLE carteiras (
     nome_responsavel VARCHAR(255),
     cpf_responsavel VARCHAR(14),
     vinculo_responsavel VARCHAR(100),
+    nome VARCHAR(255),
+    cpf VARCHAR(11),
+    rg VARCHAR(20),
+    sexo VARCHAR(10),
     criada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     atualizada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     INDEX idx_usuario_id (usuario_id),
     INDEX idx_ativa (ativa)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Ajuste de esquema para bancos existentes
+ALTER TABLE carteiras
+  ADD COLUMN IF NOT EXISTS nome VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS cpf VARCHAR(11),
+  ADD COLUMN IF NOT EXISTS rg VARCHAR(20),
+  ADD COLUMN IF NOT EXISTS sexo VARCHAR(10);
 
 -- Tabela de Denúncias
 CREATE TABLE denuncias (
@@ -187,11 +193,17 @@ SELECT * FROM login_bloqueios;
 
 -- Use este SQL no banco carteira para desbloquear manualmente:
 
--- Se quiser desbloquear pelo código de desbloqueio:
+-- Primeiro, verifique qual email e código de desbloqueio estão gravados:
+SELECT email, tentativas, bloqueado_ate, codigo_desbloqueio FROM login_bloqueios WHERE email = 'admin@carteira.com';
+
+-- Desbloqueio pelo email (recomendado quando você quer resetar a conta bloqueada):
 UPDATE login_bloqueios
 SET tentativas = 0,
     bloqueado_ate = NULL,
     codigo_desbloqueio = NULL,
     ultima_tentativa = NOW(),
     atualizado_em = NOW()
-WHERE codigo_desbloqueio = 'DESBLOQUEIO123';
+WHERE email = 'admin@carteira.com';
+
+
+-- IMPORTANTE: substitua admin@carteira.com pelo email real do usuário bloqueado pelo código que está na coluna codigo_desbloqueio.

@@ -23,7 +23,7 @@
                     <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
                 </div>
                 <nav class="nav-links">
-                    <a href="cadastro_carteira.html" class="nav-link">Cadastro</a>
+                    <a href="carteira.html" class="nav-link">Verificar Carteira</a>
                     <a href="central-direitos.html" class="nav-link active">Central de Direitos</a>
                     <a href="comunidade.html" class="nav-link">Comunidade</a>
                 </nav>
@@ -359,6 +359,54 @@
 
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/script.js"></script>
+
+    <script>
+        // Verificar se o usuário tem carteira
+        // Se nao tiver, nao deve estar nesta pagina
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAcessoCentralDireitos();
+        });
+
+        async function verificarAcessoCentralDireitos() {
+            try {
+                const usuario = JSON.parse(localStorage.getItem('carteira_user') || 'null');
+                const carteiraCadastrada = localStorage.getItem('carteira_cadastrada');
+                const token = localStorage.getItem('carteira_token');
+
+                // Se nao tiver carteira cadastrada, redirecionar para cadastro
+                if (!usuario || !token || carteiraCadastrada !== 'true') {
+                    // Tentar buscar a carteira da API para confirmação
+                    try {
+                        const resposta = await fazerRequisicao('/carteiras/minha', 'GET');
+                        if (!resposta.sucesso || !resposta.data) {
+                            // Nao tem carteira, redirecionar
+                            window.location.href = 'cadastro_carteira.html';
+                            return;
+                        }
+                    } catch (erro) {
+                        // Erro na API, redirecionar
+                        window.location.href = 'cadastro_carteira.html';
+                        return;
+                    }
+                }
+
+                // Esconder o link 'Cadastro' na navegacao se tiver carteira
+                esconderLinkCadastro();
+            } catch (erro) {
+                console.error('Erro ao verificar acesso:', erro);
+            }
+        }
+
+        function esconderLinkCadastro() {
+            const navLinks = document.querySelectorAll('a[href="cadastro_carteira.html"]');
+            navLinks.forEach(link => {
+                const parent = link.parentElement;
+                if (parent) {
+                    parent.style.display = 'none';
+                }
+            });
+        }
+    </script>
 
     <script>
         // Modal Denuncia

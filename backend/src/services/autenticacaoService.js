@@ -184,12 +184,12 @@ export class AutenticacaoService {
       comunicacao: carteira.comunicacao,
       nomeResponsavel: carteira.nome_responsavel,
       cpfResponsavel: carteira.cpf_responsavel,
-      vinculoResponsavel: carteira.vinculo_responsavel
+      vinculoResponsavel: carteira.vinculo_responsavel,
+      nome: carteira.nome,
+      cpf: carteira.cpf,
+      rg: carteira.rg,
+      sexo: carteira.sexo
     } : null;
-
-    // Enviar notificação de login em segundo plano, sem atrasar a resposta
-    enviarEmailLogin(usuario.email, usuario.nome, endereco_ip)
-      .catch(erro => console.error('Erro ao enviar email de notificação:', erro));
 
     return {
       usuario: {
@@ -209,31 +209,31 @@ export class AutenticacaoService {
   /**
    * Renova token usando refresh token
    */
-  static async renovarToken(refreshToken, endereco_ip = '', user_agent = '') {
+  static async renovarToken(refreshToken) {
     // Buscar sessão
     const sessao = await SessaoRepository.buscarPorToken(refreshToken);
-    
+
     if (!sessao) {
       throw new Error('Refresh token inválido ou expirado');
     }
 
     // Buscar usuário
-    const usuario = await UsuarioRepository.buscarPorId(sessao.usuario_id);
-    
-    if (!usuario) {
+    const usuarioRenovado = await UsuarioRepository.buscarPorId(sessao.usuario_id);
+
+    if (!usuarioRenovado) {
       throw new Error('Usuário não encontrado');
     }
 
     // Gerar novo token
-    const novoToken = gerarToken(usuario.id, usuario.email, usuario.role || 'user');
+    const novoToken = gerarToken(usuarioRenovado.id, usuarioRenovado.email, usuarioRenovado.role || 'user');
 
     return {
       token: novoToken,
       usuario: {
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        role: usuario.role || 'user'
+        id: usuarioRenovado.id,
+        nome: usuarioRenovado.nome,
+        email: usuarioRenovado.email,
+        role: usuarioRenovado.role || 'user'
       }
     };
   }

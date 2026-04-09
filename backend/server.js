@@ -70,7 +70,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-function iniciarServidor(port, tentativas = 0) {
+function iniciarServidor(port) {
   const server = app.listen(port, () => {
     console.log(`✅ Servidor rodando em http://localhost:${port}`);
     console.log(`📝 Health check: http://localhost:${port}/health`);
@@ -78,11 +78,11 @@ function iniciarServidor(port, tentativas = 0) {
   });
 
   server.on('error', (erro) => {
-    if (erro.code === 'EADDRINUSE' && tentativas < 5) {
-      const proximaPorta = port + 1;
-      console.warn(`Porta ${port} ocupada. Tentando iniciar em ${proximaPorta}...`);
-      iniciarServidor(proximaPorta, tentativas + 1);
-      return;
+    if (erro.code === 'EADDRINUSE') {
+      console.error(`❌ Porta ${port} está ocupada. Por favor, libere a porta ou configure uma porta diferente.`);
+      console.error(`💡 Para liberar a porta: taskkill /PID <PID> /F (substitua <PID> pelo ID do processo)`);
+      console.error(`💡 Para usar outra porta: defina a variável de ambiente PORT=3001`);
+      process.exit(1);
     }
 
     console.error('Erro ao iniciar o servidor:', erro);

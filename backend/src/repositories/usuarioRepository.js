@@ -8,7 +8,7 @@ export class UsuarioRepository {
     try {
       const conexao = await pool.getConnection();
       const [resultado] = await conexao.execute(
-        'SELECT * FROM usuarios WHERE email = ?',
+        'SELECT id, nome, email, senha, cpf, telefone, data_nascimento, qr_code, role, ativo, criado_em FROM usuarios WHERE email = ?',
         [email]
       );
       conexao.release();
@@ -25,7 +25,7 @@ export class UsuarioRepository {
     try {
       const conexao = await pool.getConnection();
       const [resultado] = await conexao.execute(
-        'SELECT * FROM usuarios WHERE role = ? LIMIT 1',
+        'SELECT id, nome, email, cpf, telefone, data_nascimento, qr_code, role, ativo, criado_em FROM usuarios WHERE role = ? LIMIT 1',
         [role]
       );
       conexao.release();
@@ -42,7 +42,7 @@ export class UsuarioRepository {
     try {
       const conexao = await pool.getConnection();
       const [resultado] = await conexao.execute(
-        'SELECT id, nome, email, cpf, telefone, data_nascimento, endereco, cidade, estado, cep, qr_code, role, ativo, criado_em FROM usuarios WHERE id = ?',
+        'SELECT id, nome, email, cpf, telefone, data_nascimento, qr_code, role, ativo, criado_em FROM usuarios WHERE id = ?',
         [id]
       );
       conexao.release();
@@ -59,8 +59,8 @@ export class UsuarioRepository {
     try {
       const conexao = await pool.getConnection();
       const [resultado] = await conexao.execute(
-        `INSERT INTO usuarios (nome, email, senha, cpf, telefone, data_nascimento, endereco, cidade, estado, cep, qr_code, role, ativo)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO usuarios (nome, email, senha, cpf, telefone, data_nascimento, qr_code, role, ativo)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           dados.nome,
           dados.email,
@@ -68,10 +68,6 @@ export class UsuarioRepository {
           dados.cpf,
           dados.telefone || null,
           dados.data_nascimento || null,
-          dados.endereco || null,
-          dados.cidade || null,
-          dados.estado || null,
-          dados.cep || null,
           dados.qr_code || null,
           dados.role || 'user',
           true

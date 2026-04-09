@@ -24,7 +24,7 @@
                     <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
                 </div>
                 <nav class="nav-links">
-                    <a href="verificar.html" class="nav-link">Verificar Carteira</a>
+                    <a href="carteira.html" class="nav-link">Verificar Carteira</a>
                     <a href="central-direitos.html" class="nav-link">Central de Direitos</a>
                     <a href="comunidade.html" class="nav-link">Comunidade</a>
                 </nav>
@@ -32,11 +32,27 @@
         </header>
 
         <main class="main-content">
+            <div class="verificacao-banner" id="verificacaoBanner" style="display:none">
+                <div class="vb-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="32" height="32">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <div class="vb-text">
+                    <h2>Documento Verificado</h2>
+                    <p>Esta carteira foi verificada eletronicamente e é autêntica. Emitida conforme a Lei 13.146/2015.</p>
+                </div>
+                <div class="vb-stamp">AUTÊNTICO</div>
+            </div>
             <div class="wallet-container">
 
                 <!-- ===== CARTEIRA DIGITAL OFICIAL ===== -->
                 <div class="wallet-card" id="walletCard">
-
+                    <div class="wallet-card-tabs">
+                        <button id="tabCarteira" class="tab-button active">Carteira</button>
+                        <button id="tabQRCode" class="tab-button">QR Code</button>
+                    </div>
+                    <div class="wallet-card-inner">                        <div class="wallet-card-face wallet-front">
                     <!-- Topo oficial -->
                     <div class="wallet-top-bar">
                         <div class="wallet-top-left">
@@ -194,10 +210,19 @@
                                 </div>
                             </div>
 
-                            <div class="wallet-qr-col">
+                            <div class="wallet-qr-col qrcode-column">
                                 <div class="qrcode-container" id="qrcodeWallet"></div>
                                 <span class="qrcode-label">Escaneie para verificar</span>
                                 <span class="qrcode-sublabel">Abre carteira completa</span>
+                            </div>
+                            <div class="wallet-qr-col verificacao-stamp-col verify-stamp-column" style="display:none">
+                                <div class="verificacao-stamp-box">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                        <polyline points="22 4 12 14.01 9 11.01"/>
+                                    </svg>
+                                    <span>VERIFICADO</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -227,6 +252,22 @@
                             Válido em todo o território nacional para acesso a direitos, benefícios e serviços públicos e privados.
                         </p>
                     </div>
+                </div>
+                <div class="wallet-card-face wallet-back">
+                    <div class="wallet-back-content">
+                        <div class="wallet-back-title">
+                            <h2>QR Code Exclusivo</h2>
+                            <p>Este é o único QR Code válido. Mostre-o somente ao leitor autorizado.</p>
+                        </div>
+                        <div class="qrcode-back-frame">
+                            <div class="qrcode-container" id="qrcodeWallet"></div>
+                        </div>
+                        <div class="wallet-back-instruction">
+                            <p>Ao escanear o QR Code através do aplicativo, todas as informações da carteira serão exibidas automaticamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
                 </div>
 
                 <!-- Botões de ação -->

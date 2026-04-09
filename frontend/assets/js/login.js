@@ -90,24 +90,57 @@ async function handleLogin(e) {
                 localStorage.removeItem('carteira_email_salvo');
             }
 
-            mostrarToast('Login realizado com sucesso!', 'success');
+            // Mostra notificacao de sucesso
+            if (typeof mostrarNotificacao === 'function') {
+                mostrarNotificacao('Login realizado com sucesso!', 'success');
+            } else {
+                mostrarToast('Login realizado com sucesso!', 'success');
+            }
 
             const usuario = resposta.data.usuario;
+            
+            // Admin vai para painel admin
             if (usuario?.role === 'admin') {
-                window.location.href = 'admin.html';
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 1000);
                 return;
             }
 
-            if (usuario?.possuiCarteira) {
+            // Verifica se usuario tem carteira cadastrada
+            if (usuario?.possuiCarteira || resposta.data.carteira) {
                 if (resposta.data.carteira) {
+                    // Salva nos dois formatos para compatibilidade
+                    localStorage.setItem('carteira_dados', JSON.stringify(resposta.data.carteira));
                     localStorage.setItem('userRegistration', JSON.stringify(resposta.data.carteira));
                     localStorage.setItem('carteira_cadastrada', 'true');
                 }
-                window.location.href = 'carteira.html';
+                setTimeout(() => {
+                    window.location.href = 'carteira.html';
+                }, 1000);
                 return;
             }
 
-            window.location.href = 'cadastro_carteira.html';
+            // Verifica se usuario tem carteira via API separada
+            try {
+                const { temCarteira, carteira } = await verificarCarteiraExistente(usuario.id);
+                if (temCarteira && carteira) {
+                    localStorage.setItem('carteira_dados', JSON.stringify(carteira));
+                    localStorage.setItem('userRegistration', JSON.stringify(carteira));
+                    localStorage.setItem('carteira_cadastrada', 'true');
+                    setTimeout(() => {
+                        window.location.href = 'carteira.html';
+                    }, 1000);
+                    return;
+                }
+            } catch (e) {
+                // Se falhar a verificacao, continua para cadastro
+            }
+
+            // Usuario sem carteira - vai para cadastro
+            setTimeout(() => {
+                window.location.href = 'cadastro_carteira.html';
+            }, 1000);
         }
     } catch (erro) {
         let mensagem = erro.message || 'Erro ao conectar';
@@ -132,11 +165,27 @@ async function handleLogin(e) {
 // Verifica se o usuário já tem uma carteira e redireciona corretamente
 async function verificarCarteiraERedirect() {
     try {
-        // Tentar buscar carteira do usuário na API
+        // Primeiro tenta usar a funcao do auth.js se disponivel
+        if (typeof verificarCarteiraExistente === 'function') {
+            const usuario = obterUsuario();
+            if (usuario) {
+                const { temCarteira, carteira } = await verificarCarteiraExistente(usuario.id || usuario.email);
+                if (temCarteira && carteira) {
+                    localStorage.setItem('carteira_dados', JSON.stringify(carteira));
+                    localStorage.setItem('userRegistration', JSON.stringify(carteira));
+                    localStorage.setItem('carteira_cadastrada', 'true');
+                    window.location.href = 'carteira.html';
+                    return;
+                }
+            }
+        }
+        
+        // Fallback: tentar buscar carteira do usuário na API diretamente
         const resposta = await fazerRequisicao('/carteiras/minha', 'GET');
         
         if (resposta.sucesso && resposta.data) {
             // Usuário já tem carteira - salva dados e vai para carteira.html
+            localStorage.setItem('carteira_dados', JSON.stringify(resposta.data));
             localStorage.setItem('userRegistration', JSON.stringify(resposta.data));
             localStorage.setItem('carteira_cadastrada', 'true');
             window.location.href = 'carteira.html';
@@ -146,10 +195,11 @@ async function verificarCarteiraERedirect() {
         }
     } catch (erro) {
         // Fallback: verificar localStorage
+        const carteiraDados = localStorage.getItem('carteira_dados');
         const carteiraLocal = localStorage.getItem('userRegistration');
         const carteiraCadastrada = localStorage.getItem('carteira_cadastrada');
         
-        if (carteiraLocal && carteiraCadastrada === 'true') {
+        if ((carteiraDados || carteiraLocal) && carteiraCadastrada === 'true') {
             window.location.href = 'carteira.html';
         } else {
             window.location.href = 'cadastro_carteira.html';
