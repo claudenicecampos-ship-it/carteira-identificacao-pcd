@@ -7,7 +7,7 @@ const API_BASES = Array.from(new Set([
   'http://localhost:3001/api'
 ].filter(Boolean)));
 
-let authToken = localStorage.getItem('authToken');
+let authToken = localStorage.getItem('carteira_token');
 
 const validCIDs = {
   "6A02":"Transtorno do Espectro Autista","F84":"Transtorno Global do Desenvolvimento",
@@ -128,7 +128,7 @@ async function registerUser(email, password) {
   });
 
   authToken = data.token;
-  localStorage.setItem('authToken', authToken);
+  localStorage.setItem('carteira_token', authToken);
   return data;
 }
 
@@ -138,7 +138,7 @@ async function loginUser(email, password) {
     body: JSON.stringify({ email, password })
   });
   authToken = data.token;
-  localStorage.setItem('authToken', authToken);
+  localStorage.setItem('carteira_token', authToken);
   return data;
 }
 
@@ -153,7 +153,7 @@ async function createCard(cardData) {
     });
   }
 
-  return apiRequest('/cards', {
+  return apiRequest('/carteiras', {
     method: 'POST',
     body: formData
   });
@@ -161,7 +161,7 @@ async function createCard(cardData) {
 
 function logout() {
   authToken = null;
-  localStorage.removeItem('authToken');
+  localStorage.removeItem('carteira_token');
   window.location.reload();
 }
 
@@ -641,93 +641,38 @@ document.getElementById('registrationForm')?.addEventListener('submit', async(e)
 
   const data = {
     foto: fotoSrc,
-<<<<<<<< HEAD:frontend/assets/js/script.js
     nome: fields.nome.input?.value.trim() || '',
-    dataNascimento: fields.dataNascimento.input?.value || '',
+    data_nascimento: fields.dataNascimento.input?.value || '',
     sexo: document.getElementById('sexo')?.value || '',
     cpf: fields.cpf.input?.value.replace(/\D/g,'') || '',
     rg: fields.rg.input?.value.replace(/\D/g,'') || '',
     telefone: fields.telefone.input?.value.replace(/\D/g,'') || '',
-========
-    nome: fields.nome.input.value.trim(),
-    dataNascimento: fields.dataNascimento.input.value,
-    sexo: document.getElementById('sexo').value,
-    cpf: fields.cpf.input.value.replace(/\D/g,''),
-    rg: fields.rg.input.value.replace(/\D/g,''),
-    telefone: fields.telefone.input.value.replace(/\D/g,''),
-    email: fields.email.input.value.trim(),
->>>>>>>> 9b63bc8bf2dfd0cd4475962410d494b918007981:frontend/public/script.js
+    email: fields.email.input?.value.trim() || '',
     endereco: document.getElementById('endereco')?.value.trim() || '',
     cidade: fields.cidade.input?.value.trim() || '',
     estado: document.getElementById('estado')?.value || '',
-    tipoDeficiencia: document.getElementById('tipoDeficiencia')?.value || '',
-    grauDeficiencia: document.getElementById('grauDeficiencia')?.value || '',
+    tipo_deficiencia: document.getElementById('tipoDeficiencia')?.value || '',
+    grau_deficiencia: document.getElementById('grauDeficiencia')?.value || '',
     cid: fields.cid.input?.value.toUpperCase().trim() || '',
-    necessitaAcompanhante: document.getElementById('necessitaAcompanhante')?.value || '',
+    necessita_acompanhante: document.getElementById('necessitaAcompanhante')?.value || '',
     comunicacao: document.getElementById('comunicacao')?.value || '',
-    numeroLaudo: fields.numeroLaudo.input?.value.trim() || '',
-    dataLaudo: fields.dataLaudo.input?.value || '',
-    nomeMedico: fields.nomeMedico.input?.value.trim() || '',
-    crmMedico: fields.crmMedico.input?.value.trim().toUpperCase() || '',
-    laudoArquivo: laudoFileData,
-    nomeResponsavel: document.getElementById('nomeResponsavel')?.value.trim() || '',
-    cpfResponsavel: document.getElementById('cpfResponsavel')?.value.trim() || '',
-    vinculoResponsavel: document.getElementById('vinculoResponsavel')?.value || '',
-    tipoSanguineo: document.getElementById('tipoSanguineo')?.value || '',
+    numero_laudo: fields.numeroLaudo.input?.value.trim() || '',
+    data_laudo: fields.dataLaudo.input?.value || '',
+    nome_medico: fields.nomeMedico.input?.value.trim() || '',
+    crm_medico: fields.crmMedico.input?.value.trim().toUpperCase() || '',
+    laudo_url: laudoFileData,
+    nome_responsavel: document.getElementById('nomeResponsavel')?.value.trim() || '',
+    cpf_responsavel: document.getElementById('cpfResponsavel')?.value.trim() || '',
+    vinculo_responsavel: document.getElementById('vinculoResponsavel')?.value || '',
+    tipo_sanguineo: document.getElementById('tipoSanguineo')?.value || '',
     alergias: document.getElementById('alergias')?.value.trim() || '',
     medicacoes: document.getElementById('medicacoes')?.value.trim() || '',
-    contatoEmergencia: document.getElementById('contatoEmergencia')?.value.trim() || '',
-    dataEmissao: new Date().toISOString(),
-    validade: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString(),
+    contato_emergencia: document.getElementById('contatoEmergencia')?.value.trim() || '',
   };
 
-<<<<<<<< HEAD:frontend/assets/js/script.js
-  // Verifica se a função fazerRequisicao existe (do auth.js)
-  if (typeof fazerRequisicao === 'function') {
-    try {
-      const resposta = await fazerRequisicao('/carteiras', 'POST', data);
-      if (resposta.sucesso) {
-        localStorage.setItem('userRegistration', JSON.stringify(data));
-        if (typeof mostrarToast === 'function') {
-          mostrarToast('Carteira cadastrada com sucesso!', 'success');
-        }
-        window.location.href = 'carteira.html';
-        return;
-      }
-    } catch (erro) {
-      if (typeof mostrarToast === 'function') {
-        mostrarToast('Erro ao salvar carteira: ' + erro.message, 'error');
-      }
-      console.error(erro);
-      // Continua para salvar localmente como fallback
-    }
-  }
-
-  // Fallback: salvar localmente e redirecionar
-  localStorage.setItem('userRegistration', JSON.stringify(data));
-  window.location.href = 'carteira.html';
-========
-  try {
-    // Register user first (or login if the account already exists)
-    try {
-      await registerUser(accountCredentials.email, accountCredentials.password);
-    } catch (error) {
-      if (/already exists/i.test(error.message)) {
-        try {
-          await loginUser(accountCredentials.email, accountCredentials.password);
-        } catch (loginError) {
-          alert('Erro ao acessar a conta existente: ' + loginError.message);
-          return;
-        }
-      } else {
-        alert('Erro ao criar conta: ' + error.message);
-        return;
-      }
-    }
-
-    // Create card
-    const formData = new FormData();
-    formData.append('nome', data.nome);
+  // Create card
+  const formData = new FormData();
+  formData.append('nome', data.nome);
     formData.append('data_nascimento', data.dataNascimento);
     formData.append('sexo', data.sexo);
     formData.append('cpf', data.cpf);
@@ -823,36 +768,10 @@ document.getElementById('chatInput')?.addEventListener('keypress', e => {
   if (e.key === 'Enter') sendChat();
 });
 
-<<<<<<<< HEAD:frontend/assets/js/script.js
 // Inicialização
 document.addEventListener('DOMContentLoaded', function() {
   checkForm();
 });
-========
-// Login modal
-const loginModal = document.getElementById('loginModal');
-document.getElementById('loginBtn')?.addEventListener('click', e => {
-  e.preventDefault();
-  loginModal?.classList.remove('hidden');
-});
-document.getElementById('closeLogin')?.addEventListener('click', () => {
-  loginModal?.classList.add('hidden');
-});
-document.getElementById('showRegister')?.addEventListener('click', e => {
-  e.preventDefault();
-  loginModal?.classList.add('hidden');
-  // Scroll to register section or something
-});
-
-document.getElementById('loginForm')?.addEventListener('submit', async e => {
-  e.preventDefault();
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-
-  try {
-    await loginUser(email, password);
-    loginModal?.classList.add('hidden');
-    alert('Login realizado com sucesso!');
     window.location.reload();
   } catch (error) {
     alert('Erro no login: ' + error.message);

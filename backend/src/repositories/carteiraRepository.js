@@ -12,7 +12,7 @@ export class CarteiraRepository {
            numero_laudo, data_laudo, nome_medico, crm_medico, foto, laudo_url,
            tipo_sanguineo, contato_emergencia, alergias, medicacoes,
            comunicacao, nome_responsavel, cpf_responsavel, vinculo_responsavel
-         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           dados.usuario_id || null,
           dados.tipo || null,

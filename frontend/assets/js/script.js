@@ -7,7 +7,7 @@ const API_BASES = Array.from(new Set([
   'http://localhost:3001/api'
 ].filter(Boolean)));
 
-let authToken = localStorage.getItem('authToken');
+let authToken = localStorage.getItem('carteira_token');
 
 const validCIDs = {
   "6A02":"Transtorno do Espectro Autista","F84":"Transtorno Global do Desenvolvimento",
@@ -469,7 +469,6 @@ if (fields.foto.input) {
   });
 }
 
-<<<<<<<< HEAD:frontend/assets/js/script.js
 // ===== UPLOAD DE LAUDO - CORRIGIDO =====
 if (fields.laudoFile.input) {
   fields.laudoFile.input.addEventListener('change', function(e) {
@@ -528,41 +527,6 @@ if (fields.laudoFile.input) {
     reader.readAsDataURL(file);
   });
 }
-========
-// Laudo File
-fields.laudoFile.input?.addEventListener('change', e => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) {
-    fields.laudoFile.error.textContent = 'Arquivo muito grande. Máximo 5MB.';
-    fields.laudoFile.error.classList.add('show');
-    return;
-  }
-  const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
-  if (!validTypes.includes(file.type)) {
-    fields.laudoFile.error.textContent = 'Formato inválido. Use PDF, JPG ou PNG.';
-    fields.laudoFile.error.classList.add('show');
-    return;
-  }
-  
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    laudoFileData = reader.result;
-    fields.laudoFile.preview.innerHTML = `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--success-500)">
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-        <polyline points="22 4 12 14.01 9 11.01"/>
-      </svg>
-      <span style="color: var(--success-600); font-weight: 500">${file.name}</span>
-    `;
-    fields.laudoFile.preview.classList.add('has-file');
-    fields.laudoFile.error.textContent = '';
-    fields.laudoFile.error.classList.remove('show');
-    checkForm();
-  };
-  reader.readAsDataURL(file);
-});
->>>>>>>> 9b63bc8bf2dfd0cd4475962410d494b918007981:frontend/public/script.js
 
 function getAccountCredentials() {
   const email = (fields.email.input?.value || '').trim().toLowerCase();
@@ -610,15 +574,8 @@ function checkForm() {
   return ok;
 }
 
-<<<<<<<< HEAD:frontend/assets/js/script.js
 // ===== SUBMIT - CORRIGIDO COM ASYNC =====
 document.getElementById('registrationForm')?.addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  const fotoSrc = fotoFileData || (fields.foto.preview?.style.backgroundImage.slice(5, -2) || '');
-========
-// ===== SUBMIT =====
-document.getElementById('registrationForm')?.addEventListener('submit', async(e) => {
   e.preventDefault();
 
   const issues = getFormIssues();
@@ -628,60 +585,39 @@ document.getElementById('registrationForm')?.addEventListener('submit', async(e)
     return;
   }
 
-  const originalButtonHtml = submitBtn?.innerHTML;
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span>Enviando...</span>';
-  }
-
-  const fotoSrc = fields.foto.preview.style.backgroundImage.slice(5, -2);
->>>>>>>> 9b63bc8bf2dfd0cd4475962410d494b918007981:frontend/public/script.js
-
-  const accountCredentials = getAccountCredentials();
+  const fotoSrc = fotoFileData || (fields.foto.preview?.style.backgroundImage.slice(5, -2) || '');
 
   const data = {
     foto: fotoSrc,
-<<<<<<<< HEAD:frontend/assets/js/script.js
     nome: fields.nome.input?.value.trim() || '',
-    dataNascimento: fields.dataNascimento.input?.value || '',
+    data_nascimento: fields.dataNascimento.input?.value || '',
     sexo: document.getElementById('sexo')?.value || '',
     cpf: fields.cpf.input?.value.replace(/\D/g,'') || '',
     rg: fields.rg.input?.value.replace(/\D/g,'') || '',
     telefone: fields.telefone.input?.value.replace(/\D/g,'') || '',
-========
-    nome: fields.nome.input.value.trim(),
-    dataNascimento: fields.dataNascimento.input.value,
-    sexo: document.getElementById('sexo').value,
-    cpf: fields.cpf.input.value.replace(/\D/g,''),
-    rg: fields.rg.input.value.replace(/\D/g,''),
-    telefone: fields.telefone.input.value.replace(/\D/g,''),
-    email: fields.email.input.value.trim(),
->>>>>>>> 9b63bc8bf2dfd0cd4475962410d494b918007981:frontend/public/script.js
+    email: fields.email.input?.value.trim() || '',
     endereco: document.getElementById('endereco')?.value.trim() || '',
     cidade: fields.cidade.input?.value.trim() || '',
     estado: document.getElementById('estado')?.value || '',
-    tipoDeficiencia: document.getElementById('tipoDeficiencia')?.value || '',
-    grauDeficiencia: document.getElementById('grauDeficiencia')?.value || '',
+    tipo_deficiencia: document.getElementById('tipoDeficiencia')?.value || '',
+    grau_deficiencia: document.getElementById('grauDeficiencia')?.value || '',
     cid: fields.cid.input?.value.toUpperCase().trim() || '',
-    necessitaAcompanhante: document.getElementById('necessitaAcompanhante')?.value || '',
+    necessita_acompanhante: document.getElementById('necessitaAcompanhante')?.value || '',
     comunicacao: document.getElementById('comunicacao')?.value || '',
-    numeroLaudo: fields.numeroLaudo.input?.value.trim() || '',
-    dataLaudo: fields.dataLaudo.input?.value || '',
-    nomeMedico: fields.nomeMedico.input?.value.trim() || '',
-    crmMedico: fields.crmMedico.input?.value.trim().toUpperCase() || '',
-    laudoArquivo: laudoFileData,
-    nomeResponsavel: document.getElementById('nomeResponsavel')?.value.trim() || '',
-    cpfResponsavel: document.getElementById('cpfResponsavel')?.value.trim() || '',
-    vinculoResponsavel: document.getElementById('vinculoResponsavel')?.value || '',
-    tipoSanguineo: document.getElementById('tipoSanguineo')?.value || '',
+    numero_laudo: fields.numeroLaudo.input?.value.trim() || '',
+    data_laudo: fields.dataLaudo.input?.value || '',
+    nome_medico: fields.nomeMedico.input?.value.trim() || '',
+    crm_medico: fields.crmMedico.input?.value.trim().toUpperCase() || '',
+    laudo_url: laudoFileData,
+    nome_responsavel: document.getElementById('nomeResponsavel')?.value.trim() || '',
+    cpf_responsavel: document.getElementById('cpfResponsavel')?.value.trim() || '',
+    vinculo_responsavel: document.getElementById('vinculoResponsavel')?.value || '',
+    tipo_sanguineo: document.getElementById('tipoSanguineo')?.value || '',
     alergias: document.getElementById('alergias')?.value.trim() || '',
     medicacoes: document.getElementById('medicacoes')?.value.trim() || '',
-    contatoEmergencia: document.getElementById('contatoEmergencia')?.value.trim() || '',
-    dataEmissao: new Date().toISOString(),
-    validade: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString(),
+    contato_emergencia: document.getElementById('contatoEmergencia')?.value.trim() || '',
   };
 
-<<<<<<<< HEAD:frontend/assets/js/script.js
   // Verifica se a função fazerRequisicao existe (do auth.js)
   if (typeof fazerRequisicao === 'function') {
     try {
@@ -706,70 +642,6 @@ document.getElementById('registrationForm')?.addEventListener('submit', async(e)
   // Fallback: salvar localmente e redirecionar
   localStorage.setItem('userRegistration', JSON.stringify(data));
   window.location.href = 'carteira.html';
-========
-  try {
-    // Register user first (or login if the account already exists)
-    try {
-      await registerUser(accountCredentials.email, accountCredentials.password);
-    } catch (error) {
-      if (/already exists/i.test(error.message)) {
-        try {
-          await loginUser(accountCredentials.email, accountCredentials.password);
-        } catch (loginError) {
-          alert('Erro ao acessar a conta existente: ' + loginError.message);
-          return;
-        }
-      } else {
-        alert('Erro ao criar conta: ' + error.message);
-        return;
-      }
-    }
-
-    // Create card
-    const formData = new FormData();
-    formData.append('nome', data.nome);
-    formData.append('data_nascimento', data.dataNascimento);
-    formData.append('sexo', data.sexo);
-    formData.append('cpf', data.cpf);
-    formData.append('rg', data.rg);
-    formData.append('telefone', data.telefone);
-    formData.append('email', data.email);
-    formData.append('endereco', data.endereco);
-    formData.append('cidade', data.cidade);
-    formData.append('estado', data.estado);
-    formData.append('tipo_deficiencia', data.tipoDeficiencia);
-    formData.append('grau_deficiencia', data.grauDeficiencia);
-    formData.append('cid', data.cid);
-    formData.append('numero_laudo', data.numeroLaudo);
-    formData.append('data_laudo', data.dataLaudo);
-    formData.append('nome_medico', data.nomeMedico);
-    formData.append('crm_medico', data.crmMedico);
-    formData.append('acompanhante', data.necessitaAcompanhante === 'Sim' ? '1' : '0');
-
-    const fotoFile = fields.foto.input?.files?.[0];
-    if (fotoFile) {
-      formData.append('foto', fotoFile, fotoFile.name || 'foto.jpg');
-    }
-
-    const laudoFile = fields.laudoFile.input?.files?.[0];
-    if (laudoFile) {
-      formData.append('laudoFile', laudoFile, laudoFile.name);
-    }
-
-    const createdCard = await createCard(formData);
-    localStorage.setItem('userRegistration', JSON.stringify({ ...data, card: createdCard }));
-    alert('Carteira criada com sucesso!');
-    window.location.href = 'carteira.html';
-  } catch (error) {
-    alert('Erro ao criar carteira: ' + error.message);
-  } finally {
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalButtonHtml || '<span>Gerar Carteira GO Card PCD</span>';
-    }
-    checkForm();
-  }
->>>>>>>> 9b63bc8bf2dfd0cd4475962410d494b918007981:frontend/public/script.js
 });
 
 checkForm();
@@ -823,40 +695,7 @@ document.getElementById('chatInput')?.addEventListener('keypress', e => {
   if (e.key === 'Enter') sendChat();
 });
 
-<<<<<<<< HEAD:frontend/assets/js/script.js
 // Inicialização
 document.addEventListener('DOMContentLoaded', function() {
   checkForm();
 });
-========
-// Login modal
-const loginModal = document.getElementById('loginModal');
-document.getElementById('loginBtn')?.addEventListener('click', e => {
-  e.preventDefault();
-  loginModal?.classList.remove('hidden');
-});
-document.getElementById('closeLogin')?.addEventListener('click', () => {
-  loginModal?.classList.add('hidden');
-});
-document.getElementById('showRegister')?.addEventListener('click', e => {
-  e.preventDefault();
-  loginModal?.classList.add('hidden');
-  // Scroll to register section or something
-});
-
-document.getElementById('loginForm')?.addEventListener('submit', async e => {
-  e.preventDefault();
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-
-  try {
-    await loginUser(email, password);
-    loginModal?.classList.add('hidden');
-    alert('Login realizado com sucesso!');
-    window.location.reload();
-  } catch (error) {
-    alert('Erro no login: ' + error.message);
-  }
-});
-
->>>>>>>> 9b63bc8bf2dfd0cd4475962410d494b918007981:frontend/public/script.js

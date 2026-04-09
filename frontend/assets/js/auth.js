@@ -42,7 +42,7 @@ function mostrarToast(mensagem, tipo = 'info', duracao = 3000) {
     }, duracao);
 }
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://localhost:3001';
 
 /**
  * Faz requisicao para o backend (API)

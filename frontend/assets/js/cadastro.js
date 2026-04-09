@@ -274,7 +274,7 @@ async function handleCadastro(e) {
 
             // Redirecionar após 3 segundos
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = 'cadastro_carteira.html';
             }, 3000);
         }
     } catch (erro) {

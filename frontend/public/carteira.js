@@ -2,11 +2,11 @@
 // Carrega dados da API e gera QR Code que aponta para verificar.html
 
 const API_BASES = Array.from(new Set([
-  window.location.protocol.startsWith('http') ? `${window.location.origin}/api` : null,
+  'http://localhost:3001/api',
   'http://localhost:3000/api',
-  'http://localhost:3001/api'
+  window.location.protocol.startsWith('http') ? `${window.location.origin}/api` : null
 ].filter(Boolean)));
-let authToken = localStorage.getItem('authToken');
+let authToken = localStorage.getItem('carteira_token');
 
 async function apiRequest(endpoint, options = {}) {
   let lastNetworkError = null;
@@ -27,16 +27,29 @@ async function apiRequest(endpoint, options = {}) {
 
     try {
       const response = await fetch(url, config);
-      const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const text = await response.text();
+      const data = contentType.includes('application/json') ? JSON.parse(text) : text;
 
       if (!response.ok) {
-        throw new Error(data.error || 'API request failed');
+        if (!contentType.includes('application/json')) {
+          lastNetworkError = new Error(`Resposta não JSON do servidor em ${url}`);
+          continue;
+        }
+        throw new Error(data.error || data.mensagem || data || 'API request failed');
+      }
+
+      if (!contentType.includes('application/json')) {
+        throw new Error(`Resposta inesperada do servidor em ${url}`);
       }
 
       return data;
     } catch (error) {
       if (error instanceof TypeError) {
         lastNetworkError = error;
+        continue;
+      }
+      if (error.message && error.message.startsWith('Resposta não JSON')) {
         continue;
       }
       throw error;
@@ -47,7 +60,7 @@ async function apiRequest(endpoint, options = {}) {
 }
 
 async function getMyCard() {
-  return apiRequest('/cards/my');
+  return apiRequest('/carteiras/minha');
 }
 
 const validCIDs = {
