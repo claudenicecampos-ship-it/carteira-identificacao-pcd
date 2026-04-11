@@ -256,7 +256,7 @@ export class AutenticacaoService {
 
   static async solicitarRecuperacaoSenha(email) {
     const usuario = await UsuarioRepository.buscarPorEmail(email);
-    
+
     if (!usuario) {
       // Não retornar erro para não expor se email existe
       return { mensagem: 'Se o email existe, enviaremos instruções' };
@@ -264,6 +264,7 @@ export class AutenticacaoService {
 
     // Gerar token único
     const token = uuidv4();
+    console.log('Token gerado:', token); // Debug
     const expira_em = new Date();
     expira_em.setHours(expira_em.getHours() + 1); // 1 hora
 
@@ -272,7 +273,7 @@ export class AutenticacaoService {
 
     // Enviar email
     const link = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/recuperar-senha.html?token=${token}`;
-    await enviarEmailRecuperacao(usuario.email, usuario.nome, link);
+    await enviarEmailRecuperacao(usuario.email, usuario.nome, token, link);
 
     return { mensagem: 'Email de recuperação enviado' };
   }
@@ -281,16 +282,20 @@ export class AutenticacaoService {
    * Redefine senha
    */
   static async redefinirSenha(token, novaSenha) {
+    console.log('Token recebido para redefinição:', token); // Debug
     if (!validarForçaSenha(novaSenha)) {
       throw new Error('Senha deve ter: 8+ caracteres, maiúscula, minúscula, número e caractere especial');
     }
 
     // Buscar token
     const recuperacao = await RecuperacaoSenhaRepository.buscarPorToken(token);
-    
+
     if (!recuperacao) {
+      console.log('Token não encontrado ou expirado'); // Debug
       throw new Error('Token inválido ou expirado');
     }
+
+    console.log('Token válido encontrado:', recuperacao); // Debug
 
     // Criptografar nova senha
     const senhaHash = await criptografarSenha(novaSenha);

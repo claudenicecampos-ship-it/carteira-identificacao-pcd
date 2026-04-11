@@ -139,6 +139,7 @@ function normalizarDadosCarteira(dados) {
     'data_emissao': 'dataEmissao',
     'data_validade': 'validade',
     'laudo_url': 'laudoArquivo',
+    'laudoUrl': 'laudoArquivo',
   };
   
   for (const [snakeCase, camelCase] of Object.entries(mapeamento)) {

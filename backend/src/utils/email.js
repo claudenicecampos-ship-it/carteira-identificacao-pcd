@@ -33,7 +33,7 @@ export const enviarEmailConfirmacao = async (email, nome, link) => {
 /**
  * Envia email de recuperação de senha
  */
-export const enviarEmailRecuperacao = async (email, nome, link) => {
+export const enviarEmailRecuperacao = async (email, nome, token, link) => {
   try {
     const opcoes = {
       from: process.env.EMAIL_FROM,
@@ -42,11 +42,11 @@ export const enviarEmailRecuperacao = async (email, nome, link) => {
       html: `
         <h2>Olá, ${nome}!</h2>
         <p>Recebemos uma solicitação para redefinir sua senha.</p>
-        <p>Clique no link abaixo para criar uma nova senha:</p>
+        <p>Use o token abaixo no formulário de recuperação de senha:</p>
+        <p style="font-size: 20px; font-weight: bold;">${token}</p>
+        <p>Ou clique no link abaixo para abrir o formulário automaticamente:</p>
         <a href="${link}" style="background-color: #2196F3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Redefinir Senha</a>
-        <p>Ou copie e cole este link no seu navegador:</p>
-        <p>${link}</p>
-        <p>Este link expira em 1 hora.</p>
+        <p>Este token expira em 1 hora.</p>
         <p>Se você não solicitou isso, ignore este email.</p>
       `
     };

@@ -50,26 +50,40 @@
                         <div class="email-sent">
                             <div class="email-icon">📧</div>
                             <h2>Email Enviado!</h2>
-                            <p>Enviamos um link de recuperação para:</p>
+                            <p>Enviamos um email de recuperação para:</p>
                             <p class="email-info" id="emailInfo"></p>
                             <p class="small-text">
-                                Verifique sua caixa de entrada e spam. 
-                                O link expira em 1 hora.
+                                Copie o token enviado no email e cole no próximo passo.
+                                Se quiser, também pode usar o link direto do email.
                             </p>
 
-                            <div class="resend-section">
-                                <p>Não recebeu o email?</p>
-                                <button type="button" class="btn-link" onclick="voltarStep()">Tentar novamente</button>
-                                <p class="small-text">
-                                    Se precisar de ajuda, entre em contato com nosso suporte.
-                                </p>
+                            <div class="button-group">
+                                <button type="button" class="btn-primary" onclick="irParaStep3()">Continuar</button>
+                                <button type="button" class="btn-secondary" onclick="voltarStep()">Tentar novamente</button>
                             </div>
+
+                            <p class="small-text">
+                                Se precisar de ajuda, entre em contato com nosso suporte.
+                            </p>
                         </div>
                     </div>
 
-                    <!-- Step 3: Redefinir Senha (se houver token na URL) -->
+                    <!-- Step 3: Redefinir Senha (token no email ou token na URL) -->
                     <div class="form-step" id="step3">
                         <h3>Criar Nova Senha</h3>
+
+                        <div class="form-group">
+                            <label for="recoveryToken">Token de recuperação</label>
+                            <input 
+                                type="text" 
+                                id="recoveryToken" 
+                                name="recoveryToken" 
+                                placeholder="Cole o token recebido por email"
+                                maxlength="36"
+                                required
+                            >
+                            <span class="error-message" id="recoveryTokenError"></span>
+                        </div>
 
                         <div class="form-group">
                             <label for="novaSenha">Nova Senha</label>

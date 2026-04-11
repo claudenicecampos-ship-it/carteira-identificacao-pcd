@@ -2,10 +2,10 @@
 -- Database: carteira
 -- Versão: 1.0
 
-CREATE DATABASE IF NOT EXISTS carteira CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS carteira CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE carteira;
 
-SET NAMES utf8;
+SET NAMES utf8mb4;
 
 
 CREATE TABLE IF NOT EXISTS usuarios (
@@ -24,10 +24,10 @@ CREATE TABLE IF NOT EXISTS usuarios (
     INDEX idx_email (email),
     INDEX idx_cpf (cpf),
     INDEX idx_ativa (ativo)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Tabela de Carteiras
-CREATE TABLE carteiras (
+CREATE TABLE IF NOT EXISTS carteiras (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT,
     tipo VARCHAR(50) NOT NULL,
@@ -48,8 +48,8 @@ CREATE TABLE carteiras (
     data_laudo DATE,
     nome_medico VARCHAR(255),
     crm_medico VARCHAR(100),
-    foto TEXT,
-    laudo_url TEXT,
+    foto LONGTEXT,
+    laudo_url LONGTEXT,
     tipo_sanguineo VARCHAR(5),
     contato_emergencia VARCHAR(255),
     alergias TEXT,
@@ -67,17 +67,13 @@ CREATE TABLE carteiras (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     INDEX idx_usuario_id (usuario_id),
     INDEX idx_ativa (ativa)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Ajuste de esquema para bancos existentes
-ALTER TABLE carteiras
-  ADD COLUMN IF NOT EXISTS nome VARCHAR(255),
-  ADD COLUMN IF NOT EXISTS cpf VARCHAR(11),
-  ADD COLUMN IF NOT EXISTS rg VARCHAR(20),
-  ADD COLUMN IF NOT EXISTS sexo VARCHAR(10);
+ALTER TABLE carteiras MODIFY COLUMN foto LONGTEXT;
+ALTER TABLE carteiras MODIFY COLUMN laudo_url LONGTEXT;
 
 -- Tabela de Denúncias
-CREATE TABLE denuncias (
+CREATE TABLE IF NOT EXISTS denuncias (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     titulo VARCHAR(255) NOT NULL,
@@ -95,10 +91,10 @@ CREATE TABLE denuncias (
     INDEX idx_usuario_id (usuario_id),
     INDEX idx_status (status),
     INDEX idx_criada_em (criada_em)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Tabela de Recuperação de Senha
-CREATE TABLE recuperacao_senha (
+CREATE TABLE IF NOT EXISTS recuperacao_senha (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     token VARCHAR(255) UNIQUE NOT NULL,
@@ -109,10 +105,10 @@ CREATE TABLE recuperacao_senha (
     INDEX idx_token (token),
     INDEX idx_usuario_id (usuario_id),
     INDEX idx_expira_em (expira_em)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Tabela de Auditoria (Log de ações)
-CREATE TABLE auditoria (
+CREATE TABLE IF NOT EXISTS auditoria (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT,
     acao VARCHAR(100) NOT NULL,
@@ -126,10 +122,10 @@ CREATE TABLE auditoria (
     INDEX idx_usuario_id (usuario_id),
     INDEX idx_acao (acao),
     INDEX idx_criado_em (criado_em)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Tabela de Sessões
-CREATE TABLE sessoes (
+CREATE TABLE IF NOT EXISTS sessoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     token_refresh VARCHAR(191) UNIQUE NOT NULL,
@@ -144,10 +140,10 @@ CREATE TABLE sessoes (
     INDEX idx_token (token_refresh),
     INDEX idx_ativa (ativa),
     INDEX idx_expira_em (expira_em)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Tabela de Administradores
-CREATE TABLE administradores (
+CREATE TABLE IF NOT EXISTS administradores (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL UNIQUE,
     permissoes TEXT,
@@ -155,7 +151,7 @@ CREATE TABLE administradores (
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     INDEX idx_usuario_id (usuario_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Inserir dados de teste (opcional)
 INSERT INTO usuarios (nome, email, senha, cpf, telefone, data_nascimento, role) VALUES
@@ -175,7 +171,7 @@ CREATE TABLE IF NOT EXISTS login_bloqueios (
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Código de desbloqueio de exemplo para uso manual
 INSERT INTO login_bloqueios (email, tentativas, bloqueado_ate, codigo_desbloqueio) VALUES

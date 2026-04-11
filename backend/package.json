@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js",
+    "dev": "powershell -Command \"try { $pids = netstat -ano | findstr ':3001.*LISTENING' | ForEach-Object { $_.Split()[-1] } | Where-Object { $_ -and $_ -ne '0' }; if ($pids) { Write-Host 'Liberando porta 3001...'; $pids | ForEach-Object { taskkill /PID $_ /F 2>$null } } } catch {}; Start-Sleep -Seconds 1; nodemon server.js\"",
+    "dev:clean": "powershell -Command \"try { $pids = netstat -ano | findstr ':3001.*LISTENING' | ForEach-Object { $_.Split()[-1] } | Where-Object { $_ -and $_ -ne '0' }; if ($pids) { Write-Host 'Liberando porta 3001...'; $pids | ForEach-Object { taskkill /PID $_ /F 2>$null } } } catch {}; Start-Sleep -Seconds 1; nodemon server.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

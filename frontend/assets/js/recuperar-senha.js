@@ -23,9 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     if (token) {
-        // Pular para step de redefinição
+        // Pular para step de redefinição e preencher o token automaticamente
         stepAtual = 3;
         mostrarStep();
+        const recoveryTokenInput = document.getElementById('recoveryToken');
+        if (recoveryTokenInput) {
+            recoveryTokenInput.value = token;
+        }
     }
     
     // Configurar input do código
@@ -102,47 +106,20 @@ async function enviarEmail() {
         desabilitarBotao('enviarBtn');
         limparErros();
 
-        // Tentar enviar via API primeiro
-        try {
-            const resposta = await fazerRequisicao('/auth/recuperar-senha', 'POST', { email });
+        const resposta = await fazerRequisicao('/auth/recuperar-senha', 'POST', { email });
 
-            if (resposta.sucesso) {
-                emailRecuperacao = email;
-                document.getElementById('emailInfo').textContent = email;
-                
-                stepAtual = 2;
-                mostrarStep();
-                
-                mostrarToast('Email de recuperação enviado!', 'success');
-                habilitarBotao('enviarBtn');
-                return;
-            }
-        } catch (erro) {
-            console.log('API indisponível, usando modo offline');
+        if (resposta.sucesso) {
+            emailRecuperacao = email;
+            document.getElementById('emailInfo').textContent = email;
+
+            stepAtual = 3;
+            mostrarStep();
+
+            mostrarToast('Email de recuperação enviado! Copie o token enviado e cole abaixo.', 'success');
+            return;
         }
-        
-        // Modo offline: simular envio e usar código local
-        codigoGerado = gerarCodigoRecuperacao();
-        emailRecuperacao = email;
-        
-        // Salvar código no localStorage (em produção, isso seria feito no servidor)
-        const recuperacaoData = {
-            email: email,
-            codigo: codigoGerado,
-            expira: Date.now() + (60 * 60 * 1000) // 1 hora
-        };
-        localStorage.setItem('recuperacao_temp', JSON.stringify(recuperacaoData));
-        
-        document.getElementById('emailInfo').textContent = email;
-        
-        stepAtual = 2;
-        mostrarStep();
-        
-        // Em modo desenvolvimento, mostrar o código (remover em produção)
-        mostrarToast(`Código enviado! (Dev: ${codigoGerado})`, 'success');
-        
     } catch (erro) {
-        mostrarToast(erro.message, 'error');
+        mostrarToast(erro.message || 'Falha ao solicitar recuperação de senha. Verifique o servidor.', 'error');
     } finally {
         habilitarBotao('enviarBtn');
     }
@@ -155,58 +132,9 @@ function voltarStep() {
     }
 }
 
-async function verificarCodigo() {
-    const inputs = document.querySelectorAll('.codigo-input');
-    let codigo = '';
-    
-    inputs.forEach(input => {
-        codigo += input.value;
-    });
-    
-    if (codigo.length !== 6) {
-        mostrarToast('Digite o código completo de 6 dígitos', 'error');
-        return;
-    }
-    
-    try {
-        desabilitarBotao('verificarCodigoBtn');
-        
-        // Tentar verificar via API
-        try {
-            const resposta = await fazerRequisicao('/auth/verificar-codigo', 'POST', { 
-                email: emailRecuperacao,
-                codigo 
-            });
-            
-            if (resposta.sucesso) {
-                stepAtual = 3;
-                mostrarStep();
-                mostrarToast('Código verificado!', 'success');
-                habilitarBotao('verificarCodigoBtn');
-                return;
-            }
-        } catch (erro) {
-            console.log('API indisponível, verificando localmente');
-        }
-        
-        // Verificar localmente
-        const recuperacaoData = JSON.parse(localStorage.getItem('recuperacao_temp') || '{}');
-        
-        if (recuperacaoData.codigo === codigo && Date.now() < recuperacaoData.expira) {
-            stepAtual = 3;
-            mostrarStep();
-            mostrarToast('Código verificado!', 'success');
-        } else if (Date.now() >= recuperacaoData.expira) {
-            mostrarToast('Código expirado. Solicite um novo.', 'error');
-        } else {
-            mostrarToast('Código incorreto', 'error');
-        }
-        
-    } catch (erro) {
-        mostrarToast(erro.message, 'error');
-    } finally {
-        habilitarBotao('verificarCodigoBtn');
-    }
+function irParaStep3() {
+    stepAtual = 3;
+    mostrarStep();
 }
 
 function reenviarCodigo() {
@@ -229,10 +157,23 @@ function reenviarCodigo() {
 }
 
 async function redefinirSenha() {
+    const tokenInput = document.getElementById('recoveryToken').value.trim();
     const novaSenha = document.getElementById('novaSenha').value;
     const confirmarSenha = document.getElementById('confirmarSenha').value;
 
     limparErros();
+
+    if (!tokenInput) {
+        mostrarErro('recoveryToken', 'Token de recuperação é obrigatório');
+        return;
+    }
+
+    // Validar formato do token (UUID v4)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(tokenInput)) {
+        mostrarErro('recoveryToken', 'Token inválido. Copie exatamente como recebido no email.');
+        return;
+    }
 
     // Validar nova senha
     if (!validarSenha(novaSenha)) {
@@ -249,41 +190,22 @@ async function redefinirSenha() {
     try {
         desabilitarBotao('redefinirBtn');
 
-        // Obter token da URL ou usar código verificado
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
+        const token = tokenInput;
 
-        // Tentar via API
-        try {
-            const resposta = await fazerRequisicao('/auth/redefinir-senha', 'POST', {
-                token: token,
-                novaSenha
-            });
+        const resposta = await fazerRequisicao('/auth/redefinir-senha', 'POST', {
+            token,
+            novaSenha
+        });
 
-            if (resposta.sucesso) {
-                finalizarRedefinicao();
-                return;
-            }
-        } catch (erro) {
-            console.log('API indisponível, salvando localmente');
+        if (resposta.sucesso) {
+            finalizarRedefinicao();
+            return;
         }
-        
-        // Modo offline: atualizar senha no localStorage
-        const usuarios = obterUsuariosDB();
-        const usuarioIndex = usuarios.findIndex(u => u.email === emailRecuperacao);
-        
-        if (usuarioIndex !== -1) {
-            usuarios[usuarioIndex].senha = novaSenha; // Em produção, isso seria hash
-            salvarUsuariosDB(usuarios);
-        }
-        
-        // Limpar dados de recuperação
-        localStorage.removeItem('recuperacao_temp');
-        
-        finalizarRedefinicao();
 
+        mostrarToast('Falha ao redefinir senha. Tente novamente.', 'error');
     } catch (erro) {
-        mostrarToast(erro.message, 'error');
+        mostrarToast(erro.message || 'Falha ao redefinir senha. Verifique o servidor.', 'error');
+    } finally {
         habilitarBotao('redefinirBtn');
     }
 }
