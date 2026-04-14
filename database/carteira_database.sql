@@ -11,7 +11,7 @@ SET NAMES utf8mb4;
 CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(191) UNIQUE NOT NULL,
     senha VARCHAR(255) NOT NULL,
     cpf VARCHAR(11) UNIQUE NOT NULL,
     telefone VARCHAR(15),
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS denuncias (
 CREATE TABLE IF NOT EXISTS recuperacao_senha (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
-    token VARCHAR(255) UNIQUE NOT NULL,
+    token VARCHAR(191) UNIQUE NOT NULL,
     expira_em TIMESTAMP NOT NULL,
     utilizado BOOLEAN DEFAULT FALSE,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -163,7 +163,7 @@ INSERT INTO administradores (usuario_id, permissoes) VALUES
 -- Tabela de bloqueio de login para controlar tentativas e desbloqueio manual
 CREATE TABLE IF NOT EXISTS login_bloqueios (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(191) NOT NULL UNIQUE,
     tentativas INT DEFAULT 0,
     bloqueado_ate TIMESTAMP NULL,
     codigo_desbloqueio VARCHAR(191),
