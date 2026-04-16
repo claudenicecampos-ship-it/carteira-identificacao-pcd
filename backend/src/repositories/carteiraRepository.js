@@ -6,18 +6,19 @@ export class CarteiraRepository {
       const conexao = await pool.getConnection();
       const [resultado] = await conexao.execute(
         `INSERT INTO carteiras (
-           usuario_id, tipo, numero_carteira, descricao,
+           usuario_id, tipo, numero_carteira, descricao, ativa,
            data_nascimento, endereco, cidade, estado, cep, telefone,
            tipo_deficiencia, grau_deficiencia, cid, necessita_acompanhante,
            numero_laudo, data_laudo, nome_medico, crm_medico, foto, laudo_url,
            tipo_sanguineo, contato_emergencia, alergias, medicacoes,
            comunicacao, nome_responsavel, cpf_responsavel, vinculo_responsavel
-         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           dados.usuario_id || null,
           dados.tipo || null,
           dados.numero_carteira,
           dados.descricao || null,
+          dados.ativa === false ? 0 : 1,
           dados.data_nascimento || null,
           dados.endereco || null,
           dados.cidade || null,
@@ -55,7 +56,7 @@ export class CarteiraRepository {
     try {
       const conexao = await pool.getConnection();
       const [resultado] = await conexao.execute(
-        'SELECT * FROM carteiras WHERE usuario_id = ? AND ativa = 1 LIMIT 1',
+        'SELECT * FROM carteiras WHERE usuario_id = ? AND (ativa = 1 OR ativa IS NULL) LIMIT 1',
         [usuario_id]
       );
       conexao.release();

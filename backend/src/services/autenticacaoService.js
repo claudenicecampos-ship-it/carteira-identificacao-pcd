@@ -18,25 +18,25 @@ export class AutenticacaoService {
   static async registrar(nome, email, senha, cpf, telefone, data_nascimento) {
     // Validações
     if (!validarEmail(email)) {
-      throw new Error('Email inválido');
+      return { success: false, status: 400, message: 'Email inválido' };
     }
 
     if (!validarCPF(cpf)) {
-      throw new Error('CPF inválido');
+      return { success: false, status: 400, message: 'CPF inválido' };
     }
 
     if (!validarForçaSenha(senha)) {
-      throw new Error('Senha deve ter: 8+ caracteres, maiúscula, minúscula, número e caractere especial');
+      return { success: false, status: 400, message: 'Senha deve ter: 8+ caracteres, maiúscula, minúscula, número e caractere especial' };
     }
 
     // Verificar se email já existe
     if (await UsuarioRepository.emailExiste(email)) {
-      throw new Error('Email já cadastrado');
+      return { success: false, status: 409, message: 'Email já cadastrado' };
     }
 
     // Verificar se CPF já existe
     if (await UsuarioRepository.cpfExiste(cpf)) {
-      throw new Error('CPF já cadastrado');
+      return { success: false, status: 409, message: 'CPF já cadastrado' };
     }
 
     // Criptografar senha
@@ -71,14 +71,17 @@ export class AutenticacaoService {
     await SessaoRepository.criar(usuario_id, refreshToken, '', '', expira_em);
 
     return {
-      usuario: {
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        qr_code: usuario.qr_code
-      },
-      token,
-      refreshToken
+      success: true,
+      data: {
+        usuario: {
+          id: usuario.id,
+          nome: usuario.nome,
+          email: usuario.email,
+          qr_code: usuario.qr_code
+        },
+        token,
+        refreshToken
+      }
     };
   }
 
@@ -90,17 +93,17 @@ export class AutenticacaoService {
     const usuario = await UsuarioRepository.buscarPorEmail(email);
     
     if (!usuario) {
-      throw new Error('Email ou senha incorretos');
+      return { success: false, status: 401, message: 'Email ou senha incorretos' };
     }
 
     if (!usuario.ativo) {
-      throw new Error('Usuário desativado');
+      return { success: false, status: 403, message: 'Usuário desativado' };
     }
 
     // Comparar senha
     const senhaValida = await compararSenha(senha, usuario.senha);
     if (!senhaValida) {
-      throw new Error('Email ou senha incorretos');
+      return { success: false, status: 401, message: 'Email ou senha incorretos' };
     }
 
     // Gerar tokens
@@ -120,15 +123,18 @@ export class AutenticacaoService {
     }
 
     return {
-      usuario: {
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        qr_code: usuario.qr_code,
-        role: usuario.role || 'user'
-      },
-      token,
-      refreshToken
+      success: true,
+      data: {
+        usuario: {
+          id: usuario.id,
+          nome: usuario.nome,
+          email: usuario.email,
+          qr_code: usuario.qr_code,
+          role: usuario.role || 'user'
+        },
+        token,
+        refreshToken
+      }
     };
   }
 
@@ -140,26 +146,29 @@ export class AutenticacaoService {
     const sessao = await SessaoRepository.buscarPorToken(refreshToken);
     
     if (!sessao) {
-      throw new Error('Refresh token inválido ou expirado');
+      return { success: false, status: 401, message: 'Refresh token inválido ou expirado' };
     }
 
     // Buscar usuário
     const usuario = await UsuarioRepository.buscarPorId(sessao.usuario_id);
     
     if (!usuario) {
-      throw new Error('Usuário não encontrado');
+      return { success: false, status: 404, message: 'Usuário não encontrado' };
     }
 
     // Gerar novo token
     const novoToken = gerarToken(usuario.id, usuario.email, usuario.role || 'user');
 
     return {
-      token: novoToken,
-      usuario: {
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        role: usuario.role || 'user'
+      success: true,
+      data: {
+        token: novoToken,
+        usuario: {
+          id: usuario.id,
+          nome: usuario.nome,
+          email: usuario.email,
+          role: usuario.role || 'user'
+        }
       }
     };
   }
@@ -172,7 +181,7 @@ export class AutenticacaoService {
     
     if (!usuario) {
       // Não retornar erro para não expor se email existe
-      return { mensagem: 'Se o email existe, enviaremos instruções' };
+      return { success: true, data: { mensagem: 'Se o email existe, enviaremos instruções' } };
     }
 
     // Gerar token único
@@ -187,7 +196,7 @@ export class AutenticacaoService {
     const link = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/recuperar-senha.html?token=${token}`;
     await enviarEmailRecuperacao(usuario.email, usuario.nome, link);
 
-    return { mensagem: 'Email de recuperação enviado' };
+    return { success: true, data: { mensagem: 'Email de recuperação enviado' } };
   }
 
   /**
@@ -195,14 +204,14 @@ export class AutenticacaoService {
    */
   static async redefinirSenha(token, novaSenha) {
     if (!validarForçaSenha(novaSenha)) {
-      throw new Error('Senha deve ter: 8+ caracteres, maiúscula, minúscula, número e caractere especial');
+      return { success: false, status: 400, message: 'Senha deve ter: 8+ caracteres, maiúscula, minúscula, número e caractere especial' };
     }
 
     // Buscar token
     const recuperacao = await RecuperacaoSenhaRepository.buscarPorToken(token);
     
     if (!recuperacao) {
-      throw new Error('Token inválido ou expirado');
+      return { success: false, status: 400, message: 'Token inválido ou expirado' };
     }
 
     // Criptografar nova senha
@@ -219,7 +228,7 @@ export class AutenticacaoService {
     // Encerrar todas as sessões
     await SessaoRepository.encerrarTodasSessoes(recuperacao.usuario_id);
 
-    return { mensagem: 'Senha alterada com sucesso' };
+    return { success: true, data: { mensagem: 'Senha alterada com sucesso' } };
   }
 
   /**
@@ -227,34 +236,40 @@ export class AutenticacaoService {
    */
   static async logout(usuario_id) {
     await SessaoRepository.encerrarTodasSessoes(usuario_id);
-    return { mensagem: 'Logout realizado com sucesso' };
+    return { success: true, data: { mensagem: 'Logout realizado com sucesso' } };
   }
 
   /**
    * Registrar administrador
    */
   static async registrarAdmin(nome, email, senha, cpf) {
+    // Verificar se já existe admin
+    const adminExistente = await UsuarioRepository.buscarPorRole('admin');
+    if (adminExistente) {
+      return { success: false, status: 400, message: 'Administrador já existe' };
+    }
+
     // Validações
     if (!validarEmail(email)) {
-      throw new Error('Email inválido');
+      return { success: false, status: 400, message: 'Email inválido' };
     }
 
     if (!validarCPF(cpf)) {
-      throw new Error('CPF inválido');
+      return { success: false, status: 400, message: 'CPF inválido' };
     }
 
     if (!validarForçaSenha(senha)) {
-      throw new Error('Senha deve ter: 8+ caracteres, maiúscula, minúscula, número e caractere especial');
+      return { success: false, status: 400, message: 'Senha deve ter: 8+ caracteres, maiúscula, minúscula, número e caractere especial' };
     }
 
     // Verificar se email já existe
     if (await UsuarioRepository.emailExiste(email)) {
-      throw new Error('Email já cadastrado');
+      return { success: false, status: 409, message: 'Email já cadastrado' };
     }
 
     // Verificar se CPF já existe
     if (await UsuarioRepository.cpfExiste(cpf)) {
-      throw new Error('CPF já cadastrado');
+      return { success: false, status: 409, message: 'CPF já cadastrado' };
     }
 
     // Criptografar senha
@@ -286,15 +301,18 @@ export class AutenticacaoService {
     await SessaoRepository.criar(usuario_id, refreshToken, '', '', expira_em);
 
     return {
-      usuario: {
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        role: usuario.role,
-        qr_code: usuario.qr_code
-      },
-      token,
-      refreshToken
+      success: true,
+      data: {
+        usuario: {
+          id: usuario.id,
+          nome: usuario.nome,
+          email: usuario.email,
+          role: usuario.role,
+          qr_code: usuario.qr_code
+        },
+        token,
+        refreshToken
+      }
     };
   }
 }

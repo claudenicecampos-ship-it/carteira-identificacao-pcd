@@ -5,8 +5,8 @@ export class CarteiraController {
     try {
       const dados = {
         usuario_id: req.usuario_id,
-        tipo: req.body.tipo,
-        descricao: req.body.descricao,
+        tipo: req.body.tipo || req.body.tipo_deficiencia || 'PCD',
+        descricao: req.body.descricao || `Carteira PCD de ${req.body.nome || 'Usuário'}`,
         data_nascimento: req.body.data_nascimento,
         endereco: req.body.endereco,
         cidade: req.body.cidade,

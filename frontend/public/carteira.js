@@ -2,7 +2,7 @@
 // Carrega dados da API e gera QR Code que aponta para verificar.html
 
 const API_BASES = Array.from(new Set([
-  'http://localhost:3001/api',
+  'http://localhost:3000/api',
   'http://localhost:3000/api',
   window.location.protocol.startsWith('http') ? `${window.location.origin}/api` : null
 ].filter(Boolean)));

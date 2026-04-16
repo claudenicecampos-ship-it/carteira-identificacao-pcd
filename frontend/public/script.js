@@ -4,7 +4,7 @@
 const API_BASES = Array.from(new Set([
   window.location.protocol.startsWith('http') ? `${window.location.origin}/api` : null,
   'http://localhost:3000/api',
-  'http://localhost:3001/api'
+  'http://localhost:3000/api'
 ].filter(Boolean)));
 
 let authToken = localStorage.getItem('carteira_token');

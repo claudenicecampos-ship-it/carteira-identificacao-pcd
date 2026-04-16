@@ -4,7 +4,7 @@
 const API_BASES = Array.from(new Set([
   window.location.protocol.startsWith('http') ? `${window.location.origin}/api` : null,
   'http://localhost:3000/api',
-  'http://localhost:3001/api'
+  'http://localhost:3000/api'
 ].filter(Boolean)));
 
 let authToken = localStorage.getItem('carteira_token');
@@ -634,12 +634,13 @@ document.getElementById('registrationForm')?.addEventListener('submit', async fu
       if (typeof mostrarToast === 'function') {
         mostrarToast('Erro ao salvar carteira: ' + erro.message, 'error');
       }
-      console.error(erro);
-      // Continua para salvar localmente como fallback
+      console.error('Erro ao criar carteira no servidor:', erro);
+      habilitarBotao('cadastroBtn');
+      return;
     }
   }
 
-  // Fallback: salvar localmente e redirecionar
+  // Se a API não estiver disponível, salvar localmente e redirecionar
   localStorage.setItem('userRegistration', JSON.stringify(data));
   window.location.href = 'carteira.html';
 });
