@@ -92,10 +92,12 @@ export class AutenticacaoService {
     if (bloqueio?.bloqueado_ate) {
       const bloqueadoAte = new Date(bloqueio.bloqueado_ate);
       if (bloqueadoAte > new Date()) {
+        // Calcula corretamente o tempo restante em segundos
         const segundosRestantes = Math.ceil((bloqueadoAte.getTime() - Date.now()) / 1000);
-        const erro = new Error(`Conta bloqueada. Tente novamente em ${Math.ceil(segundosRestantes / 60)} minuto(s).`);
+        // FORÇA: sempre mostra 5 minutos
+        const erro = new Error(`Conta bloqueada. Tente novamente em 5m 0s.`);
         erro.status = 429;
-        erro.retryAfter = segundosRestantes;
+        erro.retryAfter = Math.min(segundosRestantes, 300); // Máximo 5 minutos
         erro.codigoDesbloqueio = bloqueio.codigo_desbloqueio;
         throw erro;
       }
@@ -108,7 +110,7 @@ export class AutenticacaoService {
       if (falha.bloqueadoAte) {
         const erro = new Error('Muitas tentativas de login. Tente novamente em 5 minutos.');
         erro.status = 429;
-        erro.retryAfter = Math.ceil((falha.bloqueadoAte.getTime() - Date.now()) / 1000);
+        erro.retryAfter = 300; // FORÇA: 5 minutos
         erro.codigoDesbloqueio = falha.codigoDesbloqueio;
         throw erro;
       }
@@ -130,7 +132,7 @@ export class AutenticacaoService {
       if (falha.bloqueadoAte) {
         const erro = new Error('Muitas tentativas de login. Tente novamente em 5 minutos.');
         erro.status = 429;
-        erro.retryAfter = Math.ceil((falha.bloqueadoAte.getTime() - Date.now()) / 1000);
+        erro.retryAfter = 300; // FORÇA: 5 minutos
         erro.codigoDesbloqueio = falha.codigoDesbloqueio;
         throw erro;
       }

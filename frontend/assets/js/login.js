@@ -147,8 +147,10 @@ async function handleLogin(e) {
         if (erro?.status === 429) {
             const retry = erro.headers?.retryAfter;
             if (retry) {
-                const minutos = Math.ceil(retry / 60);
-                mensagem = `Muitas tentativas de login. Tente novamente em ${minutos} minuto(s).`;
+                // Mostra mensagem com contagem regressiva
+                exibirContagemRegressiva(retry, 'loginForm');
+                habilitarBotao('loginBtn');
+                return;
             }
         } else {
             const restantes = erro.headers?.remaining;
@@ -160,6 +162,63 @@ async function handleLogin(e) {
         mostrarToast(mensagem, 'error');
         habilitarBotao('loginBtn');
     }
+}
+
+// Função para exibir contagem regressiva de bloqueio
+function exibirContagemRegressiva(segundosRestantes, formId) {
+    // FORÇA: sempre 5 minutos (300 segundos)
+    let segundos = Math.min(segundosRestantes, 300);
+    
+    // Remove toast anterior se existir
+    const toastExistente = document.querySelector('[data-bloqueio-toast]');
+    if (toastExistente) toastExistente.remove();
+    
+    // Cria container para o toast de bloqueio
+    const toastContainer = document.createElement('div');
+    toastContainer.setAttribute('data-bloqueio-toast', 'true');
+    toastContainer.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #dc3545;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 4px;
+        z-index: 9999;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        font-weight: 500;
+        min-width: 300px;
+    `;
+    document.body.appendChild(toastContainer);
+    
+    const atualizarMensagem = () => {
+        const minutos = Math.floor(segundos / 60);
+        const secs = segundos % 60;
+        let mensagem;
+        
+        if (minutos > 0) {
+            mensagem = `Sua conta está bloqueada. Tente novamente em ${minutos}m ${secs}s`;
+        } else {
+            mensagem = `Sua conta está bloqueada. Tente novamente em ${secs}s`;
+        }
+        
+        toastContainer.textContent = mensagem;
+    };
+    
+    atualizarMensagem();
+    
+    const intervalo = setInterval(() => {
+        segundos--;
+        if (segundos <= 0) {
+            clearInterval(intervalo);
+            toastContainer.remove();
+            mostrarToast('Bloqueio expirado! Você pode tentar fazer login novamente.', 'success', 4000);
+            habilitarBotao('loginBtn');
+            document.getElementById('email').focus();
+        } else {
+            atualizarMensagem();
+        }
+    }, 1000);
 }
 
 // Verifica se o usuário já tem uma carteira e redireciona corretamente

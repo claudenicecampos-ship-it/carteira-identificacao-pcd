@@ -122,6 +122,13 @@ function isValidTelefone(v) {
   return true;
 }
 
+function isValidContatoEmergencia(v) {
+  const trimmed = v.trim();
+  if (!trimmed) return true;
+  // Agora valida apenas o número de telefone
+  return isValidTelefone(trimmed);
+}
+
 function isValidCity(v) { 
   return v.trim().length >= 2 && /^[a-záéíóúàâêôãõçñ\s\-]+$/i.test(v.trim());
 }
@@ -143,6 +150,21 @@ function isValidCRM(v) {
   const trimmed = v.trim().toUpperCase();
   // Formato: CRM-UF 123456 ou CRP-UF 123456 ou CRFa-UF 123456
   return trimmed.length >= 6 && /^(CRM|CRP|CRFA)[\s\-]?[A-Z]{2}[\s\-]?\d{4,6}$/i.test(trimmed.replace(/\s+/g,''));
+}
+
+function isValidOptionalName(v) {
+  const trimmed = v.trim();
+  return trimmed === '' || isValidName(trimmed);
+}
+
+function isValidOptionalCPF(v) {
+  const trimmed = v.trim();
+  return trimmed === '' || isValidCPF(trimmed);
+}
+
+function isValidOptionalVinculo(v) {
+  if (!v) return true;
+  return v.trim().length >= 3;
 }
 
 // ===== MASCARAS =====
@@ -203,20 +225,138 @@ function errorMsg(f) {
     numeroLaudo: 'Informe o número do laudo',
     nomeMedico: 'Nome do profissional inválido',
     crmMedico: 'Formato inválido. Ex: CRM-SP 123456',
+    contatoEmergencia: 'Contato de emergência inválido. Use (11) 99999-9999',
     dataLaudo: 'Data do laudo inválida',
     laudoFile: 'Anexe o laudo médico (PDF ou imagem)',
+    nomeResponsavel: 'Nome do responsável inválido',
+    cpfResponsavel: 'CPF do responsável inválido',
+    vinculoResponsavel: 'Vínculo inválido',
     foto: 'Selecione uma foto 3x4',
   };
   return msgs[f] || 'Campo inválido';
 }
 
-function checkForm() {
-  if (!submitBtn) return;
-  
+function markFieldError(fieldName, message) {
+  const f = fields[fieldName];
+  if (!f || !f.input) return;
+  f.input.classList.add('invalid');
+  if (f.check) f.check.classList.remove('show');
+  if (f.error) {
+    f.error.textContent = message;
+    f.error.classList.add('show');
+  }
+}
+
+function validateFormOnSubmit() {
+  const invalidFields = [];
   const fotoOk = fields.foto?.preview?.classList.contains('has-image');
   const laudoOk = fields.laudoFile?.preview?.classList.contains('has-file');
-  
-  const ok = fotoOk
+
+  if (!fotoOk) {
+    if (fields.foto?.error) {
+      fields.foto.error.textContent = errorMsg('foto');
+      fields.foto.error.classList.add('show');
+    }
+    invalidFields.push('Foto 3x4');
+  }
+  if (!isValidName(fields.nome.input?.value || '')) {
+    markFieldError('nome', errorMsg('nome'));
+    invalidFields.push('Nome completo');
+  }
+  if (!isValidDate(fields.dataNascimento.input?.value || '')) {
+    markFieldError('dataNascimento', errorMsg('dataNascimento'));
+    invalidFields.push('Data de nascimento');
+  }
+  if (!document.getElementById('sexo')?.value) {
+    markFieldError('sexo', 'Selecione o sexo');
+    invalidFields.push('Sexo');
+  }
+  if (!isValidCPF(fields.cpf.input?.value || '')) {
+    markFieldError('cpf', errorMsg('cpf'));
+    invalidFields.push('CPF');
+  }
+  if (!isValidRG(fields.rg.input?.value || '')) {
+    markFieldError('rg', errorMsg('rg'));
+    invalidFields.push('RG');
+  }
+  if (!isValidTelefone(fields.telefone.input?.value || '')) {
+    markFieldError('telefone', errorMsg('telefone'));
+    invalidFields.push('Telefone');
+  }
+  if (!isValidCity(fields.cidade.input?.value || '')) {
+    markFieldError('cidade', errorMsg('cidade'));
+    invalidFields.push('Município');
+  }
+  if (!document.getElementById('estado')?.value) {
+    markFieldError('estado', 'Selecione o estado');
+    invalidFields.push('Estado');
+  }
+  if (!document.getElementById('tipoDeficiencia')?.value) {
+    markFieldError('tipoDeficiencia', 'Selecione o tipo de deficiência');
+    invalidFields.push('Tipo de deficiência');
+  }
+  if (!document.getElementById('grauDeficiencia')?.value) {
+    markFieldError('grauDeficiencia', 'Selecione o grau da deficiência');
+    invalidFields.push('Grau da deficiência');
+  }
+  if (!isValidCID(fields.cid.input?.value || '')) {
+    markFieldError('cid', errorMsg('cid'));
+    invalidFields.push('CID');
+  }
+  if (!isValidLaudo(fields.numeroLaudo.input?.value || '')) {
+    markFieldError('numeroLaudo', errorMsg('numeroLaudo'));
+    invalidFields.push('Número do laudo');
+  }
+  if (!isValidDate(fields.dataLaudo.input?.value || '')) {
+    markFieldError('dataLaudo', errorMsg('dataLaudo'));
+    invalidFields.push('Data do laudo');
+  }
+  if (!isValidMedico(fields.nomeMedico.input?.value || '')) {
+    markFieldError('nomeMedico', errorMsg('nomeMedico'));
+    invalidFields.push('Nome do médico');
+  }
+  if (!isValidCRM(fields.crmMedico.input?.value || '')) {
+    markFieldError('crmMedico', errorMsg('crmMedico'));
+    invalidFields.push('CRM/CRP/CRFa');
+  }
+  if (!laudoOk) {
+    if (fields.laudoFile?.error) {
+      fields.laudoFile.error.textContent = errorMsg('laudoFile');
+      fields.laudoFile.error.classList.add('show');
+    }
+    invalidFields.push('Laudo médico');
+  }
+  if (!isValidContatoEmergencia(fields.contatoEmergencia.input?.value || '')) {
+    markFieldError('contatoEmergencia', errorMsg('contatoEmergencia'));
+    invalidFields.push('Contato de emergência');
+  }
+
+  return invalidFields;
+}
+
+function buildInvalidFieldMessage(fieldsList) {
+  if (!fieldsList.length) return null;
+  const firstFields = fieldsList.slice(0, 5);
+  const moreCount = fieldsList.length - firstFields.length;
+  return `Preencha corretamente: ${firstFields.join(', ')}${moreCount > 0 ? ` e mais ${moreCount} campo(s)` : ''}.`;
+}
+
+function showInvalidFieldSummary(invalidFields) {
+  const message = buildInvalidFieldMessage(invalidFields);
+  if (!message) return;
+  if (typeof mostrarNotificacao === 'function') {
+    mostrarNotificacao(message, 'error');
+  } else if (typeof mostrarToast === 'function') {
+    mostrarToast(message, 'error');
+  } else {
+    alert(message);
+  }
+}
+
+function checkForm() {
+  const fotoOk = fields.foto?.preview?.classList.contains('has-image');
+  const laudoOk = fields.laudoFile?.preview?.classList.contains('has-file');
+  return fotoOk
     && isValidName(fields.nome.input?.value || '')
     && isValidDate(fields.dataNascimento.input?.value || '')
     && !!document.getElementById('sexo')?.value
@@ -232,9 +372,11 @@ function checkForm() {
     && isValidDate(fields.dataLaudo.input?.value || '')
     && isValidMedico(fields.nomeMedico.input?.value || '')
     && isValidCRM(fields.crmMedico.input?.value || '')
+    && isValidOptionalName(fields.nomeResponsavel.input?.value || '')
+    && isValidOptionalCPF(fields.cpfResponsavel.input?.value || '')
+    && isValidOptionalVinculo(fields.vinculoResponsavel.input?.value || '')
+    && isValidContatoEmergencia(fields.contatoEmergencia.input?.value || '')
     && laudoOk;
-
-  submitBtn.disabled = !ok;
 }
 
 // ===== CHATBOT HELPERS =====
@@ -282,6 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
     cpf: { input: document.getElementById('cpf'), error: document.getElementById('cpfError'), check: document.getElementById('cpfCheck') },
     rg: { input: document.getElementById('rg'), error: document.getElementById('rgError'), check: document.getElementById('rgCheck') },
     telefone: { input: document.getElementById('telefone'), error: document.getElementById('telefoneError'), check: document.getElementById('telefoneCheck') },
+    contatoEmergencia: { input: document.getElementById('contatoEmergencia'), error: document.getElementById('contatoEmergenciaError'), check: document.getElementById('contatoEmergenciaCheck') },
     cidade: { input: document.getElementById('cidade'), error: document.getElementById('cidadeError'), check: document.getElementById('cidadeCheck') },
     estado: { input: document.getElementById('estado'), error: document.getElementById('estadoError') },
     tipoDeficiencia: { input: document.getElementById('tipoDeficiencia'), error: document.getElementById('tipoDeficienciaError') },
@@ -292,6 +435,9 @@ document.addEventListener('DOMContentLoaded', function() {
     nomeMedico: { input: document.getElementById('nomeMedico'), error: document.getElementById('medicoError'), check: document.getElementById('medicoCheck') },
     crmMedico: { input: document.getElementById('crmMedico'), error: document.getElementById('crmError'), check: document.getElementById('crmCheck') },
     laudoFile: { input: document.getElementById('laudoFile'), error: document.getElementById('laudoFileError'), preview: document.getElementById('laudoPreview') },
+    nomeResponsavel: { input: document.getElementById('nomeResponsavel'), error: document.getElementById('nomeResponsavelError'), check: document.getElementById('nomeResponsavelCheck') },
+    cpfResponsavel: { input: document.getElementById('cpfResponsavel'), error: document.getElementById('cpfResponsavelError'), check: document.getElementById('cpfResponsavelCheck') },
+    vinculoResponsavel: { input: document.getElementById('vinculoResponsavel'), error: document.getElementById('vinculoResponsavelError') }
   };
 
   submitBtn = document.getElementById('submitBtn');
@@ -336,6 +482,11 @@ function inicializarEventListeners() {
     setValid('telefone', isValidTelefone(e.target.value), e.target.value);
   });
 
+  fields.contatoEmergencia.input?.addEventListener('input', e => {
+    e.target.value = maskTelefone(e.target.value);
+    setValid('contatoEmergencia', isValidContatoEmergencia(e.target.value), e.target.value);
+  });
+
   fields.cidade.input?.addEventListener('input', e => {
     setValid('cidade', isValidCity(e.target.value), e.target.value);
   });
@@ -364,11 +515,24 @@ function inicializarEventListeners() {
     setValid('crmMedico', isValidCRM(e.target.value), e.target.value);
   });
 
+  fields.nomeResponsavel.input?.addEventListener('input', e => {
+    setValid('nomeResponsavel', isValidOptionalName(e.target.value), e.target.value);
+  });
+
+  fields.cpfResponsavel.input?.addEventListener('input', e => {
+    e.target.value = maskCPF(e.target.value);
+    setValid('cpfResponsavel', isValidOptionalCPF(e.target.value), e.target.value);
+  });
+
+  fields.vinculoResponsavel.input?.addEventListener('change', e => {
+    setValid('vinculoResponsavel', isValidOptionalVinculo(e.target.value), e.target.value);
+  });
+
   // Selects
-  document.getElementById('sexo')?.addEventListener('change', checkForm);
-  document.getElementById('estado')?.addEventListener('change', checkForm);
-  document.getElementById('tipoDeficiencia')?.addEventListener('change', checkForm);
-  document.getElementById('grauDeficiencia')?.addEventListener('change', checkForm);
+  document.getElementById('sexo')?.addEventListener('change', () => checkForm());
+  document.getElementById('estado')?.addEventListener('change', () => checkForm());
+  document.getElementById('tipoDeficiencia')?.addEventListener('change', () => checkForm());
+  document.getElementById('grauDeficiencia')?.addEventListener('change', () => checkForm());
 
   // ===== UPLOAD DE FOTO - CORRIGIDO COM LOGGING =====
   if (fields.foto.input) {
@@ -532,6 +696,12 @@ function inicializarEventListeners() {
   if (registrationForm) {
     registrationForm.addEventListener('submit', async function(e) {
       e.preventDefault();
+
+      const invalidFields = validateFormOnSubmit();
+      if (invalidFields.length) {
+        showInvalidFieldSummary(invalidFields);
+        return;
+      }
       
       // Desabilita o botao durante o envio
       if (submitBtn) {

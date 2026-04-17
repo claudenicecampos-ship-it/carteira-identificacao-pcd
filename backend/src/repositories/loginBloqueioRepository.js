@@ -77,13 +77,17 @@ export class LoginBloqueioRepository {
       let tentativas = 1;
       let bloqueadoAte = null;
       let codigoDesbloqueio = null;
+      let segundosRestantes = 0;
 
       if (bloqueioExistente) {
         tentativas = (bloqueioExistente.tentativas || 0) + 1;
       }
 
       if (tentativas >= maxTentativas) {
-        bloqueadoAte = new Date(agora.getTime() + minutosBloqueio * 60000);
+        // FORÇA: sempre 5 minutos (300 segundos)
+        const BLOQUEIO_MINUTOS = 5;
+        segundosRestantes = BLOQUEIO_MINUTOS * 60;
+        bloqueadoAte = new Date(agora.getTime() + BLOQUEIO_MINUTOS * 60000);
         codigoDesbloqueio = `UNLOCK-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
         tentativas = 0;
       }
@@ -100,7 +104,8 @@ export class LoginBloqueioRepository {
         tentativas,
         bloqueadoAte,
         codigoDesbloqueio,
-        restantes: tentativas > 0 ? maxTentativas - tentativas : 0
+        restantes: tentativas > 0 ? maxTentativas - tentativas : 0,
+        segundosRestantes
       };
     } catch (erro) {
       throw new Error('Erro ao registrar falha de login: ' + erro.message);

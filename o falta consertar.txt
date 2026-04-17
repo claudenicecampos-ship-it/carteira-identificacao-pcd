@@ -1,3 +1,4 @@
-
-10 fazer todos os cpf e outros campos serem completamnete validos
 11 melhorar a carteira 
+12 fazer uma aba escanear o qrcode da carteira criada e fa\er com que o qrcode so possa ser lido na aba de 
+13 fazer a pessoa ser bloqueada por 5 minutos
+14 verificar porque a carteira nao esta salvando no banco de dados

@@ -41,9 +41,9 @@ export const limitadorLogin = rateLimit({
  * Limitador para recuperação de senha
  */
 export const limitadorRecuperacaoSenha = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
+  windowMs: 5 * 60 * 1000, // 5 minutos
   max: 3, // 3 tentativas
-  message: { sucesso: false, mensagem: 'Muitas tentativas de recuperação de senha. Tente novamente em 15 minutos' },
+  message: { sucesso: false, mensagem: 'Muitas tentativas de recuperação de senha. Tente novamente em 5 minutos' },
   skipSuccessfulRequests: true,
   keyGenerator: (req) => {
     const email = req.body?.email;

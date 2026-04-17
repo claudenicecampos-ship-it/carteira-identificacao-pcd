@@ -343,13 +343,17 @@
                                     <label for="nomeResponsavel">Nome do Responsável Legal</label>
                                     <div class="input-wrapper">
                                         <input id="nomeResponsavel" name="nomeResponsavel" type="text" placeholder="Maria da Silva" class="input-field">
+                                        <svg id="nomeResponsavelCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
+                                    <span id="nomeResponsavelError" class="error-message"></span>
                                 </div>
                                 <div class="form-group">
                                     <label for="cpfResponsavel">CPF do Responsável</label>
                                     <div class="input-wrapper">
                                         <input id="cpfResponsavel" name="cpfResponsavel" type="text" placeholder="000.000.000-00" maxlength="14" class="input-field">
+                                        <svg id="cpfResponsavelCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
+                                    <span id="cpfResponsavelError" class="error-message"></span>
                                 </div>
                             </div>
 
@@ -363,6 +367,7 @@
                                     <option value="Cônjuge">Cônjuge</option>
                                     <option value="Outro">Outro</option>
                                 </select>
+                                <span id="vinculoResponsavelError" class="error-message"></span>
                             </div>
 
                             <!-- ===== EMERGÊNCIA ===== -->
@@ -393,7 +398,9 @@
                                     <label for="contatoEmergencia">Contato de Emergência</label>
                                     <div class="input-wrapper">
                                         <input id="contatoEmergencia" name="contatoEmergencia" type="text" placeholder="Nome - (11) 99999-9999" class="input-field">
+                                        <svg id="contatoEmergenciaCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
+                                    <span id="contatoEmergenciaError" class="error-message"></span>
                                 </div>
                             </div>
 
@@ -422,7 +429,7 @@
                                 </select>
                             </div>
 
-                            <button type="submit" id="submitBtn" class="submit-btn" disabled>
+                            <button type="submit" id="submitBtn" class="submit-btn">
                                 <span>Gerar Carteira GO Card PCD</span>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M5 12h14"></path>
