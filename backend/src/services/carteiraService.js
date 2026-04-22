@@ -91,6 +91,20 @@ export class CarteiraService {
       throw new Error('Nome e CPF do responsável devem ser preenchidos juntos');
     }
 
+    const carteiraExistente = await CarteiraRepository.buscarPorUsuarioId(dados.usuario_id);
+    if (carteiraExistente) {
+      const erro = new Error('Usuário já possui carteira cadastrada');
+      erro.status = 409;
+      throw erro;
+    }
+
+    const cpfExistente = await CarteiraRepository.buscarPorCpf(dados.cpf);
+    if (cpfExistente) {
+      const erro = new Error('CPF já cadastrado em outra carteira');
+      erro.status = 409;
+      throw erro;
+    }
+
     const carteiraId = await CarteiraRepository.criar(dados);
     return { id: carteiraId, ...dados };
   }

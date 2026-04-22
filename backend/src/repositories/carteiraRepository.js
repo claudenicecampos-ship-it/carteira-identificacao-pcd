@@ -41,7 +41,7 @@ export class CarteiraRepository {
       ].map(v => v === undefined ? null : v); // Converte undefined para null
 
       const [resultado] = await conexao.execute(
-        `INSERT INTO carteiras VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+        `INSERT INTO carteiras (usuario_id, tipo, numero_carteira, descricao, ativa, data_nascimento, endereco, cidade, estado, cep, telefone, tipo_deficiencia, grau_deficiencia, cid, necessita_acompanhante, numero_laudo, data_laudo, nome_medico, crm_medico, foto, laudo_url, tipo_sanguineo, contato_emergencia, alergias, medicacoes, comunicacao, nome_responsavel, cpf_responsavel, vinculo_responsavel, nome, cpf, rg, sexo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         valores
       );
       conexao.release();
@@ -62,6 +62,21 @@ export class CarteiraRepository {
       return resultado.length > 0 ? resultado[0] : null;
     } catch (erro) {
       throw new Error('Erro ao buscar carteira: ' + erro.message);
+    }
+  }
+
+  static async buscarPorCpf(cpf) {
+    if (!cpf) return null;
+    try {
+      const conexao = await pool.getConnection();
+      const [resultado] = await conexao.execute(
+        'SELECT * FROM carteiras WHERE cpf = ? LIMIT 1',
+        [cpf.replace(/\D/g, '')]
+      );
+      conexao.release();
+      return resultado.length > 0 ? resultado[0] : null;
+    } catch (erro) {
+      throw new Error('Erro ao buscar carteira por CPF: ' + erro.message);
     }
   }
 }

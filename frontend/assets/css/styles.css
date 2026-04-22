@@ -1002,10 +1002,13 @@ select.input-field {
   position: fixed;
   top: 20px;
   right: 20px;
+  left: auto;
+  bottom: auto;
   z-index: 9999;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  align-items: flex-end;
 }
 
 .toast {
@@ -1018,6 +1021,8 @@ select.input-field {
   animation: slideIn 0.3s ease;
   min-width: 300px;
   max-width: 400px;
+  position: relative;
+  right: 0;
 }
 
 .toast.success {

@@ -247,9 +247,24 @@ async function handleCadastro(e) {
     try {
         desabilitarBotao('cadastroBtn');
 
+        const email = document.getElementById('email').value.trim();
+
+        // Verificar se email já existe
+        const respostaVerificacao = await fazerRequisicao('/auth/verificar-email', 'POST', { email });
+
+        if (respostaVerificacao.sucesso && respostaVerificacao.existe) {
+            // Email encontrado, redirecionar para login
+            mostrarToast('Email já cadastrado. Faça login.', 'info');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+            return;
+        }
+
+        // Email não encontrado, prosseguir com cadastro
         const dados = {
             nome: document.getElementById('nome').value.trim(),
-            email: document.getElementById('email').value.trim(),
+            email: email,
             cpf: removerFormatacaoCPF(document.getElementById('cpf').value),
             telefone: document.getElementById('telefone').value,
             data_nascimento: document.getElementById('data_nascimento').value,

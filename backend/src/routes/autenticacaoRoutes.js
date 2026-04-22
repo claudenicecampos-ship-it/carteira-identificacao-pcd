@@ -13,6 +13,13 @@ const router = express.Router();
 router.post('/registrar', AutenticacaoController.registrar);
 
 /**
+ * @route POST /api/auth/verificar-email
+ * @desc Verifica se email existe
+ * @access Public
+ */
+router.post('/verificar-email', AutenticacaoController.verificarEmail);
+
+/**
  * @route POST /api/auth/login
  * @desc Realiza login
  * @access Public

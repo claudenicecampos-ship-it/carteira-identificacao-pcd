@@ -83,8 +83,13 @@ export class AutenticacaoService {
     };
   }
 
-  /**
-   * Login de usuário
+  /**   * Verifica se email existe
+   */
+  static async verificarEmailExiste(email) {
+    return await UsuarioRepository.emailExiste(email);
+  }
+
+  /**   * Login de usuário
    */
   static async login(email, senha, endereco_ip = '', user_agent = '') {
     // Verificar bloqueio prévio

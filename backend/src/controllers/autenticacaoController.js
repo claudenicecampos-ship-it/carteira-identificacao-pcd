@@ -53,6 +53,35 @@ export class AutenticacaoController {
   }
 
   /**
+   * POST /api/auth/verificar-email
+   */
+  static async verificarEmail(req, res) {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          sucesso: false,
+          mensagem: 'Email é obrigatório'
+        });
+      }
+
+      const existe = await AutenticacaoService.verificarEmailExiste(email);
+
+      res.status(200).json({
+        sucesso: true,
+        existe
+      });
+    } catch (erro) {
+      console.error('Erro ao verificar email:', erro);
+      res.status(500).json({
+        sucesso: false,
+        mensagem: 'Erro interno do servidor'
+      });
+    }
+  }
+
+  /**
    * POST /api/auth/login
    */
   static async login(req, res) {

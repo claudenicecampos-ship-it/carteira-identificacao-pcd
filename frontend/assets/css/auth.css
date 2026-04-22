@@ -524,10 +524,25 @@ html, body {
 }
 
 /* Toast Notification */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    left: auto;
+    bottom: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-end;
+    z-index: 1000;
+}
+
 .toast {
     position: fixed;
-    bottom: 20px;
+    top: 20px;
     right: 20px;
+    left: auto;
+    bottom: auto;
     padding: 15px 20px;
     background: var(--text-color);
     color: white;

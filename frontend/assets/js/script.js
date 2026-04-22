@@ -379,38 +379,6 @@ function checkForm() {
     && laudoOk;
 }
 
-// ===== CHATBOT HELPERS =====
-function addMsg(text, isUser = false) {
-  const msgs = document.getElementById('chatMessages');
-  if (!msgs) return;
-  const div = document.createElement('div');
-  div.className = isUser ? 'user-message' : 'bot-message';
-  div.innerHTML = `<p>${text}</p>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function getBotReply(msg) {
-  const m = msg.toLowerCase();
-  if (m.includes('cadastro') || m.includes('preencher') || m.includes('formulário')) return chatbotResponses.cadastro;
-  if (m.includes('cid') || m.includes('código') || m.includes('classificação')) return chatbotResponses.cid;
-  if (m.includes('direito') || m.includes('benefício')) return chatbotResponses.direitos;
-  if (m.includes('laudo') || m.includes('médico') || m.includes('crm')) return chatbotResponses.laudo;
-  if (m.includes('renov') || m.includes('validade') || m.includes('prazo')) return chatbotResponses.renovacao;
-  if (m.includes('acompanhante') || m.includes('assistente')) return chatbotResponses.acompanhante;
-  return chatbotResponses.default;
-}
-
-function sendChat() {
-  const input = document.getElementById('chatInput');
-  if (!input) return;
-  const msg = input.value.trim();
-  if (!msg) return;
-  addMsg(msg, true);
-  input.value = '';
-  setTimeout(() => addMsg(getBotReply(msg)), 500);
-}
-
 // Inicializar quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🔧 Inicializando Script - DOMContentLoaded disparado');
@@ -764,19 +732,37 @@ function inicializarEventListeners() {
 
       console.log('[v0] Iniciando salvamento da carteira...');
       console.log('[v0] Dados da carteira:', dadosCarteira);
-      console.log('[v0] Usuario logado:', typeof obterUsuario === 'function' ? obterUsuario() : 'funcao nao disponivel');
-      
+
+      const usuario = typeof obterUsuario === 'function' ? obterUsuario() : null;
+      if (!usuario) {
+        if (typeof mostrarToast === 'function') {
+          mostrarToast('Você precisa estar logado para gerar a carteira.', 'error');
+        }
+        setTimeout(() => window.location.href = 'login.html', 1200);
+        return;
+      }
+
+      const { temCarteira, carteira: carteiraExistente } = await verificarCarteiraExistente(usuario.id);
+      if (temCarteira && carteiraExistente) {
+        localStorage.setItem('carteira_dados', JSON.stringify(carteiraExistente));
+        if (typeof mostrarToast === 'function') {
+          mostrarToast('Já existe uma carteira cadastrada para este usuário. Redirecionando...', 'info');
+        }
+        setTimeout(() => window.location.href = 'carteira.html', 1200);
+        return;
+      }
+
       try {
         // Usa a funcao salvarCarteiraBackend do auth.js se disponivel
         if (typeof salvarCarteiraBackend === 'function') {
           console.log('[v0] Usando salvarCarteiraBackend...');
           const resultado = await salvarCarteiraBackend(dadosCarteira);
           console.log('[v0] Resultado salvarCarteiraBackend:', resultado);
-          
+
           if (resultado.sucesso) {
-            // Salva dados completos no localStorage para exibicao
             const dadosCompletos = {
               ...dadosCarteira,
+              ...resultado.carteira,
               numero_carteira: resultado.carteira?.numero_carteira || dadosCarteira.numero_carteira,
               data_emissao: resultado.carteira?.data_emissao || new Date().toISOString().split('T')[0],
               data_validade: resultado.carteira?.data_validade || new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -784,15 +770,13 @@ function inicializarEventListeners() {
             console.log('[v0] Salvando no localStorage:', dadosCompletos);
             localStorage.setItem('carteira_dados', JSON.stringify(dadosCompletos));
             localStorage.setItem('carteira_cadastrada', 'true');
-            
-            // Mostra notificacao de sucesso
+
             if (typeof mostrarNotificacao === 'function') {
               mostrarNotificacao('Carteira cadastrada com sucesso!', 'success');
             } else if (typeof mostrarToast === 'function') {
               mostrarToast('Carteira cadastrada com sucesso!', 'success');
             }
-            
-            // Redireciona apos 1.5 segundos
+
             setTimeout(() => {
               window.location.href = 'carteira.html';
             }, 1500);
@@ -800,23 +784,19 @@ function inicializarEventListeners() {
           }
         } else {
           console.log('[v0] salvarCarteiraBackend nao disponivel, usando fazerRequisicao diretamente...');
-          // Fallback: tenta enviar diretamente via fazerRequisicao
           if (typeof fazerRequisicao === 'function') {
-            // Gera numero da carteira
             const timestamp = Date.now().toString(36).toUpperCase();
             const random = Math.random().toString(36).substring(2, 6).toUpperCase();
             dadosCarteira.numero_carteira = `GO-PCD-${timestamp}-${random}`;
-            
-            // Obtem usuario logado
-            const usuario = typeof obterUsuario === 'function' ? obterUsuario() : null;
+
             if (usuario) {
               dadosCarteira.usuario_id = usuario.id;
             }
-            
+
             console.log('[v0] Enviando para API /carteiras:', dadosCarteira);
             const resposta = await fazerRequisicao('/carteiras', 'POST', dadosCarteira);
             console.log('[v0] Resposta da API:', resposta);
-            
+
             if (resposta.sucesso) {
               const carteiraCriada = resposta.data || dadosCarteira;
               localStorage.setItem('carteira_dados', JSON.stringify({
@@ -824,11 +804,11 @@ function inicializarEventListeners() {
                 ...carteiraCriada
               }));
               localStorage.setItem('carteira_cadastrada', 'true');
-              
+
               if (typeof mostrarNotificacao === 'function') {
                 mostrarNotificacao('Carteira cadastrada com sucesso!', 'success');
               }
-              
+
               setTimeout(() => {
                 window.location.href = 'carteira.html';
               }, 1500);
@@ -839,21 +819,27 @@ function inicializarEventListeners() {
       } catch (erro) {
         console.error('[v0] Erro ao salvar carteira:', erro);
         console.error('[v0] Stack:', erro.stack);
-        
-        // Fallback: salva localmente
+
+        if (erro.status && erro.status < 500) {
+          if (typeof mostrarToast === 'function') {
+            mostrarToast(erro.message, 'error');
+          }
+          return;
+        }
+
         const timestamp = Date.now().toString(36).toUpperCase();
         const random = Math.random().toString(36).substring(2, 6).toUpperCase();
         dadosCarteira.numero_carteira = `GO-PCD-${timestamp}-${random}`;
         dadosCarteira.data_emissao = new Date().toISOString().split('T')[0];
         dadosCarteira.data_validade = new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-        
+
         localStorage.setItem('carteira_dados', JSON.stringify(dadosCarteira));
         localStorage.setItem('carteira_cadastrada', 'true');
-        
+
         if (typeof mostrarNotificacao === 'function') {
           mostrarNotificacao('Carteira salva localmente. Sera sincronizada quando o servidor estiver disponivel.', 'warning');
         }
-        
+
         setTimeout(() => {
           window.location.href = 'carteira.html';
         }, 2000);
@@ -892,24 +878,6 @@ function inicializarEventListeners() {
   }
 
   console.log('✅ Todos os event listeners inicializados');
-  
-  // ===== CHATBOT =====
-  const chatbotModal = document.getElementById('chatbotModal');
-  document.getElementById('chatbotBtn')?.addEventListener('click', e => { 
-    e.preventDefault(); 
-    chatbotModal?.classList.remove('hidden'); 
-  });
-  document.getElementById('closeChatbot')?.addEventListener('click', () => {
-    chatbotModal?.classList.add('hidden');
-  });
-  chatbotModal?.addEventListener('click', e => { 
-    if (e.target === chatbotModal) chatbotModal.classList.add('hidden'); 
-  });
-  
-  document.getElementById('sendChat')?.addEventListener('click', sendChat);
-  document.getElementById('chatInput')?.addEventListener('keypress', e => {
-    if (e.key === 'Enter') sendChat();
-  });
 
   // Inicializar validação do formulário
   checkForm();

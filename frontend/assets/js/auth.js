@@ -431,9 +431,13 @@ async function salvarCarteiraBackend(dadosCarteira) {
         throw new Error(resposta.mensagem || 'Erro ao salvar carteira');
     } catch (erro) {
         console.warn('[v0] Erro ao enviar para API:', erro.message);
+
+        if (erro.status && erro.status < 500) {
+            throw erro;
+        }
+
         console.log('[v0] Salvando apenas no localStorage como fallback...');
         
-        // Se backend nao disponivel, salva apenas no localStorage
         localStorage.setItem('carteira_dados', JSON.stringify(dadosCarteira));
         return { 
             sucesso: true, 

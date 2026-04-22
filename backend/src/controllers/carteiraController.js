@@ -43,7 +43,8 @@ export class CarteiraController {
       const carteira = await CarteiraService.criarCarteira(dados);
       res.status(201).json({ sucesso: true, mensagem: 'Carteira criada com sucesso', data: carteira });
     } catch (erro) {
-      res.status(400).json({ sucesso: false, mensagem: erro.message });
+      const status = erro.status || 400;
+      res.status(status).json({ sucesso: false, mensagem: erro.message });
     }
   }
 
