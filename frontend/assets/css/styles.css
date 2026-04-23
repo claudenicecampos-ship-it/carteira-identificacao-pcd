@@ -998,12 +998,33 @@ select.input-field {
 }
 
 /* Toast Notifications */
+#toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 360px;
+  min-width: 320px;
+  border-radius: 9999px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .toast-container {
   position: fixed;
   top: 20px;
   right: 20px;
-  left: auto;
-  bottom: auto;
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -1013,7 +1034,7 @@ select.input-field {
 
 .toast {
   padding: 16px 20px;
-  border-radius: var(--radius-md);
+  border-radius: 9999px;
   box-shadow: var(--shadow-lg);
   display: flex;
   align-items: center;

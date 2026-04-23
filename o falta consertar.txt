@@ -1,5 +1,5 @@
 11 melhorar a carteira 
+
 12 fazer uma aba escanear o qrcode da carteira criada e fa\er com que o qrcode so possa ser lido na aba de 
 13 fazer a pessoa ser bloqueada por 5 minutos E FAZER MESMO SE A PESSOA SAIUR E ENTRA DENVO ELA VAI ESTA BLOQUEADA
 14 verificar porque a carteira nao esta salvando no banco de dados
-15 FAZER 

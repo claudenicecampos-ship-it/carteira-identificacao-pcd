@@ -142,11 +142,13 @@ function isValidCID(v) {
 
 function isValidLaudo(v) { return v.trim().length >= 3; }
 
-function isValidMedico(v) { 
-  return v.trim().length >= 5 && /^[a-záéíóúàâêôãõçñ\s.]+$/i.test(v.trim()); 
+function isValidMedico(v) {
+  const trimmed = v.trim();
+  if (trimmed.length < 3) return false;
+  return /^[a-zA-ZÀ-ÖØ-öø-ÿ\s.'-]+$/i.test(trimmed);
 }
 
-function isValidCRM(v) { 
+function isValidCRM(v) {
   const trimmed = v.trim().toUpperCase();
   // Formato: CRM-UF 123456 ou CRP-UF 123456 ou CRFa-UF 123456
   return trimmed.length >= 6 && /^(CRM|CRP|CRFA)[\s\-]?[A-Z]{2}[\s\-]?\d{4,6}$/i.test(trimmed.replace(/\s+/g,''));
@@ -550,15 +552,14 @@ function inicializarEventListeners() {
       reader.onloadend = function() {
         console.log('✅ FileReader concluído');
         fotoFileData = reader.result;
-        console.log('💾 FotoFileData definido, tamanho:', (fotoFileData.length / 1024).toFixed(2) + ' KB');
-        
+        console.log('💾 FotoFileData definido');
+
         if (fields.foto.preview) {
           console.log('🖼️ Atualizando preview da foto');
           fields.foto.preview.style.backgroundImage = `url('${reader.result}')`;
           fields.foto.preview.classList.add('has-image');
           console.log('✓ Classe has-image adicionada');
-          
-          // Esconde o ícone SVG dentro do preview
+
           const svgIcon = fields.foto.preview.querySelector('svg');
           if (svgIcon) {
             svgIcon.style.display = 'none';
@@ -567,7 +568,7 @@ function inicializarEventListeners() {
         } else {
           console.error('❌ fields.foto.preview é null');
         }
-        
+
         if (fields.foto.error) {
           fields.foto.error.textContent = '';
           fields.foto.error.classList.remove('show');
