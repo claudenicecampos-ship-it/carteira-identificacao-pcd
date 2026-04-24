@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - GO Card PCD</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/carteira.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="../assets/css/gocard-melhorado.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
+        <!-- Header -->
         <header class="main-header">
             <div class="header-content">
-                <div class="logo">
+                <a href="index.html" class="logo">
                     <div class="logo-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -21,18 +20,17 @@
                         </svg>
                     </div>
                     <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
-                </div>
+                </a>
             </div>
         </header>
 
         <main class="main-content">
             <div class="container">
+                <!-- Banner Informativo -->
                 <div class="info-banner">
                     <div class="banner-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 16v-4"></path>
-                            <path d="M12 8h.01"></path>
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         </svg>
                     </div>
                     <div class="banner-content">
@@ -41,19 +39,24 @@
                     </div>
                 </div>
 
+                <!-- Card Principal -->
                 <div class="card">
                     <div class="card-header">
                         <h1>Cadastro GO Card PCD</h1>
-                        <p>Campos marcados com <span style="color:var(--error-500)">*</span> são obrigatórios pela Lei 13.146/2015</p>
+                        <p>Campos marcados com <span class="required">*</span> são obrigatórios pela Lei 13.146/2015</p>
                     </div>
 
                     <div class="card-content">
                         <form id="registrationForm" class="form">
 
-                            <!-- ===== FOTO ===== -->
-                            <div class="form-section">
+                            <!-- ===== FOTO DO TITULAR ===== -->
+                            <div class="form-section" style="border-top: none; padding-top: 0;">
                                 <h3 class="section-title">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                        <circle cx="9" cy="9" r="2"/>
+                                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                                    </svg>
                                     Foto do Titular
                                 </h3>
                             </div>
@@ -66,24 +69,29 @@
                                             <circle cx="12" cy="7" r="4"></circle>
                                         </svg>
                                     </div>
-                                    <label for="foto-input" class="upload-label">
-                                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                            <polyline points="17 8 12 3 7 8"></polyline>
-                                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                                        </svg>
-                                        Escolher Foto
-                                    </label>
-                                    <input id="foto-input" type="file" accept="image/*" hidden>
+                                    <div>
+                                        <label for="foto-input" class="upload-label">
+                                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                <polyline points="17 8 12 3 7 8"></polyline>
+                                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                                            </svg>
+                                            Escolher Foto
+                                        </label>
+                                        <input id="foto-input" type="file" accept="image/*" hidden>
+                                        <p class="helper-text" style="margin-top: 12px;">Formato 3x4, fundo claro, rosto visível</p>
+                                    </div>
                                 </div>
                                 <span id="fotoError" class="error-message"></span>
-                                <span class="helper-text">Clique na área da foto ou no botão para selecionar sua foto 3x4.</span>
                             </div>
 
                             <!-- ===== DADOS PESSOAIS ===== -->
                             <div class="form-section">
                                 <h3 class="section-title">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
                                     Dados Pessoais
                                 </h3>
                             </div>
@@ -91,8 +99,8 @@
                             <div class="form-group">
                                 <label for="nome">Nome Completo <span class="required">*</span></label>
                                 <div class="input-wrapper">
-                                    <input id="nome" name="nome" type="text" placeholder="Ex: João da Silva" class="input-field">
-                                    <svg id="nomeCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    <input id="nome" name="nome" type="text" placeholder="Ex: João da Silva Santos" class="input-field" required>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 </div>
                                 <span id="nomeError" class="error-message"></span>
                             </div>
@@ -101,8 +109,8 @@
                                 <div class="form-group">
                                     <label for="dataNascimento">Data de Nascimento <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="dataNascimento" name="dataNascimento" type="date" class="input-field">
-                                        <svg id="dataCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <input id="dataNascimento" name="dataNascimento" type="date" class="input-field" required>
+                                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="dataError" class="error-message"></span>
                                 </div>
@@ -122,16 +130,16 @@
                                 <div class="form-group">
                                     <label for="cpf">CPF <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="cpf" name="cpf" type="text" placeholder="000.000.000-00" maxlength="14" class="input-field">
-                                        <svg id="cpfCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <input id="cpf" name="cpf" type="text" placeholder="000.000.000-00" maxlength="14" class="input-field" required>
+                                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="cpfError" class="error-message"></span>
                                 </div>
                                 <div class="form-group">
                                     <label for="rg">RG <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="rg" name="rg" type="text" placeholder="00.000.000-0" class="input-field">
-                                        <svg id="rgCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <input id="rg" name="rg" type="text" placeholder="00.000.000-0" class="input-field" required>
+                                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="rgError" class="error-message"></span>
                                 </div>
@@ -141,16 +149,16 @@
                                 <div class="form-group">
                                     <label for="telefone">Telefone <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="telefone" name="telefone" type="tel" placeholder="(11) 99999-9999" maxlength="15" class="input-field">
-                                        <svg id="telefoneCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <input id="telefone" name="telefone" type="tel" placeholder="(11) 99999-9999" maxlength="15" class="input-field" required>
+                                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="telefoneError" class="error-message"></span>
                                 </div>
                                 <div class="form-group">
                                     <label for="cidade">Município <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="cidade" name="cidade" type="text" placeholder="Ex: São Paulo" class="input-field">
-                                        <svg id="cidadeCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <input id="cidade" name="cidade" type="text" placeholder="Ex: São Paulo" class="input-field" required>
+                                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="cidadeError" class="error-message"></span>
                                 </div>
@@ -159,9 +167,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="endereco">Endereço Completo</label>
-                                    <div class="input-wrapper">
-                                        <input id="endereco" name="endereco" type="text" placeholder="Rua, número, complemento" class="input-field">
-                                    </div>
+                                    <input id="endereco" name="endereco" type="text" placeholder="Rua, número, complemento" class="input-field">
                                 </div>
                                 <div class="form-group">
                                     <label for="estado">Estado (UF) <span class="required">*</span></label>
@@ -202,7 +208,10 @@
                             <!-- ===== DEFICIÊNCIA ===== -->
                             <div class="form-section">
                                 <h3 class="section-title">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 8v4l3 3"/>
+                                    </svg>
                                     Informações sobre a Deficiência
                                 </h3>
                                 <p class="section-desc">Conforme art. 2º da Lei 13.146/2015 — necessário para emissão do documento com validade legal.</p>
@@ -241,11 +250,11 @@
                                 <div class="form-group">
                                     <label for="cid">CID-10 / CID-11 <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="cid" name="cid" type="text" placeholder="Ex: F84, H90, G80" class="input-field uppercase">
-                                        <svg id="cidCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <input id="cid" name="cid" type="text" placeholder="Ex: F84, H90, G80" class="input-field uppercase" required>
+                                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="cidError" class="error-message"></span>
-                                    <span id="cidDesc" class="helper-text"></span>
+                                    <span id="cidDesc" class="helper-text success"></span>
                                 </div>
                                 <div class="form-group">
                                     <label for="necessitaAcompanhante">Necessita de Acompanhante? <span class="required">*</span></label>
@@ -257,10 +266,15 @@
                                 </div>
                             </div>
 
-                            <!-- ===== LAUDO MÉDICO ===== -->
+                            <!-- ===== LAUDO MÉDICO MELHORADO ===== -->
                             <div class="form-section">
                                 <h3 class="section-title">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                    </svg>
                                     Laudo Médico / Avaliação
                                 </h3>
                                 <p class="section-desc">Exigido pelo art. 2º §1º da Lei 13.146/2015 para comprovação e validade do documento.</p>
@@ -270,16 +284,16 @@
                                 <div class="form-group">
                                     <label for="numeroLaudo">Número do Laudo <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="numeroLaudo" name="numeroLaudo" type="text" placeholder="Ex: LAU-2024-001234" class="input-field">
-                                        <svg id="laudoCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <input id="numeroLaudo" name="numeroLaudo" type="text" placeholder="Ex: LAU-2025-001234" class="input-field" required>
+                                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="laudoError" class="error-message"></span>
                                 </div>
                                 <div class="form-group">
                                     <label for="dataLaudo">Data do Laudo <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="dataLaudo" name="dataLaudo" type="date" class="input-field">
-                                        <svg id="dataLaudoCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <input id="dataLaudo" name="dataLaudo" type="date" class="input-field" required>
+                                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="dataLaudoError" class="error-message"></span>
                                 </div>
@@ -289,33 +303,38 @@
                                 <div class="form-group">
                                     <label for="nomeMedico">Nome do Médico/Profissional <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="nomeMedico" name="nomeMedico" type="text" placeholder="Dr. Carlos Souza" class="input-field">
-                                        <svg id="medicoCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <input id="nomeMedico" name="nomeMedico" type="text" placeholder="Dr. Carlos Souza" class="input-field" required>
+                                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="medicoError" class="error-message"></span>
                                 </div>
                                 <div class="form-group">
-                                    <label for="crmMedico">CRM / CRP / CRFa do Profissional <span class="required">*</span></label>
+                                    <label for="crmMedico">CRM / CRP / CRFa <span class="required">*</span></label>
                                     <div class="input-wrapper">
-                                        <input id="crmMedico" name="crmMedico" type="text" placeholder="CRM-SP 123456" class="input-field">
-                                        <svg id="crmCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <input id="crmMedico" name="crmMedico" type="text" placeholder="CRM-SP 123456" class="input-field" required>
+                                        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
                                     <span id="crmError" class="error-message"></span>
                                 </div>
                             </div>
 
-                            <!-- Upload do Laudo -->
+                            <!-- Upload do Laudo Melhorado -->
                             <div class="form-group">
-                                <label for="laudoFile">Anexar Laudo Médico (PDF ou imagem) <span class="required">*</span></label>
+                                <label>Anexar Laudo Médico (PDF ou imagem) <span class="required">*</span></label>
                                 <div class="upload-section">
                                     <div id="laudoPreview" class="laudo-preview">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                             <polyline points="14 2 14 8 20 8"/>
+                                            <line x1="12" y1="12" x2="12" y2="18"/>
+                                            <polyline points="9 15 12 12 15 15"/>
                                         </svg>
-                                        <span>Nenhum arquivo selecionado</span>
+                                        <div class="laudo-info">
+                                            <span class="drop-zone-text">Clique ou arraste o arquivo aqui</span>
+                                            <span class="drop-zone-hint">PDF, PNG, JPG até 5MB</span>
+                                        </div>
                                     </div>
-                                    <label for="laudoFile" class="upload-label">
+                                    <label for="laudoFile" class="upload-label" style="margin-top: 12px;">
                                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                             <polyline points="17 8 12 3 7 8"></polyline>
@@ -326,13 +345,17 @@
                                     <input id="laudoFile" type="file" accept=".pdf,image/*" hidden>
                                 </div>
                                 <span id="laudoFileError" class="error-message"></span>
-                                <span class="helper-text">Clique na área do laudo ou no botão para selecionar o arquivo PDF ou imagem.</span>
                             </div>
 
                             <!-- ===== RESPONSÁVEL LEGAL ===== -->
                             <div class="form-section">
                                 <h3 class="section-title">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                    </svg>
                                     Responsável Legal (se aplicável)
                                 </h3>
                                 <p class="section-desc">Obrigatório para menores de 18 anos e pessoas com curatela. Conforme art. 84 e 85 da Lei 13.146/2015.</p>
@@ -341,19 +364,11 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="nomeResponsavel">Nome do Responsável Legal</label>
-                                    <div class="input-wrapper">
-                                        <input id="nomeResponsavel" name="nomeResponsavel" type="text" placeholder="Maria da Silva" class="input-field">
-                                        <svg id="nomeResponsavelCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                    <span id="nomeResponsavelError" class="error-message"></span>
+                                    <input id="nomeResponsavel" name="nomeResponsavel" type="text" placeholder="Maria da Silva" class="input-field">
                                 </div>
                                 <div class="form-group">
                                     <label for="cpfResponsavel">CPF do Responsável</label>
-                                    <div class="input-wrapper">
-                                        <input id="cpfResponsavel" name="cpfResponsavel" type="text" placeholder="000.000.000-00" maxlength="14" class="input-field">
-                                        <svg id="cpfResponsavelCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                    <span id="cpfResponsavelError" class="error-message"></span>
+                                    <input id="cpfResponsavel" name="cpfResponsavel" type="text" placeholder="000.000.000-00" maxlength="14" class="input-field">
                                 </div>
                             </div>
 
@@ -367,13 +382,14 @@
                                     <option value="Cônjuge">Cônjuge</option>
                                     <option value="Outro">Outro</option>
                                 </select>
-                                <span id="vinculoResponsavelError" class="error-message"></span>
                             </div>
 
                             <!-- ===== EMERGÊNCIA ===== -->
                             <div class="form-section">
                                 <h3 class="section-title">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                                    </svg>
                                     Informações de Emergência
                                 </h3>
                                 <p class="section-desc">Exibidas ao escanear o QR Code — acesso rápido para socorristas e profissionais de saúde.</p>
@@ -396,24 +412,18 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="contatoEmergencia">Contato de Emergência</label>
-                                    <div class="input-wrapper">
-                                        <input id="contatoEmergencia" name="contatoEmergencia" type="text" placeholder="Nome - (11) 99999-9999" class="input-field">
-                                        <svg id="contatoEmergenciaCheck" class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
-                                    <span id="contatoEmergenciaError" class="error-message"></span>
+                                    <input id="contatoEmergencia" name="contatoEmergencia" type="text" placeholder="Nome - (11) 99999-9999" class="input-field">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="alergias">Alergias (separe por vírgulas)</label>
-                                <div class="input-wrapper">
-                                    <input id="alergias" name="alergias" type="text" placeholder="Ex: Dipirona, Látex, Amendoim" class="input-field">
-                                </div>
+                                <input id="alergias" name="alergias" type="text" placeholder="Ex: Dipirona, Látex, Amendoim" class="input-field">
                             </div>
 
                             <div class="form-group">
                                 <label for="medicacoes">Medicações de Uso Contínuo</label>
-                                <textarea id="medicacoes" name="medicacoes" placeholder="Ex: Rivotril 2mg — 1 cp à noite; Insulina NPH 10UI" class="input-field textarea" rows="3"></textarea>
+                                <textarea id="medicacoes" name="medicacoes" placeholder="Ex: Rivotril 2mg — 1 cp à noite; Insulina NPH 10UI" class="input-field" rows="3"></textarea>
                             </div>
 
                             <div class="form-group">
@@ -429,6 +439,56 @@
                                 </select>
                             </div>
 
+                            <!-- ===== TERMOS E CONDIÇÕES MELHORADOS ===== -->
+                            <div class="terms-section">
+                                <div class="terms-header">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                        <path d="M9 15l2 2 4-4"/>
+                                    </svg>
+                                    <h4>Termos de Uso e Declaração de Veracidade</h4>
+                                </div>
+                                
+                                <div class="terms-content" id="termsContent">
+                                    <h5>1. Declaração de Veracidade</h5>
+                                    <p>Ao preencher este formulário, declaro que todas as informações fornecidas são verdadeiras, completas e exatas. Estou ciente de que a prestação de informações falsas constitui crime previsto no art. 299 do Código Penal (falsidade ideológica), podendo resultar em pena de reclusão de 1 a 5 anos e multa.</p>
+                                    
+                                    <h5>2. Uso dos Dados</h5>
+                                    <p>Autorizo o uso dos meus dados pessoais exclusivamente para:</p>
+                                    <ul>
+                                        <li>Emissão da Carteira de Identificação da Pessoa com Deficiência</li>
+                                        <li>Verificação de autenticidade do documento</li>
+                                        <li>Comunicações relacionadas aos direitos da PCD</li>
+                                        <li>Estatísticas anonimizadas para políticas públicas</li>
+                                    </ul>
+                                    
+                                    <h5>3. Proteção de Dados</h5>
+                                    <p>Seus dados estão protegidos conforme a Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018). Você tem direito a acessar, corrigir, excluir e portar seus dados a qualquer momento.</p>
+                                    
+                                    <h5>4. Validade do Documento</h5>
+                                    <p>A carteira emitida tem validade em todo o território nacional conforme a Lei 13.146/2015 (Estatuto da Pessoa com Deficiência). A validade padrão é de 5 anos, podendo ser renovada mediante atualização dos dados.</p>
+                                    
+                                    <h5>5. Responsabilidades</h5>
+                                    <p>O titular é responsável por manter seus dados atualizados e comunicar qualquer alteração nas informações médicas ou pessoais. O uso indevido do documento pode resultar em sua invalidação.</p>
+                                </div>
+
+                                <label class="checkbox-wrapper">
+                                    <span class="checkbox-custom">
+                                        <input type="checkbox" id="aceitarTermos" required>
+                                        <span class="checkbox-visual">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                                <polyline points="20 6 9 17 4 12"></polyline>
+                                            </svg>
+                                        </span>
+                                    </span>
+                                    <span class="checkbox-label">
+                                        Li e concordo com os <a href="#" id="openTermsLink">Termos de Uso</a> e declaro que todas as informações fornecidas são verdadeiras, sob pena da lei. <span class="required">*</span>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <!-- Botão Submit -->
                             <button type="submit" id="submitBtn" class="submit-btn">
                                 <span>Gerar Carteira GO Card PCD</span>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -437,11 +497,17 @@
                                 </svg>
                             </button>
 
-                            <p class="form-note">Ao emitir a carteira, você declara que as informações são verdadeiras. Dados falsos podem acarretar sanções conforme o art. 171 do Código Penal.</p>
+                            <p class="form-note">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="display:inline;vertical-align:middle;margin-right:6px">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                    <line x1="12" y1="9" x2="12" y2="13"/>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                </svg>
+                                Ao emitir a carteira, você declara que as informações são verdadeiras. Dados falsos podem acarretar sanções conforme o art. 171 do Código Penal.
+                            </p>
                         </form>
                     </div>
                 </div>
-
             </div>
         </main>
 
@@ -450,8 +516,178 @@
         </footer>
     </div>
 
-    <script src="../assets/js/auth.js"></script>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
     <div id="toast"></div>
-    <script src="../assets/js/script.js"></script>
+
+    <script>
+        // Toast System
+        function showToast(title, message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+                error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
+                warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+                info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-icon">${icons[type]}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+                <div class="toast-progress"></div>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // Foto upload
+        const fotoInput = document.getElementById('foto-input');
+        const fotoPreview = document.getElementById('fotoPreview');
+
+        fotoPreview.addEventListener('click', () => fotoInput.click());
+
+        fotoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    fotoPreview.style.backgroundImage = `url(${e.target.result})`;
+                    fotoPreview.classList.add('has-image');
+                    showToast('Foto Carregada', 'Sua foto foi carregada com sucesso.', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Laudo upload
+        const laudoInput = document.getElementById('laudoFile');
+        const laudoPreview = document.getElementById('laudoPreview');
+
+        laudoPreview.addEventListener('click', () => laudoInput.click());
+
+        // Drag and drop
+        laudoPreview.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            laudoPreview.style.borderColor = 'var(--primary-500)';
+            laudoPreview.style.background = 'var(--primary-50)';
+        });
+
+        laudoPreview.addEventListener('dragleave', () => {
+            laudoPreview.style.borderColor = '';
+            laudoPreview.style.background = '';
+        });
+
+        laudoPreview.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                handleLaudoFile(file);
+            }
+        });
+
+        laudoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleLaudoFile(file);
+            }
+        });
+
+        function handleLaudoFile(file) {
+            const fileSize = (file.size / 1024 / 1024).toFixed(2);
+            laudoPreview.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="36" height="36">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <div class="laudo-info">
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">${fileSize} MB</span>
+                </div>
+            `;
+            laudoPreview.classList.add('has-file');
+            showToast('Laudo Anexado', `Arquivo "${file.name}" carregado com sucesso.`, 'success');
+        }
+
+        // CPF mask
+        document.getElementById('cpf').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+
+        // Telefone mask
+        document.getElementById('telefone').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+                value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+
+        // Form validation
+        document.getElementById('registrationForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Validar checkbox
+            if (!document.getElementById('aceitarTermos').checked) {
+                showToast('Erro', 'Você precisa aceitar os termos para continuar.', 'error');
+                return;
+            }
+
+            // Simular envio
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                showToast('Carteira Gerada!', 'Sua carteira GO Card PCD foi criada com sucesso. Redirecionando...', 'success', 3000);
+                
+                setTimeout(() => {
+                    window.location.href = 'carteira-melhorada.html';
+                }, 2000);
+            }, 2000);
+        });
+
+        // Terms scroll
+        document.getElementById('openTermsLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('termsContent').scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Input validation visual feedback
+        const requiredInputs = document.querySelectorAll('.input-field[required]');
+        requiredInputs.forEach(input => {
+            input.addEventListener('blur', () => {
+                if (input.value.trim()) {
+                    input.classList.add('valid');
+                    input.classList.remove('invalid');
+                } else {
+                    input.classList.remove('valid');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

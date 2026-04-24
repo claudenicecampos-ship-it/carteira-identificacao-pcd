@@ -103,6 +103,7 @@ export class AutenticacaoService {
         const erro = new Error(`Conta bloqueada. Tente novamente em 5m 0s.`);
         erro.status = 429;
         erro.retryAfter = Math.min(segundosRestantes, 300); // Máximo 5 minutos
+        erro.segundosRestantes = segundosRestantes;
         erro.codigoDesbloqueio = bloqueio.codigo_desbloqueio;
         throw erro;
       }
@@ -116,6 +117,7 @@ export class AutenticacaoService {
         const erro = new Error('Muitas tentativas de login. Tente novamente em 5 minutos.');
         erro.status = 429;
         erro.retryAfter = 300; // FORÇA: 5 minutos
+        erro.segundosRestantes = falha.segundosRestantes;
         erro.codigoDesbloqueio = falha.codigoDesbloqueio;
         throw erro;
       }
@@ -138,6 +140,7 @@ export class AutenticacaoService {
         const erro = new Error('Muitas tentativas de login. Tente novamente em 5 minutos.');
         erro.status = 429;
         erro.retryAfter = 300; // FORÇA: 5 minutos
+        erro.segundosRestantes = falha.segundosRestantes;
         erro.codigoDesbloqueio = falha.codigoDesbloqueio;
         throw erro;
       }
@@ -259,6 +262,47 @@ export class AutenticacaoService {
     }
 
     return { mensagem: 'Bloqueio removido com sucesso' };
+  }
+
+  /**
+   * Verifica o status de bloqueio de um email
+   */
+  static async verificarBloqueio(email) {
+    if (!email) {
+      throw new Error('Email é obrigatório');
+    }
+
+    const bloqueio = await LoginBloqueioRepository.buscarPorEmail(email);
+
+    if (!bloqueio || !bloqueio.bloqueado_ate) {
+      // Sem bloqueio
+      return {
+        bloqueado: false,
+        mensagem: 'Email não está bloqueado'
+      };
+    }
+
+    const bloqueadoAte = new Date(bloqueio.bloqueado_ate);
+    const agora = new Date();
+
+    if (bloqueadoAte <= agora) {
+      // Bloqueio expirou, limpa os dados
+      await LoginBloqueioRepository.resetarBloqueio(email);
+      return {
+        bloqueado: false,
+        mensagem: 'Bloqueio expirou'
+      };
+    }
+
+    // Bloqueio ainda está ativo
+    const segundosRestantes = Math.ceil((bloqueadoAte.getTime() - agora.getTime()) / 1000);
+
+    return {
+      bloqueado: true,
+      segundosRestantes,
+      codigoDesbloqueio: bloqueio.codigo_desbloqueio,
+      mensagem: `Conta bloqueada. Tente novamente em ${Math.floor(segundosRestantes / 60)}m ${segundosRestantes % 60}s`
+    };
   }
 
   static async solicitarRecuperacaoSenha(email) {

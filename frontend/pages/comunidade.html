@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comunidade - GO Card PCD</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/carteira.css">
+    <link rel="stylesheet" href="../assets/css/gocard-melhorado.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS para mapa interativo -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
     <div class="app-container">
@@ -23,10 +24,17 @@
                     <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
                 </div>
                 <nav class="nav-links">
-                    <a href="carteira.html" class="nav-link">Verificar Carteira</a>
-                    <a href="central-direitos.html" class="nav-link">Central de Direitos</a>
-                    <a href="comunidade.html" class="nav-link active">Comunidade</a>
+                    <a href="carteira-melhorada.html" class="nav-link">Minha Carteira</a>
+                    <a href="central-direitos-melhorada.html" class="nav-link">Central de Direitos</a>
+                    <a href="comunidade-melhorada.html" class="nav-link active">Comunidade</a>
                 </nav>
+                <button class="btn-mobile-menu" id="mobileMenuBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
             </div>
         </header>
 
@@ -40,18 +48,18 @@
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="quick-actions four-cols">
-                    <div class="quick-action-card">
-                        <div class="quick-action-icon cuidador">
+                <div class="quick-actions-grid">
+                    <button class="quick-action-card" onclick="scrollToSection('cuidador')">
+                        <div class="quick-action-icon" style="background: linear-gradient(135deg, #ec4899, #f472b6);">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                             </svg>
                         </div>
                         <h3>Espaco do Cuidador</h3>
                         <p>Area exclusiva para familiares e cuidadores</p>
-                    </div>
-                    <div class="quick-action-card">
-                        <div class="quick-action-icon mapa">
+                    </button>
+                    <button class="quick-action-card" onclick="scrollToSection('mapa')">
+                        <div class="quick-action-icon" style="background: linear-gradient(135deg, #10b981, #34d399);">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
@@ -59,9 +67,9 @@
                         </div>
                         <h3>Mapa de Acessibilidade</h3>
                         <p>Encontre lugares acessiveis perto de voce</p>
-                    </div>
-                    <div class="quick-action-card">
-                        <div class="quick-action-icon grupos">
+                    </button>
+                    <button class="quick-action-card" onclick="scrollToSection('grupos')">
+                        <div class="quick-action-icon" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
@@ -71,9 +79,9 @@
                         </div>
                         <h3>Grupos Tematicos</h3>
                         <p>Participe de grupos por tipo de deficiencia</p>
-                    </div>
-                    <div class="quick-action-card">
-                        <div class="quick-action-icon eventos">
+                    </button>
+                    <button class="quick-action-card" onclick="scrollToSection('eventos')">
+                        <div class="quick-action-icon" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                 <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -83,11 +91,11 @@
                         </div>
                         <h3>Eventos e Campanhas</h3>
                         <p>Fique por dentro das acoes da comunidade</p>
-                    </div>
+                    </button>
                 </div>
 
                 <!-- Espaco do Cuidador -->
-                <section class="section">
+                <section class="section" id="cuidador">
                     <h2 class="section-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -97,7 +105,7 @@
                     <p class="section-desc">Uma area exclusiva para quem cuida. Troque experiencias, encontre dicas e cuide tambem de voce.</p>
 
                     <div class="cuidador-grid">
-                        <div class="cuidador-card">
+                        <div class="cuidador-card" onclick="abrirModal('forumModal')">
                             <div class="cuidador-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -105,9 +113,9 @@
                             </div>
                             <h3>Forum de Discussao</h3>
                             <p>Compartilhe suas experiencias e aprenda com outros cuidadores.</p>
-                            <span class="badge">127 topicos ativos</span>
+                            <span class="badge badge-primary">127 topicos ativos</span>
                         </div>
-                        <div class="cuidador-card">
+                        <div class="cuidador-card" onclick="abrirModal('terapiasModal')">
                             <div class="cuidador-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -116,9 +124,9 @@
                             </div>
                             <h3>Guia de Terapias</h3>
                             <p>Informacoes sobre terapias, tratamentos e profissionais recomendados.</p>
-                            <span class="badge">45 artigos</span>
+                            <span class="badge badge-info">45 artigos</span>
                         </div>
-                        <div class="cuidador-card">
+                        <div class="cuidador-card" onclick="abrirModal('saudeModal')">
                             <div class="cuidador-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="12" cy="12" r="10"></circle>
@@ -129,13 +137,13 @@
                             </div>
                             <h3>Saude do Cuidador</h3>
                             <p>Dicas para cuidar da sua saude mental e fisica enquanto cuida de alguem.</p>
-                            <span class="badge">Novo!</span>
+                            <span class="badge badge-success">Novo!</span>
                         </div>
                     </div>
                 </section>
 
-                <!-- Mapa de Acessibilidade -->
-                <section class="section">
+                <!-- Mapa de Acessibilidade Interativo -->
+                <section class="section" id="mapa">
                     <h2 class="section-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -146,44 +154,124 @@
                     <p class="section-desc">Encontre e avalie lugares pela acessibilidade real. Contribua com a comunidade!</p>
 
                     <div class="mapa-container">
-                        <div class="mapa-placeholder">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                            <p>Mapa Interativo</p>
-                            <span>Em breve: avalie restaurantes, lojas, parques e mais!</span>
+                        <!-- Filtros do Mapa -->
+                        <div class="mapa-filtros">
+                            <button class="filtro-btn active" data-filtro="todos">Todos</button>
+                            <button class="filtro-btn" data-filtro="restaurantes">Restaurantes</button>
+                            <button class="filtro-btn" data-filtro="shoppings">Shoppings</button>
+                            <button class="filtro-btn" data-filtro="parques">Parques</button>
+                            <button class="filtro-btn" data-filtro="hospitais">Hospitais</button>
                         </div>
 
+                        <!-- Mapa Interativo -->
+                        <div id="mapaInterativo" class="mapa-interativo"></div>
+
+                        <!-- Legenda -->
+                        <div class="mapa-legenda">
+                            <div class="legenda-item">
+                                <span class="legenda-cor" style="background: #10b981;"></span>
+                                <span>Excelente acessibilidade</span>
+                            </div>
+                            <div class="legenda-item">
+                                <span class="legenda-cor" style="background: #f59e0b;"></span>
+                                <span>Acessibilidade parcial</span>
+                            </div>
+                            <div class="legenda-item">
+                                <span class="legenda-cor" style="background: #ef4444;"></span>
+                                <span>Precisa melhorar</span>
+                            </div>
+                        </div>
+
+                        <!-- Lista de Lugares -->
                         <div class="lugares-lista">
-                            <h4>Lugares Bem Avaliados</h4>
-                            <div class="lugar-item">
+                            <div class="lugares-header">
+                                <h4>Lugares Bem Avaliados</h4>
+                                <button class="btn btn-sm btn-outline" onclick="abrirModal('novoLugarModal')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Adicionar Lugar
+                                </button>
+                            </div>
+                            <div class="lugar-item" onclick="focalizarLugar(-23.5167, -46.6347)">
+                                <div class="lugar-foto">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                </div>
                                 <div class="lugar-info">
                                     <h5>Shopping Center Norte</h5>
-                                    <p>Sao Paulo, SP</p>
+                                    <p>Sao Paulo, SP - Shopping</p>
+                                    <div class="lugar-tags">
+                                        <span class="tag tag-success">Rampa</span>
+                                        <span class="tag tag-success">Elevador</span>
+                                        <span class="tag tag-success">Banheiro Acessivel</span>
+                                    </div>
                                 </div>
                                 <div class="lugar-rating">
-                                    <span class="stars">4.8</span>
+                                    <div class="stars">
+                                        <span class="star-value">4.8</span>
+                                        <svg viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2" width="16" height="16">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                    </div>
                                     <span class="reviews">234 avaliacoes</span>
                                 </div>
                             </div>
-                            <div class="lugar-item">
+                            <div class="lugar-item" onclick="focalizarLugar(-23.5874, -46.6576)">
+                                <div class="lugar-foto">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    </svg>
+                                </div>
                                 <div class="lugar-info">
                                     <h5>Parque Ibirapuera</h5>
-                                    <p>Sao Paulo, SP</p>
+                                    <p>Sao Paulo, SP - Parque</p>
+                                    <div class="lugar-tags">
+                                        <span class="tag tag-success">Piso Tatil</span>
+                                        <span class="tag tag-success">Cadeirante</span>
+                                        <span class="tag tag-warning">Estacionamento Limitado</span>
+                                    </div>
                                 </div>
                                 <div class="lugar-rating">
-                                    <span class="stars">4.6</span>
+                                    <div class="stars">
+                                        <span class="star-value">4.6</span>
+                                        <svg viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2" width="16" height="16">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                    </div>
                                     <span class="reviews">189 avaliacoes</span>
                                 </div>
                             </div>
-                            <div class="lugar-item">
+                            <div class="lugar-item" onclick="focalizarLugar(-22.9035, -47.0565)">
+                                <div class="lugar-foto">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                                    </svg>
+                                </div>
                                 <div class="lugar-info">
-                                    <h5>Restaurante Acessivel</h5>
-                                    <p>Campinas, SP</p>
+                                    <h5>Restaurante Sabor Inclusivo</h5>
+                                    <p>Campinas, SP - Restaurante</p>
+                                    <div class="lugar-tags">
+                                        <span class="tag tag-success">Menu em Braille</span>
+                                        <span class="tag tag-success">Libras</span>
+                                        <span class="tag tag-success">Cadeirante</span>
+                                    </div>
                                 </div>
                                 <div class="lugar-rating">
-                                    <span class="stars">4.9</span>
+                                    <div class="stars">
+                                        <span class="star-value">4.9</span>
+                                        <svg viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2" width="16" height="16">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                    </div>
                                     <span class="reviews">78 avaliacoes</span>
                                 </div>
                             </div>
@@ -192,7 +280,7 @@
                 </section>
 
                 <!-- Grupos Tematicos -->
-                <section class="section">
+                <section class="section" id="grupos">
                     <h2 class="section-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -205,7 +293,7 @@
 
                     <div class="grupos-grid">
                         <div class="grupo-card">
-                            <div class="grupo-header tea">
+                            <div class="grupo-header" style="background: linear-gradient(135deg, #3b82f6, #60a5fa);">
                                 <span class="grupo-sigla">TEA</span>
                             </div>
                             <div class="grupo-body">
@@ -215,12 +303,12 @@
                                     <span>1.234 membros</span>
                                     <span>45 posts/semana</span>
                                 </div>
-                                <button class="btn btn-secondary btn-sm">Participar</button>
+                                <button class="btn btn-primary btn-sm" onclick="participarGrupo('TEA')">Participar</button>
                             </div>
                         </div>
 
                         <div class="grupo-card">
-                            <div class="grupo-header fisica">
+                            <div class="grupo-header" style="background: linear-gradient(135deg, #10b981, #34d399);">
                                 <span class="grupo-sigla">DF</span>
                             </div>
                             <div class="grupo-body">
@@ -230,12 +318,12 @@
                                     <span>987 membros</span>
                                     <span>32 posts/semana</span>
                                 </div>
-                                <button class="btn btn-secondary btn-sm">Participar</button>
+                                <button class="btn btn-primary btn-sm" onclick="participarGrupo('DF')">Participar</button>
                             </div>
                         </div>
 
                         <div class="grupo-card">
-                            <div class="grupo-header visual">
+                            <div class="grupo-header" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">
                                 <span class="grupo-sigla">DV</span>
                             </div>
                             <div class="grupo-body">
@@ -245,12 +333,12 @@
                                     <span>654 membros</span>
                                     <span>28 posts/semana</span>
                                 </div>
-                                <button class="btn btn-secondary btn-sm">Participar</button>
+                                <button class="btn btn-primary btn-sm" onclick="participarGrupo('DV')">Participar</button>
                             </div>
                         </div>
 
                         <div class="grupo-card">
-                            <div class="grupo-header auditiva">
+                            <div class="grupo-header" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">
                                 <span class="grupo-sigla">DA</span>
                             </div>
                             <div class="grupo-body">
@@ -260,14 +348,14 @@
                                     <span>543 membros</span>
                                     <span>25 posts/semana</span>
                                 </div>
-                                <button class="btn btn-secondary btn-sm">Participar</button>
+                                <button class="btn btn-primary btn-sm" onclick="participarGrupo('DA')">Participar</button>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 <!-- Proximos Eventos -->
-                <section class="section">
+                <section class="section" id="eventos">
                     <h2 class="section-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -288,15 +376,27 @@
                                 <h3>Encontro de Familias TEA</h3>
                                 <p>Encontro presencial no Parque Villa-Lobos para troca de experiencias</p>
                                 <div class="evento-meta">
-                                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Sao Paulo, SP</span>
-                                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 10h - 14h</span>
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        Sao Paulo, SP
+                                    </span>
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                        10h - 14h
+                                    </span>
                                 </div>
                             </div>
-                            <button class="btn btn-primary btn-sm">Participar</button>
+                            <button class="btn btn-primary btn-sm" onclick="participarEvento('Encontro de Familias TEA')">Participar</button>
                         </div>
 
                         <div class="evento-card">
-                            <div class="evento-data">
+                            <div class="evento-data destaque">
                                 <span class="dia">02</span>
                                 <span class="mes">ABR</span>
                             </div>
@@ -304,15 +404,27 @@
                                 <h3>Dia Mundial da Conscientizacao do Autismo</h3>
                                 <p>Caminhada inclusiva e atividades para toda a familia</p>
                                 <div class="evento-meta">
-                                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Varias cidades</span>
-                                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> O dia todo</span>
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        Varias cidades
+                                    </span>
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                        O dia todo
+                                    </span>
                                 </div>
                             </div>
-                            <button class="btn btn-primary btn-sm">Participar</button>
+                            <button class="btn btn-primary btn-sm" onclick="participarEvento('Dia Mundial da Conscientizacao do Autismo')">Participar</button>
                         </div>
 
                         <div class="evento-card">
-                            <div class="evento-data">
+                            <div class="evento-data online">
                                 <span class="dia">15</span>
                                 <span class="mes">ABR</span>
                             </div>
@@ -320,11 +432,24 @@
                                 <h3>Workshop Online: Direitos da PCD</h3>
                                 <p>Aprenda sobre seus direitos com especialistas em acessibilidade</p>
                                 <div class="evento-meta">
-                                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg> Online (Zoom)</span>
-                                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 19h - 21h</span>
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                                        </svg>
+                                        Online (Zoom)
+                                    </span>
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                        19h - 21h
+                                    </span>
                                 </div>
                             </div>
-                            <button class="btn btn-primary btn-sm">Participar</button>
+                            <button class="btn btn-primary btn-sm" onclick="participarEvento('Workshop Online: Direitos da PCD')">Participar</button>
                         </div>
                     </div>
                 </section>
@@ -333,60 +458,317 @@
 
         <!-- Footer -->
         <footer class="main-footer">
-            <p>&copy; 2024 GO Card PCD - Garantindo Dignidade e Direitos</p>
+            <p>2024 GO Card PCD - Garantindo Dignidade e Direitos</p>
         </footer>
     </div>
-    <!-- Toast para mensagens -->
-    <div id="toast" class="toast"></div>
 
-    <script src="../assets/js/auth.js"></script>
-    <script src="../assets/js/script.js"></script>
+    <!-- Modal Forum -->
+    <div id="forumModal" class="modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>Forum de Discussao</h3>
+                <button class="close-modal" onclick="fecharModal('forumModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="forum-topicos">
+                    <div class="forum-topico">
+                        <div class="topico-avatar">MJ</div>
+                        <div class="topico-info">
+                            <h4>Como lidar com crises sensoriais em locais publicos?</h4>
+                            <p>Estou tendo dificuldade quando meu filho tem crises em locais movimentados...</p>
+                            <div class="topico-meta">
+                                <span>Maria Jose - 2h atras</span>
+                                <span>23 respostas</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="forum-topico">
+                        <div class="topico-avatar">CS</div>
+                        <div class="topico-info">
+                            <h4>Indicacao de terapeutas ocupacionais em SP</h4>
+                            <p>Alguem conhece bons profissionais na zona sul de Sao Paulo?</p>
+                            <div class="topico-meta">
+                                <span>Carlos Silva - 5h atras</span>
+                                <span>18 respostas</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="forum-topico">
+                        <div class="topico-avatar">AF</div>
+                        <div class="topico-info">
+                            <h4>Dicas para adaptar a rotina em casa</h4>
+                            <p>Compartilho aqui algumas adaptacoes que fizemos e funcionaram muito bem...</p>
+                            <div class="topico-meta">
+                                <span>Ana Ferreira - 1 dia atras</span>
+                                <span>45 respostas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Criar Novo Topico</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Adicionar Lugar -->
+    <div id="novoLugarModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Adicionar Lugar Acessivel</h3>
+                <button class="close-modal" onclick="fecharModal('novoLugarModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="novoLugarForm" class="form">
+                    <div class="form-group">
+                        <label for="nomeLugar">Nome do Lugar</label>
+                        <input type="text" id="nomeLugar" class="input-field" placeholder="Ex: Restaurante Sabor Inclusivo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="enderecoLugar">Endereco</label>
+                        <input type="text" id="enderecoLugar" class="input-field" placeholder="Rua, numero, bairro, cidade" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipoLugar">Tipo de Lugar</label>
+                        <select id="tipoLugar" class="input-field" required>
+                            <option value="">Selecione...</option>
+                            <option value="restaurante">Restaurante</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="parque">Parque</option>
+                            <option value="hospital">Hospital</option>
+                            <option value="escola">Escola</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Recursos de Acessibilidade</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="recursos" value="rampa"> Rampa de Acesso
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="recursos" value="elevador"> Elevador
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="recursos" value="banheiro"> Banheiro Acessivel
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="recursos" value="braille"> Menu/Sinalizacao em Braille
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="recursos" value="libras"> Atendimento em Libras
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="recursos" value="estacionamento"> Vagas Reservadas
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="avaliacaoLugar">Sua Avaliacao</label>
+                        <div class="rating-input">
+                            <button type="button" class="star-btn" data-value="1">&#9733;</button>
+                            <button type="button" class="star-btn" data-value="2">&#9733;</button>
+                            <button type="button" class="star-btn" data-value="3">&#9733;</button>
+                            <button type="button" class="star-btn" data-value="4">&#9733;</button>
+                            <button type="button" class="star-btn" data-value="5">&#9733;</button>
+                        </div>
+                        <input type="hidden" id="avaliacaoLugar" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="comentarioLugar">Comentario (opcional)</label>
+                        <textarea id="comentarioLugar" class="input-field textarea" rows="3" placeholder="Conte sua experiencia..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Adicionar Lugar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        // Verificar se o usuário tem carteira
-        // Se nao tiver, nao deve estar nesta pagina
-        document.addEventListener('DOMContentLoaded', function() {
-            verificarAcessoComunidade();
-        });
+        // Mapa Interativo com Leaflet
+        let mapa;
+        let marcadores = [];
 
-        async function verificarAcessoComunidade() {
-            try {
-                const usuario = JSON.parse(localStorage.getItem('carteira_user') || 'null');
-                const carteiraCadastrada = localStorage.getItem('carteira_cadastrada');
-                const token = localStorage.getItem('carteira_token');
-
-                // Se nao tiver carteira cadastrada, redirecionar para cadastro
-                if (!usuario || !token || carteiraCadastrada !== 'true') {
-                    // Tentar buscar a carteira da API para confirmação
-                    try {
-                        const resposta = await fazerRequisicao('/carteiras/minha', 'GET');
-                        if (!resposta.sucesso || !resposta.data) {
-                            // Nao tem carteira, redirecionar
-                            window.location.href = 'cadastro_carteira.html';
-                            return;
-                        }
-                    } catch (erro) {
-                        // Erro na API, redirecionar
-                        window.location.href = 'cadastro_carteira.html';
-                        return;
-                    }
-                }
-
-                // Esconder o link 'Cadastro' na navegacao se tiver carteira
-                esconderLinkCadastro();
-            } catch (erro) {
-                console.error('Erro ao verificar acesso:', erro);
+        const locaisAcessiveis = [
+            {
+                nome: 'Shopping Center Norte',
+                lat: -23.5167,
+                lng: -46.6347,
+                tipo: 'shoppings',
+                nota: 4.8,
+                cor: '#10b981'
+            },
+            {
+                nome: 'Parque Ibirapuera',
+                lat: -23.5874,
+                lng: -46.6576,
+                tipo: 'parques',
+                nota: 4.6,
+                cor: '#10b981'
+            },
+            {
+                nome: 'Restaurante Sabor Inclusivo',
+                lat: -22.9035,
+                lng: -47.0565,
+                tipo: 'restaurantes',
+                nota: 4.9,
+                cor: '#10b981'
+            },
+            {
+                nome: 'Hospital das Clinicas',
+                lat: -23.5558,
+                lng: -46.6696,
+                tipo: 'hospitais',
+                nota: 4.2,
+                cor: '#f59e0b'
+            },
+            {
+                nome: 'Shopping Eldorado',
+                lat: -23.5729,
+                lng: -46.6954,
+                tipo: 'shoppings',
+                nota: 4.5,
+                cor: '#10b981'
             }
+        ];
+
+        function initMapa() {
+            mapa = L.map('mapaInterativo').setView([-23.5505, -46.6333], 11);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(mapa);
+
+            renderizarMarcadores('todos');
         }
 
-        function esconderLinkCadastro() {
-            const navLinks = document.querySelectorAll('a[href="cadastro_carteira.html"]');
-            navLinks.forEach(link => {
-                const parent = link.parentElement;
-                if (parent) {
-                    parent.style.display = 'none';
+        function renderizarMarcadores(filtro) {
+            // Limpar marcadores existentes
+            marcadores.forEach(m => mapa.removeLayer(m));
+            marcadores = [];
+
+            locaisAcessiveis.forEach(local => {
+                if (filtro === 'todos' || local.tipo === filtro) {
+                    const icone = L.divIcon({
+                        className: 'marcador-custom',
+                        html: `<div style="background: ${local.cor}; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${local.nota}</div>`,
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 15]
+                    });
+
+                    const marcador = L.marker([local.lat, local.lng], { icon: icone })
+                        .addTo(mapa)
+                        .bindPopup(`
+                            <div style="text-align: center; padding: 8px;">
+                                <strong style="font-size: 14px;">${local.nome}</strong><br>
+                                <span style="color: #f59e0b; font-size: 16px;">&#9733;</span> ${local.nota}/5.0<br>
+                                <button onclick="mostrarToast('Abrindo detalhes de ${local.nome}', 'info')" style="margin-top: 8px; padding: 6px 12px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer;">Ver Detalhes</button>
+                            </div>
+                        `);
+
+                    marcadores.push(marcador);
                 }
             });
+        }
+
+        function focalizarLugar(lat, lng) {
+            mapa.setView([lat, lng], 15);
+        }
+
+        // Filtros do mapa
+        document.querySelectorAll('.filtro-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                renderizarMarcadores(this.dataset.filtro);
+            });
+        });
+
+        // Inicializar mapa quando a pagina carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            initMapa();
+        });
+
+        // Funcoes auxiliares
+        function scrollToSection(id) {
+            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function abrirModal(id) {
+            document.getElementById(id)?.classList.add('active');
+        }
+
+        function fecharModal(id) {
+            document.getElementById(id)?.classList.remove('active');
+        }
+
+        // Fechar modal ao clicar fora
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        function participarGrupo(grupo) {
+            mostrarToast(`Voce foi adicionado ao grupo ${grupo}!`, 'success');
+        }
+
+        function participarEvento(evento) {
+            mostrarToast(`Inscricao confirmada para: ${evento}`, 'success');
+        }
+
+        // Sistema de rating
+        document.querySelectorAll('.star-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const valor = parseInt(this.dataset.value);
+                document.getElementById('avaliacaoLugar').value = valor;
+                document.querySelectorAll('.star-btn').forEach((b, i) => {
+                    b.classList.toggle('active', i < valor);
+                });
+            });
+        });
+
+        // Form novo lugar
+        document.getElementById('novoLugarForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            mostrarToast('Lugar adicionado com sucesso! Obrigado pela contribuicao.', 'success');
+            fecharModal('novoLugarModal');
+            this.reset();
+        });
+
+        // Toast
+        function mostrarToast(mensagem, tipo = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${tipo}`;
+            
+            const icones = {
+                success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+                error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',
+                warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+                info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-icon">${icones[tipo]}</div>
+                <div class="toast-message">${mensagem}</div>
+                <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+                <div class="toast-progress"></div>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
         }
     </script>
 </body>

@@ -3,124 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administração - GO Card PCD</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/carteira.css">
+    <title>Administracao - GO Card PCD</title>
+    <link rel="stylesheet" href="../assets/css/gocard-melhorado.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        .admin-summary-grid {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            margin-bottom: 1.5rem;
-        }
-
-        .admin-summary-card {
-            background: #ffffff;
-            border: 1px solid #e6e8f0;
-            border-radius: 16px;
-            padding: 1rem 1.2rem;
-            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
-        }
-
-        .admin-summary-card h3 {
-            margin: 0 0 0.5rem;
-            font-size: 0.95rem;
-            color: #717faa;
-        }
-
-        .admin-summary-card p {
-            margin: 0;
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        .admin-section {
-            margin-bottom: 2rem;
-        }
-
-        .admin-section-title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .admin-section-title h2 {
-            margin: 0;
-            font-size: 1.2rem;
-        }
-
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        .admin-table th,
-        .admin-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #f0f2f7;
-            text-align: left;
-            font-size: 0.92rem;
-            color: #334155;
-        }
-
-        .admin-table th {
-            background: #f8fafc;
-            color: #475569;
-            font-weight: 600;
-        }
-
-        .admin-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .admin-empty {
-            padding: 1rem;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            color: #334155;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.35rem 0.7rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-        }
-
-        .status-badge.ativo { background: #16a34a; }
-        .status-badge.inativo { background: #ef4444; }
-        .status-badge.pendente { background: #f59e0b; }
-        .status-badge.resolvida { background: #0ea5e9; }
-
-        .admin-card-actions .btn {
-            margin-right: 0.5rem;
-        }
-
-        @media (max-width: 900px) {
-            .admin-table th,
-            .admin-table td {
-                padding: 0.8rem;
-            }
-        }
-    </style>
 </head>
-<body>
-    <div class="app-container">
-        <header class="main-header">
-            <div class="header-content">
+<body class="admin-body">
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
                 <div class="logo">
                     <div class="logo-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -130,67 +21,732 @@
                     </div>
                     <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
                 </div>
-                <nav class="nav-links">
-                    <button class="btn btn-secondary" id="logoutAdmin">Sair</button>
-                </nav>
             </div>
-        </header>
 
-        <main class="main-content">
-            <div class="container-wide">
-                <div class="page-header">
-                    <h1>Painel do Administrador</h1>
-                    <p>Gerencie todos os usuários, carteiras e denúncias em um único lugar.</p>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="sidebar-link active" data-section="dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#usuarios" class="sidebar-link" data-section="usuarios">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Usuarios
+                </a>
+                <a href="#carteiras" class="sidebar-link" data-section="carteiras">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                    </svg>
+                    Carteiras
+                </a>
+                <a href="#denuncias" class="sidebar-link" data-section="denuncias">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Denuncias
+                    <span class="sidebar-badge">3</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="sidebar-link logout" onclick="logout()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="admin-header-left">
+                    <button class="btn-mobile-sidebar" id="toggleSidebar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <h1 class="admin-page-title">Painel do Administrador</h1>
                 </div>
-
-                <div class="admin-summary-grid">
-                    <div class="admin-summary-card">
-                        <h3>Usuários cadastrados</h3>
-                        <p id="totalUsers">0</p>
+                <div class="admin-header-right">
+                    <div class="admin-search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" placeholder="Buscar usuarios, carteiras..." id="adminSearch">
                     </div>
-                    <div class="admin-summary-card">
-                        <h3>Carteiras registradas</h3>
-                        <p id="totalCarteiras">0</p>
-                    </div>
-                    <div class="admin-summary-card">
-                        <h3>Denúncias</h3>
-                        <p id="totalDenuncias">0</p>
+                    <div class="admin-user">
+                        <div class="admin-avatar">AD</div>
+                        <span>Administrador</span>
                     </div>
                 </div>
+            </header>
 
-                <section class="admin-section">
-                    <div class="admin-section-title">
-                        <h2>Usuários</h2>
+            <!-- Content -->
+            <div class="admin-content">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="admin-section active">
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #2563eb, #3b82f6);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Usuarios Cadastrados</span>
+                                <span class="stat-value" id="totalUsers">1.247</span>
+                                <span class="stat-change positive">+12% este mes</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #34d399);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Carteiras Ativas</span>
+                                <span class="stat-value" id="totalCarteiras">892</span>
+                                <span class="stat-change positive">+8% este mes</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Denuncias Pendentes</span>
+                                <span class="stat-value" id="totalDenuncias">23</span>
+                                <span class="stat-change negative">3 urgentes</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Taxa de Aprovacao</span>
+                                <span class="stat-value">94%</span>
+                                <span class="stat-change positive">+2% este mes</span>
+                            </div>
+                        </div>
                     </div>
-                    <div id="usuariosLoading" class="info-box">Carregando usuários...</div>
-                    <div id="usuariosEmpty" class="admin-empty hidden">Nenhum usuário encontrado.</div>
-                    <div id="usuariosList"></div>
+
+                    <!-- Recent Activity -->
+                    <div class="admin-grid">
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <h3>Atividade Recente</h3>
+                                <button class="btn btn-sm btn-outline">Ver Todas</button>
+                            </div>
+                            <div class="admin-card-body">
+                                <div class="activity-list">
+                                    <div class="activity-item">
+                                        <div class="activity-icon success">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                            </svg>
+                                        </div>
+                                        <div class="activity-info">
+                                            <p><strong>Maria Silva</strong> teve sua carteira aprovada</p>
+                                            <span>Ha 5 minutos</span>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon warning">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                            </svg>
+                                        </div>
+                                        <div class="activity-info">
+                                            <p>Nova denuncia registrada: <strong>Fila Prioritaria</strong></p>
+                                            <span>Ha 12 minutos</span>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon info">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="9" cy="7" r="4"></circle>
+                                                <line x1="19" y1="8" x2="19" y2="14"></line>
+                                                <line x1="22" y1="11" x2="16" y2="11"></line>
+                                            </svg>
+                                        </div>
+                                        <div class="activity-info">
+                                            <p><strong>Joao Santos</strong> criou uma conta</p>
+                                            <span>Ha 25 minutos</span>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon success">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                                            </svg>
+                                        </div>
+                                        <div class="activity-info">
+                                            <p><strong>Ana Oliveira</strong> solicitou nova carteira</p>
+                                            <span>Ha 1 hora</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <h3>Denuncias Urgentes</h3>
+                                <span class="badge badge-danger">3 pendentes</span>
+                            </div>
+                            <div class="admin-card-body">
+                                <div class="denuncias-urgentes">
+                                    <div class="denuncia-urgente" onclick="verDenuncia(1)">
+                                        <div class="denuncia-urgente-header">
+                                            <span class="urgencia-badge critica">Critica</span>
+                                            <span class="denuncia-data">Hoje, 14:32</span>
+                                        </div>
+                                        <h4>Atendimento Discriminatorio</h4>
+                                        <p>Shopping Plaza - Sao Paulo, SP</p>
+                                    </div>
+                                    <div class="denuncia-urgente" onclick="verDenuncia(2)">
+                                        <div class="denuncia-urgente-header">
+                                            <span class="urgencia-badge alta">Alta</span>
+                                            <span class="denuncia-data">Hoje, 11:15</span>
+                                        </div>
+                                        <h4>Vaga Reservada Ocupada</h4>
+                                        <p>Hospital Municipal - Campinas, SP</p>
+                                    </div>
+                                    <div class="denuncia-urgente" onclick="verDenuncia(3)">
+                                        <div class="denuncia-urgente-header">
+                                            <span class="urgencia-badge alta">Alta</span>
+                                            <span class="denuncia-data">Ontem, 18:45</span>
+                                        </div>
+                                        <h4>Falta de Acessibilidade</h4>
+                                        <p>Agencia Bancaria Centro - Santos, SP</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
-                <section class="admin-section">
-                    <div class="admin-section-title">
-                        <h2>Carteiras</h2>
+                <!-- Usuarios Section -->
+                <section id="usuarios" class="admin-section">
+                    <div class="section-header">
+                        <h2>Gerenciar Usuarios</h2>
+                        <div class="section-actions">
+                            <select class="input-field input-sm" id="filtroStatusUsuario">
+                                <option value="todos">Todos os Status</option>
+                                <option value="ativo">Ativos</option>
+                                <option value="pendente">Pendentes</option>
+                                <option value="inativo">Inativos</option>
+                            </select>
+                            <button class="btn btn-primary btn-sm">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Novo Usuario
+                            </button>
+                        </div>
                     </div>
-                    <div id="carteirasLoading" class="info-box">Carregando carteiras...</div>
-                    <div id="carteirasEmpty" class="admin-empty hidden">Nenhuma carteira encontrada.</div>
-                    <div id="carteirasList"></div>
+
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Carteira</th>
+                                    <th>Data Cadastro</th>
+                                    <th>Acoes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usuariosTableBody">
+                                <tr>
+                                    <td>
+                                        <div class="user-cell">
+                                            <div class="user-avatar">MS</div>
+                                            <span>Maria Silva</span>
+                                        </div>
+                                    </td>
+                                    <td>maria.silva@email.com</td>
+                                    <td><span class="status-badge ativo">Ativo</span></td>
+                                    <td><span class="status-badge success">Aprovada</span></td>
+                                    <td>15/03/2024</td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="btn-icon" title="Ver detalhes" onclick="verUsuario(1)">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                            </button>
+                                            <button class="btn-icon" title="Editar" onclick="editarUsuario(1)">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                            </button>
+                                            <button class="btn-icon danger" title="Excluir" onclick="excluirUsuario(1)">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="user-cell">
+                                            <div class="user-avatar">JS</div>
+                                            <span>Joao Santos</span>
+                                        </div>
+                                    </td>
+                                    <td>joao.santos@email.com</td>
+                                    <td><span class="status-badge pendente">Pendente</span></td>
+                                    <td><span class="status-badge warning">Em Analise</span></td>
+                                    <td>20/03/2024</td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="btn-icon" title="Ver detalhes" onclick="verUsuario(2)">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                            </button>
+                                            <button class="btn-icon" title="Editar" onclick="editarUsuario(2)">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                            </button>
+                                            <button class="btn-icon danger" title="Excluir" onclick="excluirUsuario(2)">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="user-cell">
+                                            <div class="user-avatar">AO</div>
+                                            <span>Ana Oliveira</span>
+                                        </div>
+                                    </td>
+                                    <td>ana.oliveira@email.com</td>
+                                    <td><span class="status-badge ativo">Ativo</span></td>
+                                    <td><span class="status-badge success">Aprovada</span></td>
+                                    <td>10/03/2024</td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="btn-icon" title="Ver detalhes" onclick="verUsuario(3)">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                            </button>
+                                            <button class="btn-icon" title="Editar" onclick="editarUsuario(3)">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                            </button>
+                                            <button class="btn-icon danger" title="Excluir" onclick="excluirUsuario(3)">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-pagination">
+                        <span>Mostrando 1-3 de 1.247 usuarios</span>
+                        <div class="pagination-buttons">
+                            <button class="btn btn-sm btn-outline" disabled>Anterior</button>
+                            <button class="btn btn-sm btn-primary">1</button>
+                            <button class="btn btn-sm btn-outline">2</button>
+                            <button class="btn btn-sm btn-outline">3</button>
+                            <button class="btn btn-sm btn-outline">...</button>
+                            <button class="btn btn-sm btn-outline">Proximo</button>
+                        </div>
+                    </div>
                 </section>
 
-                <section class="admin-section">
-                    <div class="admin-section-title">
-                        <h2>Denúncias</h2>
+                <!-- Carteiras Section -->
+                <section id="carteiras" class="admin-section">
+                    <div class="section-header">
+                        <h2>Gerenciar Carteiras</h2>
+                        <div class="section-actions">
+                            <select class="input-field input-sm" id="filtroStatusCarteira">
+                                <option value="todos">Todos os Status</option>
+                                <option value="aprovada">Aprovadas</option>
+                                <option value="pendente">Pendentes</option>
+                                <option value="rejeitada">Rejeitadas</option>
+                            </select>
+                        </div>
                     </div>
-                    <div id="denunciasLoading" class="info-box">Carregando denúncias...</div>
-                    <div id="denunciasEmpty" class="admin-empty hidden">Nenhuma denúncia encontrada.</div>
-                    <div id="denunciasList"></div>
+
+                    <div class="carteiras-grid">
+                        <div class="carteira-admin-card">
+                            <div class="carteira-admin-header">
+                                <div class="carteira-foto">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </div>
+                                <div class="carteira-info">
+                                    <h4>Maria Silva</h4>
+                                    <p>CPF: 123.456.789-00</p>
+                                    <span class="status-badge success">Aprovada</span>
+                                </div>
+                            </div>
+                            <div class="carteira-admin-body">
+                                <div class="carteira-detail">
+                                    <span class="label">CID:</span>
+                                    <span class="value">F84.0 - TEA</span>
+                                </div>
+                                <div class="carteira-detail">
+                                    <span class="label">Validade:</span>
+                                    <span class="value">15/03/2029</span>
+                                </div>
+                                <div class="carteira-detail">
+                                    <span class="label">Solicitada em:</span>
+                                    <span class="value">15/03/2024</span>
+                                </div>
+                            </div>
+                            <div class="carteira-admin-footer">
+                                <button class="btn btn-sm btn-outline" onclick="verCarteira(1)">Ver Detalhes</button>
+                                <button class="btn btn-sm btn-outline" onclick="verLaudo(1)">Ver Laudo</button>
+                            </div>
+                        </div>
+
+                        <div class="carteira-admin-card pendente">
+                            <div class="carteira-admin-header">
+                                <div class="carteira-foto">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </div>
+                                <div class="carteira-info">
+                                    <h4>Joao Santos</h4>
+                                    <p>CPF: 987.654.321-00</p>
+                                    <span class="status-badge warning">Pendente</span>
+                                </div>
+                            </div>
+                            <div class="carteira-admin-body">
+                                <div class="carteira-detail">
+                                    <span class="label">CID:</span>
+                                    <span class="value">G80 - Paralisia Cerebral</span>
+                                </div>
+                                <div class="carteira-detail">
+                                    <span class="label">Solicitada em:</span>
+                                    <span class="value">20/03/2024</span>
+                                </div>
+                                <div class="carteira-detail">
+                                    <span class="label">Aguardando:</span>
+                                    <span class="value">Analise do Laudo</span>
+                                </div>
+                            </div>
+                            <div class="carteira-admin-footer">
+                                <button class="btn btn-sm btn-success" onclick="aprovarCarteira(2)">Aprovar</button>
+                                <button class="btn btn-sm btn-danger" onclick="rejeitarCarteira(2)">Rejeitar</button>
+                                <button class="btn btn-sm btn-outline" onclick="verLaudo(2)">Ver Laudo</button>
+                            </div>
+                        </div>
+
+                        <div class="carteira-admin-card pendente">
+                            <div class="carteira-admin-header">
+                                <div class="carteira-foto">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </div>
+                                <div class="carteira-info">
+                                    <h4>Pedro Almeida</h4>
+                                    <p>CPF: 456.789.123-00</p>
+                                    <span class="status-badge warning">Pendente</span>
+                                </div>
+                            </div>
+                            <div class="carteira-admin-body">
+                                <div class="carteira-detail">
+                                    <span class="label">CID:</span>
+                                    <span class="value">H54 - Deficiencia Visual</span>
+                                </div>
+                                <div class="carteira-detail">
+                                    <span class="label">Solicitada em:</span>
+                                    <span class="value">22/03/2024</span>
+                                </div>
+                                <div class="carteira-detail">
+                                    <span class="label">Aguardando:</span>
+                                    <span class="value">Validacao de Documento</span>
+                                </div>
+                            </div>
+                            <div class="carteira-admin-footer">
+                                <button class="btn btn-sm btn-success" onclick="aprovarCarteira(3)">Aprovar</button>
+                                <button class="btn btn-sm btn-danger" onclick="rejeitarCarteira(3)">Rejeitar</button>
+                                <button class="btn btn-sm btn-outline" onclick="verLaudo(3)">Ver Laudo</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Denuncias Section -->
+                <section id="denuncias" class="admin-section">
+                    <div class="section-header">
+                        <h2>Gerenciar Denuncias</h2>
+                        <div class="section-actions">
+                            <select class="input-field input-sm" id="filtroUrgencia">
+                                <option value="todos">Todas as Urgencias</option>
+                                <option value="critica">Critica</option>
+                                <option value="alta">Alta</option>
+                                <option value="media">Media</option>
+                                <option value="baixa">Baixa</option>
+                            </select>
+                            <select class="input-field input-sm" id="filtroStatusDenuncia">
+                                <option value="todos">Todos os Status</option>
+                                <option value="pendente">Pendentes</option>
+                                <option value="em_andamento">Em Andamento</option>
+                                <option value="resolvida">Resolvidas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="denuncias-list">
+                        <div class="denuncia-card critica">
+                            <div class="denuncia-header">
+                                <div class="denuncia-titulo">
+                                    <span class="urgencia-badge critica">Critica</span>
+                                    <h4>Atendimento Discriminatorio</h4>
+                                </div>
+                                <span class="denuncia-protocolo">DEN000123</span>
+                            </div>
+                            <div class="denuncia-body">
+                                <div class="denuncia-info">
+                                    <p><strong>Local:</strong> Shopping Plaza</p>
+                                    <p><strong>Endereco:</strong> Av. Paulista, 1000 - Sao Paulo, SP</p>
+                                    <p><strong>Tipo:</strong> Atendimento Discriminatorio</p>
+                                    <p><strong>Data:</strong> 24/03/2024 - 14:32</p>
+                                </div>
+                                <div class="denuncia-descricao">
+                                    <p>Funcionario se recusou a atender meu filho com TEA na fila prioritaria, alegando que "nao parecia deficiente"...</p>
+                                </div>
+                            </div>
+                            <div class="denuncia-footer">
+                                <div class="denuncia-denunciante">
+                                    <span>Denunciante: Maria Silva</span>
+                                </div>
+                                <div class="denuncia-actions">
+                                    <button class="btn btn-sm btn-outline" onclick="verDenuncia(1)">Ver Completa</button>
+                                    <button class="btn btn-sm btn-primary" onclick="atenderDenuncia(1)">Atender</button>
+                                    <button class="btn btn-sm btn-success" onclick="resolverDenuncia(1)">Resolver</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="denuncia-card alta">
+                            <div class="denuncia-header">
+                                <div class="denuncia-titulo">
+                                    <span class="urgencia-badge alta">Alta</span>
+                                    <h4>Vaga Reservada Ocupada</h4>
+                                </div>
+                                <span class="denuncia-protocolo">DEN000122</span>
+                            </div>
+                            <div class="denuncia-body">
+                                <div class="denuncia-info">
+                                    <p><strong>Local:</strong> Hospital Municipal</p>
+                                    <p><strong>Endereco:</strong> Rua das Flores, 500 - Campinas, SP</p>
+                                    <p><strong>Tipo:</strong> Vaga Reservada Ocupada</p>
+                                    <p><strong>Data:</strong> 24/03/2024 - 11:15</p>
+                                </div>
+                                <div class="denuncia-descricao">
+                                    <p>Veiculo sem identificacao ocupando vaga reservada para PCD no estacionamento do hospital...</p>
+                                </div>
+                            </div>
+                            <div class="denuncia-footer">
+                                <div class="denuncia-denunciante">
+                                    <span>Denunciante: Joao Santos</span>
+                                </div>
+                                <div class="denuncia-actions">
+                                    <button class="btn btn-sm btn-outline" onclick="verDenuncia(2)">Ver Completa</button>
+                                    <button class="btn btn-sm btn-primary" onclick="atenderDenuncia(2)">Atender</button>
+                                    <button class="btn btn-sm btn-success" onclick="resolverDenuncia(2)">Resolver</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="denuncia-card media resolvida">
+                            <div class="denuncia-header">
+                                <div class="denuncia-titulo">
+                                    <span class="urgencia-badge media">Media</span>
+                                    <h4>Falta de Acessibilidade</h4>
+                                </div>
+                                <span class="denuncia-protocolo">DEN000120</span>
+                                <span class="status-badge success">Resolvida</span>
+                            </div>
+                            <div class="denuncia-body">
+                                <div class="denuncia-info">
+                                    <p><strong>Local:</strong> Restaurante Bom Sabor</p>
+                                    <p><strong>Endereco:</strong> Rua Central, 200 - Santo Andre, SP</p>
+                                    <p><strong>Tipo:</strong> Falta de Acessibilidade</p>
+                                    <p><strong>Data:</strong> 20/03/2024 - 19:00</p>
+                                </div>
+                                <div class="denuncia-descricao">
+                                    <p>Restaurante sem rampa de acesso e banheiro adaptado...</p>
+                                </div>
+                            </div>
+                            <div class="denuncia-footer">
+                                <div class="denuncia-denunciante">
+                                    <span>Denunciante: Ana Oliveira</span>
+                                </div>
+                                <div class="denuncia-actions">
+                                    <button class="btn btn-sm btn-outline" onclick="verDenuncia(3)">Ver Detalhes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </section>
             </div>
         </main>
     </div>
 
-    <div id="toast" class="toast"></div>
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
 
-    <script src="../assets/js/auth.js"></script>
-    <script src="../assets/js/admin.js"></script>
+    <script>
+        // Navegacao entre secoes
+        document.querySelectorAll('.sidebar-link[data-section]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const section = this.dataset.section;
+                
+                // Atualizar links ativos
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Mostrar secao correspondente
+                document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section)?.classList.add('active');
+                
+                // Atualizar titulo
+                const titulos = {
+                    dashboard: 'Painel do Administrador',
+                    usuarios: 'Gerenciar Usuarios',
+                    carteiras: 'Gerenciar Carteiras',
+                    denuncias: 'Gerenciar Denuncias'
+                };
+                document.querySelector('.admin-page-title').textContent = titulos[section] || 'Admin';
+            });
+        });
+
+        // Toggle sidebar mobile
+        document.getElementById('toggleSidebar')?.addEventListener('click', function() {
+            document.querySelector('.admin-sidebar').classList.toggle('open');
+        });
+
+        // Funcoes de acao
+        function verUsuario(id) {
+            mostrarToast(`Abrindo detalhes do usuario #${id}`, 'info');
+        }
+
+        function editarUsuario(id) {
+            mostrarToast(`Editando usuario #${id}`, 'info');
+        }
+
+        function excluirUsuario(id) {
+            if (confirm('Tem certeza que deseja excluir este usuario?')) {
+                mostrarToast(`Usuario #${id} excluido com sucesso`, 'success');
+            }
+        }
+
+        function verCarteira(id) {
+            mostrarToast(`Abrindo carteira #${id}`, 'info');
+        }
+
+        function verLaudo(id) {
+            mostrarToast(`Abrindo laudo da carteira #${id}`, 'info');
+        }
+
+        function aprovarCarteira(id) {
+            mostrarToast(`Carteira #${id} aprovada com sucesso!`, 'success');
+        }
+
+        function rejeitarCarteira(id) {
+            mostrarToast(`Carteira #${id} rejeitada`, 'warning');
+        }
+
+        function verDenuncia(id) {
+            mostrarToast(`Abrindo denuncia #${id}`, 'info');
+        }
+
+        function atenderDenuncia(id) {
+            mostrarToast(`Denuncia #${id} marcada como "Em Andamento"`, 'info');
+        }
+
+        function resolverDenuncia(id) {
+            mostrarToast(`Denuncia #${id} marcada como "Resolvida"`, 'success');
+        }
+
+        function logout() {
+            if (confirm('Deseja realmente sair?')) {
+                mostrarToast('Saindo do sistema...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'cadastro-melhorado.html';
+                }, 1000);
+            }
+        }
+
+        // Toast
+        function mostrarToast(mensagem, tipo = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${tipo}`;
+            
+            const icones = {
+                success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+                error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',
+                warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+                info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-icon">${icones[tipo]}</div>
+                <div class="toast-message">${mensagem}</div>
+                <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+                <div class="toast-progress"></div>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
 </body>
 </html>

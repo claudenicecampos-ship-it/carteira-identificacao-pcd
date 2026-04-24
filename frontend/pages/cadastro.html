@@ -3,58 +3,375 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - Carteira</title>
-    <link rel="stylesheet" href="../assets/css/auth.css">
+    <title>Criar Conta - GO Card PCD</title>
+    <link rel="stylesheet" href="../assets/css/gocard-melhorado.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para página de autenticação */
+        body {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f2440 50%, #1a365d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .auth-logo-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary-500), var(--accent-500));
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+        }
+
+        .auth-logo-icon svg {
+            width: 32px;
+            height: 32px;
+            color: white;
+        }
+
+        .auth-logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .auth-logo-text span {
+            background: linear-gradient(135deg, var(--primary-300), var(--accent-400));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .auth-card {
+            background: var(--white);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .auth-header {
+            padding: 36px 36px 28px;
+            text-align: center;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .auth-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            color: var(--gray-500);
+            font-size: 15px;
+        }
+
+        .auth-body {
+            padding: 36px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            transition: all var(--transition-base);
+        }
+
+        .step-dot.active {
+            background: var(--primary-500);
+            box-shadow: 0 0 0 4px var(--primary-100);
+        }
+
+        .step-dot.completed {
+            background: var(--success-500);
+        }
+
+        .form-step {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .form-step h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-step h3 svg {
+            width: 22px;
+            height: 22px;
+            color: var(--primary-500);
+        }
+
+        .step-description {
+            color: var(--gray-500);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 4px;
+            transition: color var(--transition-base);
+        }
+
+        .password-toggle:hover {
+            color: var(--gray-600);
+        }
+
+        .password-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .password-strength-bar {
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: var(--radius-full);
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .password-strength-fill {
+            height: 100%;
+            border-radius: var(--radius-full);
+            transition: all var(--transition-base);
+            width: 0;
+        }
+
+        .password-strength-fill.weak {
+            width: 33%;
+            background: var(--error-500);
+        }
+
+        .password-strength-fill.medium {
+            width: 66%;
+            background: var(--warning-500);
+        }
+
+        .password-strength-fill.strong {
+            width: 100%;
+            background: var(--success-500);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .button-group .btn {
+            width: 100%;
+        }
+
+        .success-step {
+            text-align: center;
+            padding: 24px 0;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            animation: bounce 0.5s ease;
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            color: var(--success-500);
+        }
+
+        .success-step h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+        }
+
+        .success-step p {
+            color: var(--gray-500);
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 28px 0;
+            color: var(--gray-400);
+            font-size: 13px;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gray-200);
+        }
+
+        .auth-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .auth-link a {
+            color: var(--primary-600);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+            padding: 14px;
+            background: var(--success-50);
+            border: 1px solid var(--success-200);
+            border-radius: var(--radius-lg);
+            font-size: 13px;
+            color: var(--success-700);
+        }
+
+        .security-badge svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .auth-footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--gray-50);
+            border-top: 1px solid var(--gray-100);
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="auth-form-wrapper">
-            <div class="form-container">
-                <div class="form-header">
-                    <h1>Criar Conta</h1>
-                    <p>Junte-se a nós</p>
+    <div class="auth-container">
+        <!-- Logo -->
+        <div class="auth-logo">
+            <div class="auth-logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+            <div class="auth-logo-text">GO Card <span>PCD</span></div>
+        </div>
+
+        <!-- Card de Autenticação -->
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Criar Conta</h1>
+                <p>Junte-se a milhares de pessoas que já têm sua carteira digital</p>
+            </div>
+
+            <div class="auth-body">
+                <!-- Indicador de Steps -->
+                <div class="step-indicator">
+                    <div class="step-dot active" id="dot1"></div>
+                    <div class="step-dot" id="dot2"></div>
+                    <div class="step-dot" id="dot3"></div>
                 </div>
 
-                <form id="cadastroForm" class="auth-form multi-step">
+                <form id="cadastroForm">
                     <!-- Step 1: Informações Pessoais -->
                     <div class="form-step active" id="step1">
-                        <h3>Informações Pessoais</h3>
-                        
+                        <h3>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Informações Pessoais
+                        </h3>
+                        <p class="step-description">Preencha seus dados básicos para criar sua conta</p>
+
                         <div class="form-group">
-                            <label for="nome">Nome Completo</label>
-                            <input 
-                                type="text" 
-                                id="nome" 
-                                name="nome" 
-                                placeholder="Seu nome completo"
-                                required
-                            >
+                            <label for="nome">Nome Completo <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <input type="text" id="nome" name="nome" placeholder="Seu nome completo" class="input-field" required>
+                                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
                             <span class="error-message" id="nomeError"></span>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="email">Email</label>
-                                <input 
-                                    type="email" 
-                                    id="email" 
-                                    name="email" 
-                                    placeholder="seu@email.com"
-                                    required
-                                >
+                                <label for="email">Email <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="email" id="email" name="email" placeholder="seu@email.com" class="input-field" required>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </div>
                                 <span class="error-message" id="emailError"></span>
                             </div>
 
                             <div class="form-group">
-                                <label for="cpf">CPF</label>
-                                <input 
-                                    type="text" 
-                                    id="cpf" 
-                                    name="cpf" 
-                                    placeholder="000.000.000-00"
-                                    required
-                                    maxlength="14"
-                                >
+                                <label for="cpf">CPF <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" maxlength="14" class="input-field" required>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </div>
                                 <span class="error-message" id="cpfError"></span>
                             </div>
                         </div>
@@ -62,265 +379,396 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="data_nascimento">Data de Nascimento</label>
-                                <input 
-                                    type="date" 
-                                    id="data_nascimento" 
-                                    name="data_nascimento"
-                                >
-                                <span class="error-message" id="dataNascimentoError"></span>
+                                <input type="date" id="data_nascimento" name="data_nascimento" class="input-field">
                             </div>
 
                             <div class="form-group">
                                 <label for="telefone">Telefone</label>
-                                <input 
-                                    type="tel" 
-                                    id="telefone" 
-                                    name="telefone" 
-                                    placeholder="(11) 99999-9999"
-                                    maxlength="15"
-                                >
-                                <span class="error-message" id="telefoneError"></span>
+                                <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999" maxlength="15" class="input-field">
                             </div>
                         </div>
 
-                        <button type="button" class="btn-primary" onclick="proximoStep()">Próximo</button>
+                        <button type="button" class="btn btn-primary full-width" onclick="nextStep()" style="margin-top: 20px;">
+                            Próximo
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </button>
                     </div>
 
-                    <!-- Step 2: Senha e Confirmação -->
+                    <!-- Step 2: Segurança -->
                     <div class="form-step" id="step2">
-                        <h3>Segurança</h3>
-                        
+                        <h3>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            Segurança
+                        </h3>
+                        <p class="step-description">Crie uma senha forte para proteger sua conta</p>
+
                         <div class="form-group">
-                            <label for="senha">Senha</label>
-                            <div class="password-wrapper">
-                                <input 
-                                    type="password" 
-                                    id="senha" 
-                                    name="senha" 
-                                    placeholder="Crie uma senha segura"
-                                    required
-                                >
-                                <button type="button" class="toggle-password" onclick="togglePassword('senha')">
-                                    👁️
+                            <label for="senha">Senha <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <input type="password" id="senha" name="senha" placeholder="Crie uma senha segura" class="input-field" required style="padding-right: 48px;">
+                                <button type="button" class="password-toggle" onclick="togglePassword('senha')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="senhaIcon">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
                                 </button>
                             </div>
-                            <div class="password-strength" id="passwordStrength"></div>
+                            <div class="password-strength-bar">
+                                <div class="password-strength-fill" id="passwordStrengthFill"></div>
+                            </div>
                             <span class="error-message" id="senhaError"></span>
                         </div>
 
                         <div class="password-requirements">
-                            <p><strong>Sua senha deve ter:</strong></p>
+                            <p>Sua senha deve ter:</p>
                             <ul>
-                                <li id="req1">• Mínimo 8 caracteres</li>
-                                <li id="req2">• Pelo menos uma letra maiúscula</li>
-                                <li id="req3">• Pelo menos uma letra minúscula</li>
-                                <li id="req4">• Pelo menos um número</li>
-                                <li id="req5">• Pelo menos um caractere especial (@, $, !, %, *, ?, &)</li>
+                                <li id="req1">Mínimo 8 caracteres</li>
+                                <li id="req2">Pelo menos uma letra maiúscula</li>
+                                <li id="req3">Pelo menos uma letra minúscula</li>
+                                <li id="req4">Pelo menos um número</li>
+                                <li id="req5">Pelo menos um caractere especial (@, $, !, %, *, ?, &)</li>
                             </ul>
                         </div>
 
                         <div class="form-group">
-                            <label for="confirmarSenha">Confirmar Senha</label>
-                            <div class="password-wrapper">
-                                <input 
-                                    type="password" 
-                                    id="confirmarSenha" 
-                                    name="confirmarSenha" 
-                                    placeholder="Confirme sua senha"
-                                    required
-                                >
-                                <button type="button" class="toggle-password" onclick="togglePassword('confirmarSenha')">
-                                    👁️
+                            <label for="confirmarSenha">Confirmar Senha <span class="required">*</span></label>
+                            <div class="input-wrapper">
+                                <input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Confirme sua senha" class="input-field" required style="padding-right: 48px;">
+                                <button type="button" class="password-toggle" onclick="togglePassword('confirmarSenha')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
                                 </button>
                             </div>
                             <span class="error-message" id="confirmarSenhaError"></span>
                         </div>
 
-                        <div class="form-group terms">
-                            <input type="checkbox" id="aceitar" name="aceitar" required>
-                            <label for="aceitar">
-                                Concordo com os <a href="#" onclick="abrirModalTermos(event)">Termos de Serviço</a> e 
-                                <a href="#" onclick="abrirModalPrivacidade(event)">Política de Privacidade</a>
+                        <!-- Termos Melhorados -->
+                        <div class="terms-section" style="margin-top: 24px;">
+                            <label class="checkbox-wrapper">
+                                <span class="checkbox-custom">
+                                    <input type="checkbox" id="aceitar" required>
+                                    <span class="checkbox-visual">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </span>
+                                </span>
+                                <span class="checkbox-label">
+                                    Concordo com os <a href="#" onclick="openModal('termos'); return false;">Termos de Serviço</a> e a <a href="#" onclick="openModal('privacidade'); return false;">Política de Privacidade</a> <span class="required">*</span>
+                                </span>
                             </label>
-                            <span class="error-message" id="aceitarError"></span>
                         </div>
 
                         <div class="button-group">
-                            <button type="button" class="btn-secondary" onclick="voltarStep()">Voltar</button>
-                            <button type="submit" class="btn-primary" id="cadastroBtn">
-                                <span>Criar Conta</span>
-                                <span class="spinner" id="spinner"></span>
+                            <button type="button" class="btn btn-secondary" onclick="prevStep()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                                </svg>
+                                Voltar
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                Criar Conta
                             </button>
                         </div>
                     </div>
 
                     <!-- Step 3: Sucesso -->
                     <div class="form-step" id="step3">
-                        <div class="success-message">
-                            <div class="success-icon">✅</div>
+                        <div class="success-step">
+                            <div class="success-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                            </div>
                             <h2>Conta Criada com Sucesso!</h2>
-                            <p>Sua conta foi criada e validada.</p>
-                            <p>Você pode agora fazer login com suas credenciais.</p>
-                            <a href="index.html" class="btn-primary">Ir para Login</a>
+                            <p>Sua conta foi criada e está pronta para uso.</p>
+                            <p>Agora você pode acessar todos os recursos do GO Card PCD.</p>
+                            <a href="index.html" class="btn btn-primary full-width" style="margin-top: 24px;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                                    <polyline points="10 17 15 12 10 7"/>
+                                    <line x1="15" y1="12" x2="3" y2="12"/>
+                                </svg>
+                                Ir para Login
+                            </a>
                         </div>
                     </div>
                 </form>
 
-                <div class="divider">
+                <div class="auth-divider">
                     <span>Já tem conta?</span>
                 </div>
 
-                <a href="index.html" class="btn-secondary">Fazer login</a>
+                <a href="index.html" class="btn btn-secondary full-width">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10 17 15 12 10 7"/>
+                        <line x1="15" y1="12" x2="3" y2="12"/>
+                    </svg>
+                    Fazer Login
+                </a>
 
-                <div class="security-info">
-                    🔒 Dados criptografados e protegidos contra SQL Injection e XSS
+                <div class="security-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    Dados criptografados e protegidos
                 </div>
             </div>
 
-            <div class="form-footer">
-                <small>© 2024 Carteira. Todos os direitos reservados.</small>
+            <div class="auth-footer">
+                &copy; 2025 GO Card PCD. Todos os direitos reservados.
             </div>
         </div>
     </div>
 
-    <!-- ========== MODAL TERMOS DE SERVIÇO ========== -->
-    <div id="modalTermos" class="modal">
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Modal Termos -->
+    <div id="modalTermos" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Termos de Serviço</h2>
-                <button type="button" class="modal-close" onclick="fecharModal('modalTermos')">&times;</button>
+                <h3>Termos de Serviço</h3>
+                <button class="close-modal" onclick="closeModal('modalTermos')">&times;</button>
             </div>
             <div class="modal-body">
-                <h3>1. Aceitação dos Termos</h3>
-                <p>Ao acessar e usar a plataforma GO Card PCD, você concorda em aceitar e cumprir com estes Termos de Serviço e todas as leis e regulamentos aplicáveis.</p>
-
-                <h3>2. Uso Licenciado</h3>
-                <p>É concedida permissão para baixar temporariamente uma cópia dos materiais (informações ou software) no site GO Card PCD para visualização pessoal não comercial apenas. Esta é a concessão de uma licença, não uma transferência de título, e sob esta licença você não pode:</p>
-                <ul>
-                    <li>Modificar ou copiar os materiais</li>
-                    <li>Usar os materiais para qualquer finalidade comercial ou para exibição pública</li>
-                    <li>Tentar descompilar ou fazer engenharia reversa de qualquer software contido no site GO Card PCD</li>
-                    <li>Remover quaisquer direitos autorais ou outras designações de propriedade dos materiais</li>
-                    <li>Transferir os materiais para outra pessoa ou "espelhar" os materiais em qualquer outro servidor</li>
-                </ul>
-
-                <h3>3. Isenção de Responsabilidade</h3>
-                <p>Os materiais no site GO Card PCD são fornecidos como estão. O GO Card PCD não oferece garantias, expressas ou implícitas, e por este meio rejeita e nega todas as outras garantias incluindo, sem limitação, garantias implícitas ou condições de comercialização, adequação para um propósito específico ou não infração de propriedade intelectual ou outro direito.</p>
-
-                <h3>4. Limitações</h3>
-                <p>Em nenhum caso o GO Card PCD ou seus fornecedores serão responsáveis por quaisquer danos (incluindo, sem limitação, danos por perda de dados ou lucro ou devido a interrupção dos negócios) decorrentes do uso ou da incapacidade de usar o material no site.</p>
-
-                <h3>5. Precisão dos Materiais</h3>
-                <p>O material exibido no site do GO Card PCD pode incluir erros técnicos, tipográficos ou fotográficos. O GO Card PCD não garante que qualquer material em seu site seja preciso, completo ou atual. O GO Card PCD pode fazer alterações nos materiais contidos em seu site a qualquer momento sem aviso prévio.</p>
-
-                <h3>6. Links</h3>
-                <p>O GO Card PCD não analisou todos os sites vinculados ao seu site e não é responsável pelo conteúdo de qualquer site externo. A inclusão de qualquer link não implica aprovação do site pelo GO Card PCD. O uso de qualquer site vinculado é por conta e risco do usuário.</p>
-
-                <h3>7. Modificações</h3>
-                <p>O GO Card PCD pode revisar estes Termos de Serviço para seu site a qualquer momento sem aviso prévio. Ao usar este site, você está concordando em ficar vinculado pela versão revisada destes Termos de Serviço.</p>
-
-                <h3>8. Lei Aplicável</h3>
-                <p>Estes Termos e Condições de Serviço são regidos por e construídos de acordo com as leis do Brasil, e você irrevogavelmente se submete à jurisdição exclusiva dos tribunais nesse local.</p>
+                <div class="legal-item">
+                    <h4>1. Aceitação dos Termos</h4>
+                    <p>Ao acessar e usar a plataforma GO Card PCD, você concorda em aceitar e cumprir com estes Termos de Serviço e todas as leis e regulamentos aplicáveis.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>2. Uso Licenciado</h4>
+                    <p>É concedida permissão para uso pessoal não comercial da plataforma. Você não pode modificar, copiar ou distribuir os materiais sem autorização prévia.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>3. Responsabilidades do Usuário</h4>
+                    <p>O usuário é responsável por manter a confidencialidade de sua conta e senha, e por todas as atividades que ocorram sob sua conta.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>4. Limitações</h4>
+                    <p>O GO Card PCD não será responsável por danos decorrentes do uso ou incapacidade de uso dos serviços da plataforma.</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ========== MODAL POLÍTICA DE PRIVACIDADE ========== -->
-    <div id="modalPrivacidade" class="modal">
+    <!-- Modal Privacidade -->
+    <div id="modalPrivacidade" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Política de Privacidade</h2>
-                <button type="button" class="modal-close" onclick="fecharModal('modalPrivacidade')">&times;</button>
+                <h3>Política de Privacidade</h3>
+                <button class="close-modal" onclick="closeModal('modalPrivacidade')">&times;</button>
             </div>
             <div class="modal-body">
-                <h3>1. Introdução</h3>
-                <p>O GO Card PCD ("nós", "nosso" ou "nos") opera a plataforma GO Card PCD. Esta página informa você das nossas políticas sobre a coleta, uso e divulgação de dados pessoais quando você usa nosso site e as escolhas que você tem associadas a esses dados.</p>
-
-                <h3>2. Coleta de Dados</h3>
-                <p>Coletamos os seguintes tipos de dados pessoais:</p>
-                <ul>
-                    <li><strong>Informações de Cadastro:</strong> Nome, email, CPF, data de nascimento, telefone</li>
-                    <li><strong>Informações de Carteira:</strong> Tipo de deficiência, CID, dados médicos, contatos de emergência</li>
-                    <li><strong>Dados Técnicos:</strong> Endereço IP, tipo de navegador, páginas visitadas, tempo gasto em cada página</li>
-                </ul>
-
-                <h3>3. Uso dos Dados</h3>
-                <p>Nós usamos os dados coletados para:</p>
-                <ul>
-                    <li>Criar e manter sua conta</li>
-                    <li>Gerar sua carteira digital de identificação</li>
-                    <li>Melhorar nossos serviços</li>
-                    <li>Enviar atualizações importantes sobre sua conta</li>
-                    <li>Cumprir com obrigações legais</li>
-                </ul>
-
-                <h3>4. Proteção de Dados</h3>
-                <p>Implementamos medidas de segurança apropriadas para proteger seus dados pessoais contra acesso não autorizado, alteração, divulgação ou destruição. Seus dados são criptografados durante a transmissão e armazenamento. No entanto, nenhum método de transmissão pela Internet é 100% seguro e não podemos garantir segurança absoluta.</p>
-
-                <h3>5. Compartilhamento de Dados</h3>
-                <p>Não compartilhamos seus dados pessoais com terceiros, exceto:</p>
-                <ul>
-                    <li>Conforme exigido pela lei</li>
-                    <li>Para proteger os direitos e segurança do GO Card PCD ou de terceiros</li>
-                    <li>Com seu consentimento explícito</li>
-                </ul>
-
-                <h3>6. Retenção de Dados</h3>
-                <p>Mantemos seus dados pessoais enquanto você tiver uma conta ativa. Se você solicitar a exclusão de sua conta, excluiremos seus dados pessoais em conformidade com as leis aplicáveis, exceto quando for necessário manter os dados para fins legais ou contratuais.</p>
-
-                <h3>7. Seus Direitos</h3>
-                <p>Você tem o direito de:</p>
-                <ul>
-                    <li>Acessar seus dados pessoais</li>
-                    <li>Corrigir dados imprecisos ou incompletos</li>
-                    <li>Solicitar a exclusão de seus dados</li>
-                    <li>Opor-se ao processamento de seus dados</li>
-                    <li>Solicitar a portabilidade de seus dados</li>
-                </ul>
-
-                <h3>8. Cookies</h3>
-                <p>Nosso site usa cookies para melhorar sua experiência. Os cookies são pequenos arquivos de texto que são armazenados em seu dispositivo. Você pode controlar e/ou deletar cookies conforme desejar. Você pode deletar todos os cookies que já estão no seu computador e pode configurar a maioria dos navegadores para impedir que sejam colocados.</p>
-
-                <h3>9. Alterações Nesta Política</h3>
-                <p>Podemos atualizar nossa Política de Privacidade periodicamente. As alterações entram em vigor quando publicadas nesta página. Encorajamos você a revisar esta política periodicamente para se manter informado sobre como protegemos seus dados.</p>
-
-                <h3>10. Contato</h3>
-                <p>Se você tiver dúvidas sobre esta Política de Privacidade, entre em contato conosco através dos canais disponibilizados no site GO Card PCD.</p>
+                <div class="legal-item">
+                    <h4>1. Coleta de Dados</h4>
+                    <p>Coletamos informações pessoais como nome, email, CPF e dados de saúde necessários para a emissão da carteira PCD.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>2. Uso dos Dados</h4>
+                    <p>Seus dados são utilizados exclusivamente para emissão e verificação da carteira digital, conforme a Lei 13.146/2015.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>3. Proteção de Dados</h4>
+                    <p>Implementamos medidas de segurança conforme a LGPD (Lei 13.709/2018) para proteger seus dados pessoais.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>4. Seus Direitos</h4>
+                    <p>Você tem direito a acessar, corrigir, excluir e portar seus dados a qualquer momento, conforme previsto na LGPD.</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast para mensagens -->
-    <div id="toast" class="toast"></div>
-
-    <script src="../assets/js/auth.js"></script>
-    <script src="../assets/js/cadastro.js"></script>
     <script>
-        function abrirModalTermos(e) {
-            e.preventDefault();
-            document.getElementById('modalTermos').classList.add('show');
-        }
+        let currentStep = 1;
 
-        function abrirModalPrivacidade(e) {
-            e.preventDefault();
-            document.getElementById('modalPrivacidade').classList.add('show');
-        }
-
-        function fecharModal(modalId) {
-            document.getElementById(modalId).classList.remove('show');
-        }
-
-        // Fechar modal ao clicar fora do conteúdo
-        document.addEventListener('click', function(event) {
-            const modalTermos = document.getElementById('modalTermos');
-            const modalPrivacidade = document.getElementById('modalPrivacidade');
+        // Toast System
+        function showToast(title, message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
             
-            if (event.target === modalTermos) {
-                fecharModal('modalTermos');
+            const icons = {
+                success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+                error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
+                warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
+                info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-icon">${icons[type]}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // Step Navigation
+        function nextStep() {
+            // Validar step atual
+            if (currentStep === 1) {
+                const nome = document.getElementById('nome').value;
+                const email = document.getElementById('email').value;
+                const cpf = document.getElementById('cpf').value;
+
+                if (!nome || !email || !cpf) {
+                    showToast('Campos Obrigatórios', 'Preencha todos os campos obrigatórios.', 'error');
+                    return;
+                }
             }
-            if (event.target === modalPrivacidade) {
-                fecharModal('modalPrivacidade');
+
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`dot${currentStep}`).classList.remove('active');
+            document.getElementById(`dot${currentStep}`).classList.add('completed');
+            
+            currentStep++;
+            
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            document.getElementById(`dot${currentStep}`).classList.add('active');
+        }
+
+        function prevStep() {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            document.getElementById(`dot${currentStep}`).classList.remove('active');
+            
+            currentStep--;
+            
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            document.getElementById(`dot${currentStep}`).classList.add('active');
+            document.getElementById(`dot${currentStep}`).classList.remove('completed');
+        }
+
+        // Password Toggle
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            field.type = field.type === 'password' ? 'text' : 'password';
+        }
+
+        // Password Strength
+        document.getElementById('senha').addEventListener('input', (e) => {
+            const password = e.target.value;
+            const fill = document.getElementById('passwordStrengthFill');
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[@$!%*?&]/.test(password)) strength++;
+
+            // Update requirements
+            document.getElementById('req1').className = password.length >= 8 ? 'valid' : '';
+            document.getElementById('req2').className = /[A-Z]/.test(password) ? 'valid' : '';
+            document.getElementById('req3').className = /[a-z]/.test(password) ? 'valid' : '';
+            document.getElementById('req4').className = /[0-9]/.test(password) ? 'valid' : '';
+            document.getElementById('req5').className = /[@$!%*?&]/.test(password) ? 'valid' : '';
+
+            // Update strength bar
+            fill.className = 'password-strength-fill';
+            if (strength <= 2) fill.classList.add('weak');
+            else if (strength <= 4) fill.classList.add('medium');
+            else fill.classList.add('strong');
+        });
+
+        // CPF Mask
+        document.getElementById('cpf').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        });
+
+        // Phone Mask
+        document.getElementById('telefone').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+            value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+            e.target.value = value;
+        });
+
+        // Form Submit
+        document.getElementById('cadastroForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const senha = document.getElementById('senha').value;
+            const confirmar = document.getElementById('confirmarSenha').value;
+            const aceitar = document.getElementById('aceitar').checked;
+
+            if (senha !== confirmar) {
+                showToast('Erro', 'As senhas não coincidem.', 'error');
+                return;
             }
+
+            if (!aceitar) {
+                showToast('Erro', 'Você precisa aceitar os termos.', 'error');
+                return;
+            }
+
+            // Simular loading
+            const btn = document.getElementById('submitBtn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.classList.remove('loading');
+                nextStep();
+                showToast('Sucesso!', 'Sua conta foi criada com sucesso.', 'success');
+            }, 1500);
+        });
+
+        // Modal Functions
+        function openModal(type) {
+            if (type === 'termos') {
+                document.getElementById('modalTermos').classList.remove('hidden');
+            } else {
+                document.getElementById('modalPrivacidade').classList.remove('hidden');
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+
+        // Input validation feedback
+        document.querySelectorAll('.input-field').forEach(input => {
+            input.addEventListener('blur', () => {
+                if (input.value.trim() && input.checkValidity()) {
+                    input.classList.add('valid');
+                } else {
+                    input.classList.remove('valid');
+                }
+            });
         });
     </script>
 </body>

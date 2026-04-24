@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Carteira - GO Card PCD</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/carteira.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/gocard-melhorado.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <div class="app-container">
+        <!-- Header -->
         <header class="main-header">
             <div class="header-content">
-                <div class="logo">
+                <a href="index.html" class="logo">
                     <div class="logo-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -22,9 +22,9 @@
                         </svg>
                     </div>
                     <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
-                </div>
+                </a>
                 <nav class="nav-links">
-                    <a href="carteira.html" class="nav-link">Verificar Carteira</a>
+                    <a href="carteira-melhorada.html" class="nav-link active">Minha Carteira</a>
                     <a href="central-direitos.html" class="nav-link">Central de Direitos</a>
                     <a href="comunidade.html" class="nav-link">Comunidade</a>
                 </nav>
@@ -32,6 +32,7 @@
         </header>
 
         <main class="main-content">
+            <!-- Banner de Verificação -->
             <div class="verificacao-banner" id="verificacaoBanner" style="display:none">
                 <div class="vb-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="32" height="32">
@@ -44,16 +45,31 @@
                 </div>
                 <div class="vb-stamp">AUTÊNTICO</div>
             </div>
-            <div class="wallet-container">
 
-                <!-- ===== CARTEIRA DIGITAL OFICIAL ===== -->
+            <div class="wallet-container">
+                <!-- Carteira Digital -->
                 <div class="wallet-card" id="walletCard">
+                    <!-- Tabs -->
                     <div class="wallet-card-tabs">
-                        <button id="tabCarteira" class="tab-button active">Carteira</button>
-                        <button id="tabQRCode" class="tab-button">QR Code</button>
+                        <button id="tabCarteira" class="tab-button active">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="display:inline;vertical-align:middle;margin-right:6px">
+                                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                <path d="M2 10h20"/>
+                            </svg>
+                            Carteira
+                        </button>
+                        <button id="tabQRCode" class="tab-button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="display:inline;vertical-align:middle;margin-right:6px">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                            QR Code
+                        </button>
                     </div>
-                    <div class="wallet-card-inner">                        <div class="wallet-card-face wallet-front">
-                    <!-- Topo oficial -->
+
+                    <!-- Barra Superior Governamental -->
                     <div class="wallet-top-bar">
                         <div class="wallet-top-left">
                             <div class="wallet-gov-logo">
@@ -67,12 +83,15 @@
                                 <div class="wallet-subtitle-gov">Ministério dos Direitos Humanos e da Cidadania</div>
                             </div>
                         </div>
-                        <div class="wallet-top-right">
-                            <div class="wallet-lei-badge">Lei 13.146/2015</div>
+                        <div class="wallet-lei-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:4px">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                            Lei 13.146/2015
                         </div>
                     </div>
 
-                    <!-- Título da carteira -->
+                    <!-- Título da Carteira -->
                     <div class="wallet-title-bar">
                         <div class="wallet-isa-symbol" title="Símbolo Internacional de Acesso">
                             <svg viewBox="0 0 50 50" width="40" height="40">
@@ -94,9 +113,8 @@
                         </div>
                     </div>
 
-                    <!-- Corpo da carteira -->
+                    <!-- Corpo da Carteira -->
                     <div class="wallet-body">
-
                         <!-- Foto + Dados principais -->
                         <div class="wallet-main-row">
                             <div class="wallet-photo-col">
@@ -112,73 +130,71 @@
                             <div class="wallet-info-col">
                                 <div class="wallet-field wide">
                                     <span class="wf-label">NOME COMPLETO</span>
-                                    <span id="nomeWallet" class="wf-value name-value">—</span>
+                                    <span id="nomeWallet" class="wf-value name-value">João da Silva Santos</span>
                                 </div>
                                 <div class="wallet-fields-row">
                                     <div class="wallet-field">
                                         <span class="wf-label">DATA DE NASCIMENTO</span>
-                                        <span id="dataWallet" class="wf-value">—</span>
+                                        <span id="dataWallet" class="wf-value">15/03/1990</span>
                                     </div>
                                     <div class="wallet-field">
                                         <span class="wf-label">SEXO</span>
-                                        <span id="sexoWallet" class="wf-value">—</span>
+                                        <span id="sexoWallet" class="wf-value">Masculino</span>
                                     </div>
                                 </div>
                                 <div class="wallet-fields-row">
                                     <div class="wallet-field">
                                         <span class="wf-label">CPF</span>
-                                        <span id="cpfWallet" class="wf-value">—</span>
+                                        <span id="cpfWallet" class="wf-value">123.456.789-00</span>
                                     </div>
                                     <div class="wallet-field">
                                         <span class="wf-label">RG</span>
-                                        <span id="rgWallet" class="wf-value">—</span>
+                                        <span id="rgWallet" class="wf-value">12.345.678-9</span>
                                     </div>
                                 </div>
                                 <div class="wallet-fields-row">
                                     <div class="wallet-field">
                                         <span class="wf-label">MUNICÍPIO / UF</span>
-                                        <span id="cidadeWallet" class="wf-value">—</span>
+                                        <span id="cidadeWallet" class="wf-value">São Paulo / SP</span>
                                     </div>
                                     <div class="wallet-field">
                                         <span class="wf-label">ACOMPANHANTE</span>
-                                        <span id="acompanhanteWallet" class="wf-value">—</span>
+                                        <span id="acompanhanteWallet" class="wf-value">Sim</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Divisor -->
                         <div class="wallet-divider"></div>
 
-                        <!-- Deficiência + CID + Laudo -->
+                        <!-- Deficiência + CID -->
                         <div class="wallet-deficiencia-row">
                             <div class="wallet-def-block">
                                 <div class="wallet-field">
                                     <span class="wf-label">TIPO DE DEFICIÊNCIA</span>
-                                    <span id="tipoDefWallet" class="wf-value wf-accent">—</span>
+                                    <span id="tipoDefWallet" class="wf-value wf-accent">Física</span>
                                 </div>
                             </div>
                             <div class="wallet-def-block">
                                 <div class="wallet-field">
                                     <span class="wf-label">GRAU</span>
-                                    <span id="grauDefWallet" class="wf-value">—</span>
+                                    <span id="grauDefWallet" class="wf-value">Moderado</span>
                                 </div>
                             </div>
                             <div class="wallet-def-block">
                                 <div class="wallet-field">
                                     <span class="wf-label">CID-10 / CID-11</span>
-                                    <span id="cidWallet" class="wf-value wf-cid">—</span>
+                                    <span id="cidWallet" class="wf-value wf-cid">G80.0</span>
                                 </div>
                             </div>
                             <div class="wallet-def-block">
                                 <div class="wallet-field">
                                     <span class="wf-label">COMUNICAÇÃO</span>
-                                    <span id="comunicacaoWallet" class="wf-value">—</span>
+                                    <span id="comunicacaoWallet" class="wf-value">Nenhuma</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Divisor -->
                         <div class="wallet-divider"></div>
 
                         <!-- Laudo + QR Code -->
@@ -187,21 +203,21 @@
                                 <div class="wallet-fields-row">
                                     <div class="wallet-field">
                                         <span class="wf-label">Nº DO LAUDO</span>
-                                        <span id="laudoWallet" class="wf-value">—</span>
+                                        <span id="laudoWallet" class="wf-value">LAU-2025-001234</span>
                                     </div>
                                     <div class="wallet-field">
                                         <span class="wf-label">DATA DO LAUDO</span>
-                                        <span id="dataLaudoWallet" class="wf-value">—</span>
+                                        <span id="dataLaudoWallet" class="wf-value">10/01/2025</span>
                                     </div>
                                 </div>
                                 <div class="wallet-fields-row">
                                     <div class="wallet-field">
                                         <span class="wf-label">PROFISSIONAL RESPONSÁVEL</span>
-                                        <span id="medicoWallet" class="wf-value">—</span>
+                                        <span id="medicoWallet" class="wf-value">Dr. Carlos Souza</span>
                                     </div>
                                     <div class="wallet-field">
                                         <span class="wf-label">CRM / CRP / CRFa</span>
-                                        <span id="crmWallet" class="wf-value">—</span>
+                                        <span id="crmWallet" class="wf-value">CRM-SP 123456</span>
                                     </div>
                                 </div>
                                 <div class="wallet-field" id="responsavelBlock" style="display:none">
@@ -215,36 +231,27 @@
                                 <span class="qrcode-label">Escaneie para verificar</span>
                                 <span class="qrcode-sublabel">Abre carteira completa</span>
                             </div>
-                            <div class="wallet-qr-col verificacao-stamp-col verify-stamp-column" style="display:none">
-                                <div class="verificacao-stamp-box">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                        <polyline points="22 4 12 14.01 9 11.01"/>
-                                    </svg>
-                                    <span>VERIFICADO</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
-                    <!-- Rodapé oficial -->
+                    <!-- Rodapé -->
                     <div class="wallet-footer-bar">
                         <div class="validity-grid">
                             <div class="validity-item">
                                 <span class="vl-label">Nº DA CARTEIRA</span>
-                                <span id="numeroCarteira" class="vl-value">—</span>
+                                <span id="numeroCarteira" class="vl-value">GC-2025-00001234</span>
                             </div>
                             <div class="validity-item">
                                 <span class="vl-label">DATA DE EMISSÃO</span>
-                                <span id="dataEmissao" class="vl-value">—</span>
+                                <span id="dataEmissao" class="vl-value">15/01/2025</span>
                             </div>
                             <div class="validity-item">
                                 <span class="vl-label">VÁLIDA ATÉ</span>
-                                <span id="dataValidade" class="vl-value">—</span>
+                                <span id="dataValidade" class="vl-value">15/01/2030</span>
                             </div>
                             <div class="validity-item">
                                 <span class="vl-label">CÓDIGO DE VERIFICAÇÃO</span>
-                                <span id="codigoVerificacao" class="vl-value">—</span>
+                                <span id="codigoVerificacao" class="vl-value">ABC123XYZ</span>
                             </div>
                         </div>
                         <p class="wallet-footer-legal">
@@ -253,24 +260,8 @@
                         </p>
                     </div>
                 </div>
-                <div class="wallet-card-face wallet-back">
-                    <div class="wallet-back-content">
-                        <div class="wallet-back-title">
-                            <h2>QR Code Exclusivo</h2>
-                            <p>Este é o único QR Code válido. Mostre-o somente ao leitor autorizado.</p>
-                        </div>
-                        <div class="qrcode-back-frame">
-                            <div class="qrcode-container" id="qrcodeWallet"></div>
-                        </div>
-                        <div class="wallet-back-instruction">
-                            <p>Ao escanear o QR Code através do aplicativo, todas as informações da carteira serão exibidas automaticamente.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-                </div>
 
-                <!-- Botões de ação -->
+                <!-- Botões de Ação -->
                 <div class="action-buttons">
                     <button id="printBtn" class="btn btn-primary">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -280,7 +271,7 @@
                         </svg>
                         Imprimir Carteira
                     </button>
-                    <button id="downloadBtn" class="btn btn-primary">
+                    <button id="downloadBtn" class="btn btn-success">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                             <polyline points="7 10 12 15 17 10"/>
@@ -288,7 +279,7 @@
                         </svg>
                         Baixar PNG
                     </button>
-                    <a href="index.html" class="btn btn-secondary">
+                    <a href="cadastro_carteira-melhorado.html" class="btn btn-secondary">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -297,7 +288,7 @@
                     </a>
                 </div>
 
-                <!-- Informações de Emergência -->
+                <!-- Card de Emergência -->
                 <div class="emergency-card">
                     <div class="emergency-header">
                         <div class="emergency-icon">
@@ -313,27 +304,27 @@
                     <div class="emergency-grid">
                         <div class="emergency-item">
                             <span class="label">Tipo Sanguíneo</span>
-                            <span id="tipoSanguineoDisplay" class="value blood-type">—</span>
+                            <span id="tipoSanguineoDisplay" class="value blood-type">O+</span>
                         </div>
                         <div class="emergency-item">
                             <span class="label">Contato de Emergência</span>
-                            <span id="contatoDisplay" class="value">—</span>
+                            <span id="contatoDisplay" class="value">Maria Silva - (11) 99999-0000</span>
                         </div>
                         <div class="emergency-item">
                             <span class="label">Necessidades de Comunicação</span>
-                            <span id="comunicacaoDisplay" class="value">—</span>
+                            <span id="comunicacaoDisplay" class="value">Nenhuma necessidade especial</span>
                         </div>
                         <div class="emergency-item">
                             <span class="label">Necessita de Acompanhante</span>
-                            <span id="acompanhanteDisplay" class="value">—</span>
+                            <span id="acompanhanteDisplay" class="value">Sim</span>
                         </div>
                         <div class="emergency-item full-width">
                             <span class="label">Alergias</span>
-                            <span id="alergiasDisplay" class="value alergias-value">—</span>
+                            <span id="alergiasDisplay" class="value alergias-value">Dipirona, Látex</span>
                         </div>
                         <div class="emergency-item full-width">
                             <span class="label">Medicações de Uso Contínuo</span>
-                            <span id="medicacoesDisplay" class="value">—</span>
+                            <span id="medicacoesDisplay" class="value">Rivotril 2mg — 1 cp à noite</span>
                         </div>
                     </div>
                 </div>
@@ -435,12 +426,9 @@
         </footer>
     </div>
 
-    <!-- Toast para mensagens -->
-    <div id="toast" class="toast"></div>
-
-    <!-- Scripts -->
-    <script src="../assets/js/auth.js"></script>
-    <script src="../assets/js/carteira.js"></script>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    <div id="toast"></div>
 
     <!-- Modal Guia Legal -->
     <div id="guiaLegalModal" class="modal hidden">
@@ -486,7 +474,7 @@
         </div>
     </div>
 
-    <!-- Modal Denúncia -->
+    <!-- Modal Denúncia Melhorado -->
     <div id="denunciaModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header denuncia-header">
@@ -499,10 +487,11 @@
                         <label for="localDenuncia">Local do Ocorrido <span class="required">*</span></label>
                         <input type="text" id="localDenuncia" class="input-field" placeholder="Nome do estabelecimento / endereço" required>
                     </div>
+                    
                     <div class="form-group">
                         <label for="tipoDenuncia">Tipo de Violação <span class="required">*</span></label>
                         <select id="tipoDenuncia" class="input-field" required>
-                            <option value="">Selecione...</option>
+                            <option value="">Selecione o tipo de violação...</option>
                             <option value="Negaram Atendimento Prioritário">Negaram Atendimento Prioritário</option>
                             <option value="Falta de Acessibilidade">Falta de Acessibilidade</option>
                             <option value="Atendimento Discriminatório">Atendimento Discriminatório</option>
@@ -512,15 +501,57 @@
                             <option value="Outro">Outro</option>
                         </select>
                     </div>
+
+                    <div class="form-group">
+                        <label>Urgência da Denúncia</label>
+                        <div class="denuncia-urgency">
+                            <span class="urgency-badge low active" data-urgency="baixa">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                    <circle cx="12" cy="12" r="10"/>
+                                </svg>
+                                Baixa
+                            </span>
+                            <span class="urgency-badge medium" data-urgency="media">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 8v4"/>
+                                </svg>
+                                Média
+                            </span>
+                            <span class="urgency-badge high" data-urgency="alta">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                </svg>
+                                Alta
+                            </span>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="dataDenuncia">Data do Ocorrido <span class="required">*</span></label>
                         <input type="date" id="dataDenuncia" class="input-field" required>
                     </div>
+                    
                     <div class="form-group">
                         <label for="descricaoDenuncia">Descrição do Ocorrido <span class="required">*</span></label>
-                        <textarea id="descricaoDenuncia" class="input-field textarea" rows="4" placeholder="Descreva com detalhes o que aconteceu..." required></textarea>
+                        <textarea id="descricaoDenuncia" class="input-field" rows="5" placeholder="Descreva com detalhes o que aconteceu, incluindo horário, funcionários envolvidos e testemunhas se houver..." required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary full-width">
+
+                    <div class="form-group">
+                        <label>Anexar Evidências (opcional)</label>
+                        <div class="laudo-preview" id="evidenciaPreview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <span class="drop-zone-text">Clique ou arraste fotos/vídeos aqui</span>
+                            <span class="drop-zone-hint">PNG, JPG, MP4 até 10MB</span>
+                        </div>
+                        <input type="file" id="evidenciaFile" accept="image/*,video/*" hidden multiple>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-danger full-width">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="m22 2-7 20-4-9-9-4Z"/>
                             <path d="M22 2 11 13"/>
@@ -528,10 +559,132 @@
                         Enviar Denúncia
                     </button>
                 </form>
-                <p class="denuncia-note">Sua denúncia será encaminhada para o Ministério Público, Defensoria Pública e ONGs parceiras. Você receberá um protocolo por e-mail.</p>
+                <p class="denuncia-note">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="display:inline;vertical-align:middle;margin-right:6px">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    Sua denúncia é confidencial e será encaminhada para o Ministério Público, Defensoria Pública e ONGs parceiras. Você receberá um protocolo por e-mail para acompanhamento.
+                </p>
             </div>
         </div>
     </div>
 
+    <script>
+        // Toast System Melhorado
+        function showToast(title, message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+                error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
+                warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+                info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-icon">${icons[type]}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+                <div class="toast-progress"></div>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // Modal handlers
+        document.getElementById('guiaLegalBtn').addEventListener('click', () => {
+            document.getElementById('guiaLegalModal').classList.remove('hidden');
+        });
+
+        document.getElementById('denunciaBtn').addEventListener('click', () => {
+            document.getElementById('denunciaModal').classList.remove('hidden');
+        });
+
+        document.getElementById('closeGuiaLegal').addEventListener('click', () => {
+            document.getElementById('guiaLegalModal').classList.add('hidden');
+        });
+
+        document.getElementById('closeDenuncia').addEventListener('click', () => {
+            document.getElementById('denunciaModal').classList.add('hidden');
+        });
+
+        // Fechar modal ao clicar fora
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+
+        // Urgency badges
+        document.querySelectorAll('.urgency-badge').forEach(badge => {
+            badge.addEventListener('click', () => {
+                document.querySelectorAll('.urgency-badge').forEach(b => b.classList.remove('active'));
+                badge.classList.add('active');
+            });
+        });
+
+        // Formulário de denúncia
+        document.getElementById('denunciaForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            showToast('Denúncia Enviada', 'Sua denúncia foi registrada com sucesso. Você receberá um e-mail com o número do protocolo.', 'success');
+            document.getElementById('denunciaModal').classList.add('hidden');
+            e.target.reset();
+        });
+
+        // Upload de evidências
+        document.getElementById('evidenciaPreview').addEventListener('click', () => {
+            document.getElementById('evidenciaFile').click();
+        });
+
+        document.getElementById('evidenciaFile').addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files.length > 0) {
+                const preview = document.getElementById('evidenciaPreview');
+                preview.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="36" height="36">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <span class="drop-zone-text">${files.length} arquivo(s) selecionado(s)</span>
+                `;
+                preview.classList.add('has-file');
+            }
+        });
+
+        // Print e Download
+        document.getElementById('printBtn').addEventListener('click', () => {
+            window.print();
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            showToast('Gerando Imagem', 'Aguarde enquanto preparamos sua carteira para download...', 'info');
+            // Implementar html2canvas aqui
+        });
+
+        // Suporte
+        document.getElementById('suporteBtn').addEventListener('click', () => {
+            showToast('Suporte', 'Em breve você será conectado com nossa equipe de suporte.', 'info');
+        });
+
+        // Demo: mostrar toast de boas-vindas
+        setTimeout(() => {
+            showToast('Bem-vindo!', 'Sua carteira GO Card PCD está ativa e válida.', 'success');
+        }, 1000);
+    </script>
 </body>
 </html>

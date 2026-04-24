@@ -134,7 +134,10 @@ export class AutenticacaoController {
         sucesso: false,
         mensagem: erro.message,
         retryAfter: erro.retryAfter || null,
-        remaining: erro.remaining != null ? erro.remaining : null
+        remaining: erro.remaining != null ? erro.remaining : null,
+        segundosRestantes: erro.segundosRestantes || null,
+        codigoDesbloqueio: erro.codigoDesbloqueio || null,
+        bloqueado: status === 429
       });
     }
   }
@@ -158,6 +161,35 @@ export class AutenticacaoController {
       });
     } catch (erro) {
       console.error('Erro ao desbloquear login:', erro);
+      res.status(400).json({
+        sucesso: false,
+        mensagem: erro.message
+      });
+    }
+  }
+
+  /**
+   * POST /api/auth/verificar-bloqueio
+   */
+  static async verificarBloqueio(req, res) {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          sucesso: false,
+          mensagem: 'Email é obrigatório'
+        });
+      }
+
+      const resultado = await AutenticacaoService.verificarBloqueio(email);
+
+      res.status(200).json({
+        sucesso: true,
+        ...resultado
+      });
+    } catch (erro) {
+      console.error('Erro ao verificar bloqueio:', erro);
       res.status(400).json({
         sucesso: false,
         mensagem: erro.message

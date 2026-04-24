@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (emailSalvo) {
         document.getElementById('email').value = emailSalvo;
         document.getElementById('lembrarMe').checked = true;
+        
+        // Verifica bloqueio do email salvo
+        await verificarBloqueioDoEmail(emailSalvo);
     }
 
     await verificarBackend();
@@ -38,6 +41,36 @@ async function verificarBackend() {
     } catch (erro) {
         mostrarToast('Servidor não está ativo. Inicie o backend com npm run dev em backend.', 'error');
         return false;
+    }
+}
+
+/**
+ * Verifica o status de bloqueio de um email
+ */
+async function verificarBloqueioDoEmail(email) {
+    try {
+        if (!email) return;
+        
+        const baseUrl = await resolveApiBaseUrl();
+        const resposta = await fetch(`${baseUrl}/api/auth/verificar-bloqueio`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+        });
+
+        if (!resposta.ok) return;
+
+        const json = await resposta.json();
+
+        if (json.sucesso && json.bloqueado) {
+            // Usuário está bloqueado
+            exibirContagemRegressiva(json.segundosRestantes);
+        }
+    } catch (erro) {
+        // Silenciosamente ignora erros de verificação
+        console.debug('Erro ao verificar bloqueio:', erro.message);
     }
 }
 
@@ -144,15 +177,20 @@ async function handleLogin(e) {
         }
     } catch (erro) {
         let mensagem = erro.message || 'Erro ao conectar';
-        if (erro?.status === 429) {
+        
+        // Tratamento para bloqueio (429)
+        if (erro.status === 429) {
             const retry = erro.headers?.retryAfter;
-            if (retry) {
-                // Mostra mensagem com contagem regressiva
-                exibirContagemRegressiva(retry, 'loginForm');
+            const segundosRestantes = erro.segundosRestantes || retry;
+            
+            if (segundosRestantes) {
+                // Exibe contagem regressiva em tempo real
+                exibirContagemRegressiva(segundosRestantes);
                 habilitarBotao('loginBtn');
                 return;
             }
-        } else {
+        } else if (erro.status === 401) {
+            // Erro de autenticação
             const restantes = erro.headers?.remaining;
             if (restantes != null && restantes > 0) {
                 mensagem += ` Você tem ${restantes} tentativa(s) restante(s) antes do bloqueio de 5 minutos.`;
@@ -165,56 +203,70 @@ async function handleLogin(e) {
 }
 
 // Função para exibir contagem regressiva de bloqueio
-function exibirContagemRegressiva(segundosRestantes, formId) {
-    // FORÇA: sempre 5 minutos (300 segundos)
-    let segundos = Math.min(segundosRestantes, 300);
-    
+function exibirContagemRegressiva(segundosRestantes) {
     // Remove toast anterior se existir
     const toastExistente = document.querySelector('[data-bloqueio-toast]');
     if (toastExistente) toastExistente.remove();
     
-    // Cria container para o toast de bloqueio
-    const toastContainer = document.createElement('div');
-    toastContainer.setAttribute('data-bloqueio-toast', 'true');
-    toastContainer.style.cssText = `
+    // Garante que temos um número válido
+    let segundos = parseInt(segundosRestantes) || 300;
+    
+    // Cria container para o alerta de bloqueio
+    const alertContainer = document.createElement('div');
+    alertContainer.setAttribute('data-bloqueio-toast', 'true');
+    alertContainer.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background: #dc3545;
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
         color: white;
-        padding: 15px 20px;
-        border-radius: 4px;
+        padding: 20px 25px;
+        border-radius: 8px;
         z-index: 9999;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        font-weight: 500;
-        min-width: 300px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        font-weight: 600;
+        min-width: 320px;
+        border-left: 4px solid #fff;
+        font-size: 14px;
+        line-height: 1.5;
     `;
-    document.body.appendChild(toastContainer);
+    document.body.appendChild(alertContainer);
+    
+    // Desabilita o botão de login
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn) {
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Bloqueado...';
+    }
     
     const atualizarMensagem = () => {
         const minutos = Math.floor(segundos / 60);
         const secs = segundos % 60;
-        let mensagem;
+        const secsFormatado = String(secs).padStart(2, '0');
         
-        if (minutos > 0) {
-            mensagem = `Sua conta está bloqueada. Tente novamente em ${minutos}m ${secs}s`;
-        } else {
-            mensagem = `Sua conta está bloqueada. Tente novamente em ${secs}s`;
-        }
+        let mensagem = '⏱️ Sua conta está bloqueada<br>';
+        mensagem += `Tente novamente em ${minutos}m ${secsFormatado}s`;
         
-        toastContainer.textContent = mensagem;
+        alertContainer.innerHTML = mensagem;
     };
     
     atualizarMensagem();
     
     const intervalo = setInterval(() => {
         segundos--;
+        
         if (segundos <= 0) {
             clearInterval(intervalo);
-            toastContainer.remove();
-            mostrarToast('Bloqueio expirado! Você pode tentar fazer login novamente.', 'success', 4000);
-            habilitarBotao('loginBtn');
-            document.getElementById('email').focus();
+            alertContainer.remove();
+            
+            // Re-habilita o botão
+            if (loginBtn) {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Entrar';
+            }
+            
+            mostrarToast('✅ Bloqueio expirado! Você pode tentar fazer login novamente.', 'success', 4000);
+            document.getElementById('email')?.focus();
         } else {
             atualizarMensagem();
         }
