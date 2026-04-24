@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - Carteira</title>
+    <title>Cadastro - GO Card PCD</title>
     <link rel="stylesheet" href="../assets/css/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -12,13 +13,13 @@
             <div class="form-container">
                 <div class="form-header">
                     <h1>Criar Conta</h1>
-                    <p>Junte-se a nós</p>
+                    <p>Junte-se ao GO Card PCD</p>
                 </div>
 
                 <form id="cadastroForm" class="auth-form multi-step">
-                    <!-- Step 1: Informações Pessoais -->
+                    <!-- Step 1: Informacoes Pessoais -->
                     <div class="form-step active" id="step1">
-                        <h3>Informações Pessoais</h3>
+                        <h3>Informacoes Pessoais</h3>
                         
                         <div class="form-group">
                             <label for="nome">Nome Completo</label>
@@ -83,12 +84,12 @@
                             </div>
                         </div>
 
-                        <button type="button" class="btn-primary" onclick="proximoStep()">Próximo</button>
+                        <button type="button" class="btn-primary" onclick="proximoStep()">Proximo</button>
                     </div>
 
-                    <!-- Step 2: Senha e Confirmação -->
+                    <!-- Step 2: Senha e Confirmacao -->
                     <div class="form-step" id="step2">
-                        <h3>Segurança</h3>
+                        <h3>Seguranca</h3>
                         
                         <div class="form-group">
                             <label for="senha">Senha</label>
@@ -101,7 +102,10 @@
                                     required
                                 >
                                 <button type="button" class="toggle-password" onclick="togglePassword('senha')">
-                                    👁️
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
                                 </button>
                             </div>
                             <div class="password-strength" id="passwordStrength"></div>
@@ -109,13 +113,13 @@
                         </div>
 
                         <div class="password-requirements">
-                            <p><strong>Sua senha deve ter:</strong></p>
+                            <p>Sua senha deve ter:</p>
                             <ul>
-                                <li id="req1">• Mínimo 8 caracteres</li>
-                                <li id="req2">• Pelo menos uma letra maiúscula</li>
-                                <li id="req3">• Pelo menos uma letra minúscula</li>
-                                <li id="req4">• Pelo menos um número</li>
-                                <li id="req5">• Pelo menos um caractere especial (@, $, !, %, *, ?, &)</li>
+                                <li id="req1">Minimo 8 caracteres</li>
+                                <li id="req2">Pelo menos uma letra maiuscula</li>
+                                <li id="req3">Pelo menos uma letra minuscula</li>
+                                <li id="req4">Pelo menos um numero</li>
+                                <li id="req5">Pelo menos um caractere especial (@, $, !, %, *, ?, &)</li>
                             </ul>
                         </div>
 
@@ -130,7 +134,10 @@
                                     required
                                 >
                                 <button type="button" class="toggle-password" onclick="togglePassword('confirmarSenha')">
-                                    👁️
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
                                 </button>
                             </div>
                             <span class="error-message" id="confirmarSenhaError"></span>
@@ -139,8 +146,8 @@
                         <div class="form-group terms">
                             <input type="checkbox" id="aceitar" name="aceitar" required>
                             <label for="aceitar">
-                                Concordo com os <a href="#" onclick="abrirModalTermos(event)">Termos de Serviço</a> e 
-                                <a href="#" onclick="abrirModalPrivacidade(event)">Política de Privacidade</a>
+                                Concordo com os <a href="#" onclick="abrirModalTermos(event)">Termos de Servico</a> e 
+                                <a href="#" onclick="abrirModalPrivacidade(event)">Politica de Privacidade</a>
                             </label>
                             <span class="error-message" id="aceitarError"></span>
                         </div>
@@ -157,135 +164,143 @@
                     <!-- Step 3: Sucesso -->
                     <div class="form-step" id="step3">
                         <div class="success-message">
-                            <div class="success-icon">✅</div>
+                            <div class="success-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
                             <h2>Conta Criada com Sucesso!</h2>
                             <p>Sua conta foi criada e validada.</p>
-                            <p>Você pode agora fazer login com suas credenciais.</p>
+                            <p>Voce pode agora fazer login com suas credenciais.</p>
                             <a href="index.html" class="btn-primary">Ir para Login</a>
                         </div>
                     </div>
                 </form>
 
                 <div class="divider">
-                    <span>Já tem conta?</span>
+                    <span>Ja tem conta?</span>
                 </div>
 
                 <a href="index.html" class="btn-secondary">Fazer login</a>
 
                 <div class="security-info">
-                    🔒 Dados criptografados e protegidos contra SQL Injection e XSS
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Dados criptografados e protegidos
                 </div>
             </div>
 
             <div class="form-footer">
-                <small>© 2024 Carteira. Todos os direitos reservados.</small>
+                <small>&copy; 2025 GO Card PCD. Todos os direitos reservados.</small>
             </div>
         </div>
     </div>
 
-    <!-- ========== MODAL TERMOS DE SERVIÇO ========== -->
+    <!-- ========== MODAL TERMOS DE SERVICO ========== -->
     <div id="modalTermos" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Termos de Serviço</h2>
+                <h2>Termos de Servico</h2>
                 <button type="button" class="modal-close" onclick="fecharModal('modalTermos')">&times;</button>
             </div>
             <div class="modal-body">
-                <h3>1. Aceitação dos Termos</h3>
-                <p>Ao acessar e usar a plataforma GO Card PCD, você concorda em aceitar e cumprir com estes Termos de Serviço e todas as leis e regulamentos aplicáveis.</p>
+                <h3>1. Aceitacao dos Termos</h3>
+                <p>Ao acessar e usar a plataforma GO Card PCD, voce concorda em aceitar e cumprir com estes Termos de Servico e todas as leis e regulamentos aplicaveis.</p>
 
                 <h3>2. Uso Licenciado</h3>
-                <p>É concedida permissão para baixar temporariamente uma cópia dos materiais (informações ou software) no site GO Card PCD para visualização pessoal não comercial apenas. Esta é a concessão de uma licença, não uma transferência de título, e sob esta licença você não pode:</p>
+                <p>E concedida permissao para baixar temporariamente uma copia dos materiais (informacoes ou software) no site GO Card PCD para visualizacao pessoal nao comercial apenas. Esta e a concessao de uma licenca, nao uma transferencia de titulo, e sob esta licenca voce nao pode:</p>
                 <ul>
                     <li>Modificar ou copiar os materiais</li>
-                    <li>Usar os materiais para qualquer finalidade comercial ou para exibição pública</li>
+                    <li>Usar os materiais para qualquer finalidade comercial ou para exibicao publica</li>
                     <li>Tentar descompilar ou fazer engenharia reversa de qualquer software contido no site GO Card PCD</li>
-                    <li>Remover quaisquer direitos autorais ou outras designações de propriedade dos materiais</li>
+                    <li>Remover quaisquer direitos autorais ou outras designacoes de propriedade dos materiais</li>
                     <li>Transferir os materiais para outra pessoa ou "espelhar" os materiais em qualquer outro servidor</li>
                 </ul>
 
-                <h3>3. Isenção de Responsabilidade</h3>
-                <p>Os materiais no site GO Card PCD são fornecidos como estão. O GO Card PCD não oferece garantias, expressas ou implícitas, e por este meio rejeita e nega todas as outras garantias incluindo, sem limitação, garantias implícitas ou condições de comercialização, adequação para um propósito específico ou não infração de propriedade intelectual ou outro direito.</p>
+                <h3>3. Isencao de Responsabilidade</h3>
+                <p>Os materiais no site GO Card PCD sao fornecidos como estao. O GO Card PCD nao oferece garantias, expressas ou implicitas, e por este meio rejeita e nega todas as outras garantias incluindo, sem limitacao, garantias implicitas ou condicoes de comercializacao, adequacao para um proposito especifico ou nao infracao de propriedade intelectual ou outro direito.</p>
 
-                <h3>4. Limitações</h3>
-                <p>Em nenhum caso o GO Card PCD ou seus fornecedores serão responsáveis por quaisquer danos (incluindo, sem limitação, danos por perda de dados ou lucro ou devido a interrupção dos negócios) decorrentes do uso ou da incapacidade de usar o material no site.</p>
+                <h3>4. Limitacoes</h3>
+                <p>Em nenhum caso o GO Card PCD ou seus fornecedores serao responsaveis por quaisquer danos (incluindo, sem limitacao, danos por perda de dados ou lucro ou devido a interrupcao dos negocios) decorrentes do uso ou da incapacidade de usar o material no site.</p>
 
-                <h3>5. Precisão dos Materiais</h3>
-                <p>O material exibido no site do GO Card PCD pode incluir erros técnicos, tipográficos ou fotográficos. O GO Card PCD não garante que qualquer material em seu site seja preciso, completo ou atual. O GO Card PCD pode fazer alterações nos materiais contidos em seu site a qualquer momento sem aviso prévio.</p>
+                <h3>5. Precisao dos Materiais</h3>
+                <p>O material exibido no site do GO Card PCD pode incluir erros tecnicos, tipograficos ou fotograficos. O GO Card PCD nao garante que qualquer material em seu site seja preciso, completo ou atual. O GO Card PCD pode fazer alteracoes nos materiais contidos em seu site a qualquer momento sem aviso previo.</p>
 
                 <h3>6. Links</h3>
-                <p>O GO Card PCD não analisou todos os sites vinculados ao seu site e não é responsável pelo conteúdo de qualquer site externo. A inclusão de qualquer link não implica aprovação do site pelo GO Card PCD. O uso de qualquer site vinculado é por conta e risco do usuário.</p>
+                <p>O GO Card PCD nao analisou todos os sites vinculados ao seu site e nao e responsavel pelo conteudo de qualquer site externo. A inclusao de qualquer link nao implica aprovacao do site pelo GO Card PCD. O uso de qualquer site vinculado e por conta e risco do usuario.</p>
 
-                <h3>7. Modificações</h3>
-                <p>O GO Card PCD pode revisar estes Termos de Serviço para seu site a qualquer momento sem aviso prévio. Ao usar este site, você está concordando em ficar vinculado pela versão revisada destes Termos de Serviço.</p>
+                <h3>7. Modificacoes</h3>
+                <p>O GO Card PCD pode revisar estes Termos de Servico para seu site a qualquer momento sem aviso previo. Ao usar este site, voce esta concordando em ficar vinculado pela versao revisada destes Termos de Servico.</p>
 
-                <h3>8. Lei Aplicável</h3>
-                <p>Estes Termos e Condições de Serviço são regidos por e construídos de acordo com as leis do Brasil, e você irrevogavelmente se submete à jurisdição exclusiva dos tribunais nesse local.</p>
+                <h3>8. Lei Aplicavel</h3>
+                <p>Estes Termos e Condicoes de Servico sao regidos por e construidos de acordo com as leis do Brasil, e voce irrevogavelmente se submete a jurisdicao exclusiva dos tribunais nesse local.</p>
             </div>
         </div>
     </div>
 
-    <!-- ========== MODAL POLÍTICA DE PRIVACIDADE ========== -->
+    <!-- ========== MODAL POLITICA DE PRIVACIDADE ========== -->
     <div id="modalPrivacidade" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Política de Privacidade</h2>
+                <h2>Politica de Privacidade</h2>
                 <button type="button" class="modal-close" onclick="fecharModal('modalPrivacidade')">&times;</button>
             </div>
             <div class="modal-body">
-                <h3>1. Introdução</h3>
-                <p>O GO Card PCD ("nós", "nosso" ou "nos") opera a plataforma GO Card PCD. Esta página informa você das nossas políticas sobre a coleta, uso e divulgação de dados pessoais quando você usa nosso site e as escolhas que você tem associadas a esses dados.</p>
+                <h3>1. Introducao</h3>
+                <p>O GO Card PCD ("nos", "nosso" ou "nos") opera a plataforma GO Card PCD. Esta pagina informa voce das nossas politicas sobre a coleta, uso e divulgacao de dados pessoais quando voce usa nosso site e as escolhas que voce tem associadas a esses dados.</p>
 
                 <h3>2. Coleta de Dados</h3>
                 <p>Coletamos os seguintes tipos de dados pessoais:</p>
                 <ul>
-                    <li><strong>Informações de Cadastro:</strong> Nome, email, CPF, data de nascimento, telefone</li>
-                    <li><strong>Informações de Carteira:</strong> Tipo de deficiência, CID, dados médicos, contatos de emergência</li>
-                    <li><strong>Dados Técnicos:</strong> Endereço IP, tipo de navegador, páginas visitadas, tempo gasto em cada página</li>
+                    <li><strong>Informacoes de Cadastro:</strong> Nome, email, CPF, data de nascimento, telefone</li>
+                    <li><strong>Informacoes de Carteira:</strong> Tipo de deficiencia, CID, dados medicos, contatos de emergencia</li>
+                    <li><strong>Dados Tecnicos:</strong> Endereco IP, tipo de navegador, paginas visitadas, tempo gasto em cada pagina</li>
                 </ul>
 
                 <h3>3. Uso dos Dados</h3>
-                <p>Nós usamos os dados coletados para:</p>
+                <p>Nos usamos os dados coletados para:</p>
                 <ul>
                     <li>Criar e manter sua conta</li>
-                    <li>Gerar sua carteira digital de identificação</li>
-                    <li>Melhorar nossos serviços</li>
-                    <li>Enviar atualizações importantes sobre sua conta</li>
-                    <li>Cumprir com obrigações legais</li>
+                    <li>Gerar sua carteira digital de identificacao</li>
+                    <li>Melhorar nossos servicos</li>
+                    <li>Enviar atualizacoes importantes sobre sua conta</li>
+                    <li>Cumprir com obrigacoes legais</li>
                 </ul>
 
-                <h3>4. Proteção de Dados</h3>
-                <p>Implementamos medidas de segurança apropriadas para proteger seus dados pessoais contra acesso não autorizado, alteração, divulgação ou destruição. Seus dados são criptografados durante a transmissão e armazenamento. No entanto, nenhum método de transmissão pela Internet é 100% seguro e não podemos garantir segurança absoluta.</p>
+                <h3>4. Protecao de Dados</h3>
+                <p>Implementamos medidas de seguranca apropriadas para proteger seus dados pessoais contra acesso nao autorizado, alteracao, divulgacao ou destruicao. Seus dados sao criptografados durante a transmissao e armazenamento. No entanto, nenhum metodo de transmissao pela Internet e 100% seguro e nao podemos garantir seguranca absoluta.</p>
 
                 <h3>5. Compartilhamento de Dados</h3>
-                <p>Não compartilhamos seus dados pessoais com terceiros, exceto:</p>
+                <p>Nao compartilhamos seus dados pessoais com terceiros, exceto:</p>
                 <ul>
                     <li>Conforme exigido pela lei</li>
-                    <li>Para proteger os direitos e segurança do GO Card PCD ou de terceiros</li>
-                    <li>Com seu consentimento explícito</li>
+                    <li>Para proteger os direitos e seguranca do GO Card PCD ou de terceiros</li>
+                    <li>Com seu consentimento explicito</li>
                 </ul>
 
-                <h3>6. Retenção de Dados</h3>
-                <p>Mantemos seus dados pessoais enquanto você tiver uma conta ativa. Se você solicitar a exclusão de sua conta, excluiremos seus dados pessoais em conformidade com as leis aplicáveis, exceto quando for necessário manter os dados para fins legais ou contratuais.</p>
+                <h3>6. Retencao de Dados</h3>
+                <p>Mantemos seus dados pessoais enquanto voce tiver uma conta ativa. Se voce solicitar a exclusao de sua conta, excluiremos seus dados pessoais em conformidade com as leis aplicaveis, exceto quando for necessario manter os dados para fins legais ou contratuais.</p>
 
                 <h3>7. Seus Direitos</h3>
-                <p>Você tem o direito de:</p>
+                <p>Voce tem o direito de:</p>
                 <ul>
                     <li>Acessar seus dados pessoais</li>
                     <li>Corrigir dados imprecisos ou incompletos</li>
-                    <li>Solicitar a exclusão de seus dados</li>
+                    <li>Solicitar a exclusao de seus dados</li>
                     <li>Opor-se ao processamento de seus dados</li>
                     <li>Solicitar a portabilidade de seus dados</li>
                 </ul>
 
                 <h3>8. Cookies</h3>
-                <p>Nosso site usa cookies para melhorar sua experiência. Os cookies são pequenos arquivos de texto que são armazenados em seu dispositivo. Você pode controlar e/ou deletar cookies conforme desejar. Você pode deletar todos os cookies que já estão no seu computador e pode configurar a maioria dos navegadores para impedir que sejam colocados.</p>
+                <p>Nosso site usa cookies para melhorar sua experiencia. Os cookies sao pequenos arquivos de texto que sao armazenados em seu dispositivo. Voce pode controlar e/ou deletar cookies conforme desejar. Voce pode deletar todos os cookies que ja estao no seu computador e pode configurar a maioria dos navegadores para impedir que sejam colocados.</p>
 
-                <h3>9. Alterações Nesta Política</h3>
-                <p>Podemos atualizar nossa Política de Privacidade periodicamente. As alterações entram em vigor quando publicadas nesta página. Encorajamos você a revisar esta política periodicamente para se manter informado sobre como protegemos seus dados.</p>
+                <h3>9. Alteracoes Nesta Politica</h3>
+                <p>Podemos atualizar nossa Politica de Privacidade periodicamente. As alteracoes entram em vigor quando publicadas nesta pagina. Encorajamos voce a revisar esta politica periodicamente para se manter informado sobre como protegemos seus dados.</p>
 
                 <h3>10. Contato</h3>
-                <p>Se você tiver dúvidas sobre esta Política de Privacidade, entre em contato conosco através dos canais disponibilizados no site GO Card PCD.</p>
+                <p>Se voce tiver duvidas sobre esta Politica de Privacidade, entre em contato conosco atraves dos canais disponibilizados no site GO Card PCD.</p>
             </div>
         </div>
     </div>
@@ -310,7 +325,7 @@
             document.getElementById(modalId).classList.remove('show');
         }
 
-        // Fechar modal ao clicar fora do conteúdo
+        // Fechar modal ao clicar fora do conteudo
         document.addEventListener('click', function(event) {
             const modalTermos = document.getElementById('modalTermos');
             const modalPrivacidade = document.getElementById('modalPrivacidade');

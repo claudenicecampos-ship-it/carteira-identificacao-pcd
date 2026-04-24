@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperar Senha - Carteira</title>
+    <title>Recuperar Senha - GO Card PCD</title>
     <link rel="stylesheet" href="../assets/css/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -20,7 +21,7 @@
                     <div class="form-step active" id="step1">
                         <h3>Digite seu Email</h3>
                         <p class="step-description">
-                            Enviaremos um link de recuperação para seu email cadastrado.
+                            Enviaremos um link de recuperacao para seu email cadastrado.
                         </p>
 
                         <div class="form-group">
@@ -45,16 +46,21 @@
                         <a href="index.html" class="btn-secondary">Voltar ao Login</a>
                     </div>
 
-                    <!-- Step 2: Confirmação de Email Enviado -->
+                    <!-- Step 2: Confirmacao de Email Enviado -->
                     <div class="form-step" id="step2">
                         <div class="email-sent">
-                            <div class="email-icon">📧</div>
+                            <div class="email-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                            </div>
                             <h2>Email Enviado!</h2>
-                            <p>Enviamos um email de recuperação para:</p>
+                            <p>Enviamos um email de recuperacao para:</p>
                             <p class="email-info" id="emailInfo"></p>
                             <p class="small-text">
-                                Copie o token enviado no email e cole no próximo passo.
-                                Se quiser, também pode usar o link direto do email.
+                                Copie o token enviado no email e cole no proximo passo.
+                                Se quiser, tambem pode usar o link direto do email.
                             </p>
 
                             <div class="button-group">
@@ -68,12 +74,12 @@
                         </div>
                     </div>
 
-                    <!-- Step 3: Redefinir Senha (token no email ou token na URL) -->
+                    <!-- Step 3: Redefinir Senha -->
                     <div class="form-step" id="step3">
                         <h3>Criar Nova Senha</h3>
 
                         <div class="form-group">
-                            <label for="recoveryToken">Token de recuperação</label>
+                            <label for="recoveryToken">Token de recuperacao</label>
                             <input 
                                 type="text" 
                                 id="recoveryToken" 
@@ -96,7 +102,10 @@
                                     required
                                 >
                                 <button type="button" class="toggle-password" onclick="togglePassword('novaSenha')">
-                                    👁️
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
                                 </button>
                             </div>
                             <div class="password-strength" id="passwordStrength"></div>
@@ -104,13 +113,13 @@
                         </div>
 
                         <div class="password-requirements">
-                            <p><strong>Sua senha deve ter:</strong></p>
+                            <p>Sua senha deve ter:</p>
                             <ul>
-                                <li id="req1">• Mínimo 8 caracteres</li>
-                                <li id="req2">• Pelo menos uma letra maiúscula</li>
-                                <li id="req3">• Pelo menos uma letra minúscula</li>
-                                <li id="req4">• Pelo menos um número</li>
-                                <li id="req5">• Pelo menos um caractere especial (@, $, !, %, *, ?, &)</li>
+                                <li id="req1">Minimo 8 caracteres</li>
+                                <li id="req2">Pelo menos uma letra maiuscula</li>
+                                <li id="req3">Pelo menos uma letra minuscula</li>
+                                <li id="req4">Pelo menos um numero</li>
+                                <li id="req5">Pelo menos um caractere especial (@, $, !, %, *, ?, &)</li>
                             </ul>
                         </div>
 
@@ -125,7 +134,10 @@
                                     required
                                 >
                                 <button type="button" class="toggle-password" onclick="togglePassword('confirmarSenha')">
-                                    👁️
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
                                 </button>
                             </div>
                             <span class="error-message" id="confirmarSenhaError"></span>
@@ -140,22 +152,30 @@
                     <!-- Step 4: Sucesso -->
                     <div class="form-step" id="step4">
                         <div class="success-message">
-                            <div class="success-icon">✅</div>
+                            <div class="success-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
                             <h2>Senha Redefinida!</h2>
                             <p>Sua senha foi alterada com sucesso.</p>
-                            <p>Todas as suas sessões anteriores foram encerradas por segurança.</p>
-                            <a href="login.html" class="btn-primary">Fazer Login</a>
+                            <p>Todas as suas sessoes anteriores foram encerradas por seguranca.</p>
+                            <a href="index.html" class="btn-primary">Fazer Login</a>
                         </div>
                     </div>
                 </form>
 
                 <div class="security-info">
-                    🔒 Sua senha está protegida com criptografia de ponta a ponta
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Sua senha esta protegida com criptografia de ponta a ponta
                 </div>
             </div>
 
             <div class="form-footer">
-                <small>© 2024 Carteira. Todos os direitos reservados.</small>
+                <small>&copy; 2025 GO Card PCD. Todos os direitos reservados.</small>
             </div>
         </div>
     </div>
