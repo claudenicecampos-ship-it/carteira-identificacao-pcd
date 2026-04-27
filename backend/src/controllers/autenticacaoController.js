@@ -139,6 +139,43 @@ export class AutenticacaoController {
     }
   }
 
+  /**
+   * GET /api/auth/verificar-bloqueio/:email
+   */
+  static async verificarBloqueio(req, res) {
+    try {
+      const { email } = req.params;
+
+      if (!email) {
+        return res.status(400).json({
+          sucesso: false,
+          mensagem: 'Email é obrigatório'
+        });
+      }
+
+      const bloqueio = await AutenticacaoService.verificarBloqueio(email);
+
+      if (bloqueio.bloqueado) {
+        return res.status(200).json({
+          sucesso: true,
+          bloqueado: true,
+          tempoRestante: bloqueio.segundosRestantes
+        });
+      }
+
+      res.status(200).json({
+        sucesso: true,
+        bloqueado: false
+      });
+    } catch (erro) {
+      console.error('Erro ao verificar bloqueio:', erro);
+      res.status(500).json({
+        sucesso: false,
+        mensagem: 'Erro interno do servidor'
+      });
+    }
+  }
+
   static async desbloquear(req, res) {
     try {
       const { email, codigo } = req.body;

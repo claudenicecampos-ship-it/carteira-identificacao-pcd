@@ -24,9 +24,10 @@
                     <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
                 </div>
                 <nav class="nav-links">
-                    <a href="carteira.html" class="nav-link">Verificar Carteira</a>
+                    <a href="carteira.html" class="nav-link active">Verificar Carteira</a>
                     <a href="central-direitos.html" class="nav-link">Central de Direitos</a>
-                    <a href="comunidade.html" class="nav-link">Comunidade</a>
+                    <a href="comunidade.html" class="nav-link ">Comunidade</a>
+                    <a href="escanear.html" class="nav-link">Escanear QR Code</a>
                 </nav>
             </div>
         </header>
@@ -52,7 +53,6 @@
                         <button id="tabCarteira" class="tab-button active">Carteira</button>
                         <button id="tabQRCode" class="tab-button">QR Code</button>
                     </div>
-                    <div class="wallet-card-inner">                        <div class="wallet-card-face wallet-front">
                     <!-- Topo oficial -->
                     <div class="wallet-top-bar">
                         <div class="wallet-top-left">
@@ -181,48 +181,31 @@
                         <!-- Divisor -->
                         <div class="wallet-divider"></div>
 
-                        <!-- Laudo + QR Code -->
-                        <div class="wallet-laudo-qr-row">
-                            <div class="wallet-laudo-col">
-                                <div class="wallet-fields-row">
-                                    <div class="wallet-field">
-                                        <span class="wf-label">Nº DO LAUDO</span>
-                                        <span id="laudoWallet" class="wf-value">—</span>
-                                    </div>
-                                    <div class="wallet-field">
-                                        <span class="wf-label">DATA DO LAUDO</span>
-                                        <span id="dataLaudoWallet" class="wf-value">—</span>
-                                    </div>
+                        <!-- Laudo Médico -->
+                        <div class="wallet-laudo-row">
+                            <div class="wallet-fields-row">
+                                <div class="wallet-field">
+                                    <span class="wf-label">Nº DO LAUDO</span>
+                                    <span id="laudoWallet" class="wf-value">—</span>
                                 </div>
-                                <div class="wallet-fields-row">
-                                    <div class="wallet-field">
-                                        <span class="wf-label">PROFISSIONAL RESPONSÁVEL</span>
-                                        <span id="medicoWallet" class="wf-value">—</span>
-                                    </div>
-                                    <div class="wallet-field">
-                                        <span class="wf-label">CRM / CRP / CRFa</span>
-                                        <span id="crmWallet" class="wf-value">—</span>
-                                    </div>
-                                </div>
-                                <div class="wallet-field" id="responsavelBlock" style="display:none">
-                                    <span class="wf-label">RESPONSÁVEL LEGAL</span>
-                                    <span id="responsavelWallet" class="wf-value">—</span>
+                                <div class="wallet-field">
+                                    <span class="wf-label">DATA DO LAUDO</span>
+                                    <span id="dataLaudoWallet" class="wf-value">—</span>
                                 </div>
                             </div>
-
-                            <div class="wallet-qr-col qrcode-column">
-                                <div class="qrcode-container" id="qrcodeWallet"></div>
-                                <span class="qrcode-label">Escaneie para verificar</span>
-                                <span class="qrcode-sublabel">Abre carteira completa</span>
-                            </div>
-                            <div class="wallet-qr-col verificacao-stamp-col verify-stamp-column" style="display:none">
-                                <div class="verificacao-stamp-box">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                        <polyline points="22 4 12 14.01 9 11.01"/>
-                                    </svg>
-                                    <span>VERIFICADO</span>
+                            <div class="wallet-fields-row">
+                                <div class="wallet-field">
+                                    <span class="wf-label">PROFISSIONAL RESPONSÁVEL</span>
+                                    <span id="medicoWallet" class="wf-value">—</span>
                                 </div>
+                                <div class="wallet-field">
+                                    <span class="wf-label">CRM / CRP / CRFa</span>
+                                    <span id="crmWallet" class="wf-value">—</span>
+                                </div>
+                            </div>
+                            <div class="wallet-field" id="responsavelBlock" style="display:none">
+                                <span class="wf-label">RESPONSÁVEL LEGAL</span>
+                                <span id="responsavelWallet" class="wf-value">—</span>
                             </div>
                         </div>
                     </div>
@@ -252,9 +235,21 @@
                             Válido em todo o território nacional para acesso a direitos, benefícios e serviços públicos e privados.
                         </p>
                     </div>
-                </div>
-                <div class="wallet-card-face wallet-back">
-                    <div class="wallet-back-content">
+
+                    <!-- Verso da carteira (QR Code) -->
+                    <div class="wallet-card-back">
+                        <div class="wallet-back-header">
+                            <div class="wallet-gov-logo">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="wallet-republic">REPÚBLICA FEDERATIVA DO BRASIL</div>
+                                <div class="wallet-subtitle-gov">Ministério dos Direitos Humanos e da Cidadania</div>
+                            </div>
+                        </div>
                         <div class="wallet-back-title">
                             <h2>QR Code Exclusivo</h2>
                             <p>Este é o único QR Code válido. Mostre-o somente ao leitor autorizado.</p>
@@ -265,9 +260,12 @@
                         <div class="wallet-back-instruction">
                             <p>Ao escanear o QR Code através do aplicativo, todas as informações da carteira serão exibidas automaticamente.</p>
                         </div>
+                        <div class="wallet-back-footer">
+                            <p class="wallet-footer-legal">
+                                Documento emitido com base na Lei nº 13.146, de 6 de julho de 2015 (Estatuto da Pessoa com Deficiência).
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </div>
                 </div>
 
                 <!-- Botões de ação -->
@@ -368,12 +366,6 @@
                                 <line x1="12" y1="17" x2="12.01" y2="17"/>
                             </svg>
                             Fazer Denúncia
-                        </button>
-                        <button class="socorro-btn" id="suporteBtn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                            </svg>
-                            Falar com Suporte
                         </button>
                     </div>
                 </div>

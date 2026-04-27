@@ -954,3 +954,103 @@
   .wallet-deficiencia-row { grid-template-columns: 1fr; }
   .validity-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ==================== WALLET CARD BACK (QR CODE) ==================== */
+.wallet-card-back {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: linear-gradient(135deg, var(--primary-800) 0%, var(--primary-900) 100%);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  min-height: 400px;
+  text-align: center;
+}
+
+.wallet-card.flipped .wallet-card-back {
+  display: flex;
+}
+
+.wallet-card.flipped .wallet-body,
+.wallet-card.flipped .wallet-footer-bar,
+.wallet-card.flipped .wallet-top-bar,
+.wallet-card.flipped .wallet-title-bar {
+  display: none;
+}
+
+.wallet-back-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.wallet-back-header .wallet-gov-logo svg {
+  width: 32px;
+  height: 32px;
+}
+
+.wallet-back-header .wallet-republic {
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.wallet-back-header .wallet-subtitle-gov {
+  font-size: 8px;
+  opacity: 0.8;
+}
+
+.wallet-back-title {
+  margin-bottom: 24px;
+}
+
+.wallet-back-title h2 {
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.wallet-back-title p {
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
+}
+
+.qrcode-back-frame {
+  background: white;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  margin-bottom: 24px;
+}
+
+.qrcode-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qrcode-container canvas {
+  border-radius: 8px;
+}
+
+.wallet-back-instruction {
+  margin-bottom: 24px;
+}
+
+.wallet-back-instruction p {
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  max-width: 300px;
+}
+
+.wallet-back-footer {
+  margin-top: auto;
+}
+
+.wallet-back-footer .wallet-footer-legal {
+  color: rgba(255,255,255,0.6);
+  font-size: 10px;
+  line-height: 1.5;
+}

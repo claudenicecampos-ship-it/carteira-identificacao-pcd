@@ -1,0 +1,28 @@
+import helmet from 'helmet';
+
+/**
+ * Configurações de segurança HTTP headers
+ */
+export const configurarSegurancaHeaders = helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:', 'https:'],
+    },
+  },
+  hsts: {
+    maxAge: 31536000, // 1 ano
+    includeSubDomains: true,
+    preload: true,
+  },
+  frameguard: {
+    action: 'deny',
+  },
+  noSniff: true,
+  xssFilter: true,
+  referrerPolicy: {
+    policy: 'strict-origin-when-cross-origin',
+  },
+});

@@ -1225,16 +1225,18 @@ select.input-field {
   z-index: 9999;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 24px;
-  border-radius: var(--radius-lg);
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-toast);
-  min-width: 320px;
-  max-width: 420px;
+  min-width: 280px;
+  max-width: 360px;
   opacity: 0;
   transform: translateX(100%);
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
   font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 #toast.show {
@@ -1245,21 +1247,25 @@ select.input-field {
 #toast.success {
   background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
   color: white;
+  border-left: 4px solid rgba(255,255,255,0.4);
 }
 
 #toast.error {
   background: linear-gradient(135deg, var(--error-500) 0%, var(--error-600) 100%);
   color: white;
+  border-left: 4px solid rgba(255,255,255,0.4);
 }
 
 #toast.warning {
   background: linear-gradient(135deg, var(--warning-500) 0%, var(--warning-600) 100%);
   color: white;
+  border-left: 4px solid rgba(255,255,255,0.4);
 }
 
 #toast.info {
   background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
   color: white;
+  border-left: 4px solid rgba(255,255,255,0.4);
 }
 
 /* Page Transitions */
@@ -1734,6 +1740,15 @@ select.input-field {
   box-shadow: var(--shadow-md);
   height: 400px;
   position: relative;
+  min-height: 400px;
+  background: var(--gray-100);
+}
+
+/* Leaflet map container fix */
+.mapa-interativo .leaflet-container {
+  height: 100%;
+  width: 100%;
+  min-height: 400px;
 }
 
 .mapa-interativo iframe {

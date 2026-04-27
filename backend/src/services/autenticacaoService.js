@@ -89,6 +89,36 @@ export class AutenticacaoService {
     return await UsuarioRepository.emailExiste(email);
   }
 
+  /**
+   * Verifica se email está bloqueado (sem tentar login)
+   */
+  static async verificarBloqueio(email) {
+    const bloqueio = await LoginBloqueioRepository.buscarPorEmail(email);
+    
+    if (bloqueio?.bloqueado_ate) {
+      const bloqueadoAte = new Date(bloqueio.bloqueado_ate);
+      const agora = new Date();
+      
+      if (bloqueadoAte > agora) {
+        const segundosRestantes = Math.ceil((bloqueadoAte.getTime() - agora.getTime()) / 1000);
+        const minutos = Math.floor(segundosRestantes / 60);
+        const segundos = segundosRestantes % 60;
+        return {
+          bloqueado: true,
+          bloqueadoAte: bloqueadoAte.toISOString(),
+          segundosRestantes,
+          codigoDesbloqueio: bloqueio.codigo_desbloqueio
+        };
+      } else {
+        // Bloqueio expirou, limpar
+        await LoginBloqueioRepository.resetarBloqueio(email);
+        return { bloqueado: false };
+      }
+    }
+    
+    return { bloqueado: false };
+  }
+
   /**   * Login de usuário
    */
   static async login(email, senha, endereco_ip = '', user_agent = '') {
@@ -99,11 +129,12 @@ export class AutenticacaoService {
       if (bloqueadoAte > new Date()) {
         // Calcula corretamente o tempo restante em segundos
         const segundosRestantes = Math.ceil((bloqueadoAte.getTime() - Date.now()) / 1000);
-        // FORÇA: sempre mostra 5 minutos
-        const erro = new Error(`Conta bloqueada. Tente novamente em 5m 0s.`);
+        const minutos = Math.floor(segundosRestantes / 60);
+        const segundos = segundosRestantes % 60;
+        const erro = new Error(`Conta bloqueada. Tente novamente em ${minutos}m ${segundos}s.`);
         erro.status = 429;
-        erro.retryAfter = Math.min(segundosRestantes, 300); // Máximo 5 minutos
-        erro.codigoDesbloqueio = bloqueio.codigo_desbloqueio;
+        erro.retryAfter = falha.segundosRestantes; // Tempo real calculado
+        erro.codigoDesbloqueio = falha.codigoDesbloqueio;
         throw erro;
       }
     }
@@ -111,11 +142,11 @@ export class AutenticacaoService {
     // Buscar usuário
     const usuario = await UsuarioRepository.buscarPorEmail(email);
     if (!usuario) {
-      const falha = await LoginBloqueioRepository.registrarFalha(email);
+      const falha = await LoginBloqueioRepository.registrarFalha(email, 3, 5); // Adicionei os parâmetros maxTentativas e minutosBloqueio
       if (falha.bloqueadoAte) {
-        const erro = new Error('Muitas tentativas de login. Tente novamente em 5 minutos.');
+        const erro = new Error(`Muitas tentativas de login. Tente novamente em ${Math.floor(falha.segundosRestantes / 60)} minutos e ${falha.segundosRestantes % 60} segundos.`);
         erro.status = 429;
-        erro.retryAfter = 300; // FORÇA: 5 minutos
+        erro.retryAfter = falha.segundosRestantes; // Tempo real calculado
         erro.codigoDesbloqueio = falha.codigoDesbloqueio;
         throw erro;
       }
@@ -133,11 +164,11 @@ export class AutenticacaoService {
     // Comparar senha
     const senhaValida = await compararSenha(senha, usuario.senha);
     if (!senhaValida) {
-      const falha = await LoginBloqueioRepository.registrarFalha(email);
+      const falha = await LoginBloqueioRepository.registrarFalha(email, 3, 5); // Adicionei os parâmetros maxTentativas e minutosBloqueio
       if (falha.bloqueadoAte) {
-        const erro = new Error('Muitas tentativas de login. Tente novamente em 5 minutos.');
+        const erro = new Error(`Muitas tentativas de login. Tente novamente em ${Math.floor(falha.segundosRestantes / 60)} minutos e ${falha.segundosRestantes % 60} segundos.`);
         erro.status = 429;
-        erro.retryAfter = 300; // FORÇA: 5 minutos
+        erro.retryAfter = falha.segundosRestantes; // Tempo real calculado
         erro.codigoDesbloqueio = falha.codigoDesbloqueio;
         throw erro;
       }

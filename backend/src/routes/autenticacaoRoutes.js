@@ -28,6 +28,13 @@ router.post('/login', AutenticacaoController.login);
 router.post('/desbloquear', AutenticacaoController.desbloquear);
 
 /**
+ * @route GET /api/auth/verificar-bloqueio/:email
+ * @desc Verifica se email está bloqueado
+ * @access Public
+ */
+router.get('/verificar-bloqueio/:email', AutenticacaoController.verificarBloqueio);
+
+/**
  * @route POST /api/auth/renovar-token
  * @desc Renova o token JWT
  * @access Private

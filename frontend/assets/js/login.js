@@ -90,12 +90,12 @@ async function handleLogin(e) {
                 localStorage.removeItem('carteira_email_salvo');
             }
 
-            // Mostra notificacao de sucesso
-            if (typeof mostrarNotificacao === 'function') {
-                mostrarNotificacao('Login realizado com sucesso!', 'success');
-            } else {
-                mostrarToast('Login realizado com sucesso!', 'success');
-            }
+            // Remove toast anterior se existir
+            const toastAntigo = document.querySelector('.toast-container');
+            if (toastAntigo) toastAntigo.remove();
+
+            // Mostra toast de sucesso
+            mostrarToast('Login realizado com sucesso!', 'success');
 
             const usuario = resposta.data.usuario;
             

@@ -25,7 +25,8 @@
                 <nav class="nav-links">
                     <a href="carteira.html" class="nav-link">Verificar Carteira</a>
                     <a href="central-direitos.html" class="nav-link active">Central de Direitos</a>
-                    <a href="comunidade.html" class="nav-link">Comunidade</a>
+                    <a href="comunidade.html" class="nav-link ">Comunidade</a>
+                    <a href="escanear.html" class="nav-link">Escanear QR Code</a>
                 </nav>
             </div>
         </header>
@@ -280,17 +281,6 @@
                             <p>Registre a violacao e receba um protocolo. Encaminhamos para MP e Defensoria.</p>
                             <button class="btn btn-primary" id="btnDenuncia">Denunciar Agora</button>
                         </div>
-
-                        <div class="socorro-action-card">
-                            <div class="socorro-action-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                                </svg>
-                            </div>
-                            <h3>Chat com Suporte</h3>
-                            <p>Fale com um atendente que pode orientar voce em tempo real.</p>
-                            <button class="btn btn-secondary" onclick="iniciarChat()">Iniciar Chat</button>
-                        </div>
                     </div>
                 </section>
             </div>
@@ -364,25 +354,41 @@
     <div id="leisModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Leis que Garantem Seus Direitos</h3>
+                <h3>Guia Legal Rápido — Lei 13.146/2015</h3>
                 <button class="close-modal" id="closeLeis">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="legal-item">
-                    <h4>Fila Prioritaria</h4>
-                    <p><strong>Lei 10.048/2000, Art. 1:</strong> "As pessoas com deficiencia, os idosos com idade igual ou superior a 60 anos, as gestantes, as lactantes, as pessoas com criancas de colo e os obesos terao atendimento prioritario."</p>
+                    <h4>Atendimento Prioritário</h4>
+                    <p><strong>Lei 10.048/2000 + Art. 9º LBI</strong> — Garante atendimento prioritário em estabelecimentos públicos e privados, sem necessidade de justificativa adicional além da apresentação desta carteira.</p>
                 </div>
                 <div class="legal-item">
-                    <h4>Vagas de Estacionamento</h4>
-                    <p><strong>Lei 13.146/2015, Art. 47:</strong> "Em todas as areas de estacionamento aberto ao publico, de uso publico ou privado de uso coletivo e em vias publicas, devem ser reservadas vagas proximas aos acessos de circulacao de pedestres."</p>
+                    <h4>Direito ao Acompanhante</h4>
+                    <p><strong>Art. 22 da Lei 13.146/2015</strong> — Direito a acompanhante durante internações e procedimentos hospitalares. O acompanhante não pode ser cobrado por acomodação.</p>
                 </div>
                 <div class="legal-item">
-                    <h4>Acessibilidade</h4>
-                    <p><strong>Lei 13.146/2015, Art. 53:</strong> "A acessibilidade e direito que garante a pessoa com deficiencia ou com mobilidade reduzida viver de forma independente e exercer seus direitos de cidadania."</p>
+                    <h4>Passe Livre Interestadual</h4>
+                    <p><strong>Lei 8.899/1994</strong> — Gratuidade no transporte coletivo interestadual para PCDs comprovadamente carentes. Apresente esta carteira + comprovante de renda.</p>
                 </div>
                 <div class="legal-item">
-                    <h4>Discriminacao</h4>
-                    <p><strong>Lei 13.146/2015, Art. 88:</strong> "Praticar, induzir ou incitar discriminacao de pessoa em razao de sua deficiencia. Pena: reclusao de 1 a 3 anos e multa."</p>
+                    <h4>Vagas de Estacionamento Reservadas</h4>
+                    <p><strong>Art. 47 da Lei 13.146/2015</strong> — 2% das vagas em estacionamentos públicos e privados devem ser reservadas para PCDs ou idosos, próximas ao acesso.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Isenção de IPI em Veículos</h4>
+                    <p><strong>Lei 8.989/1995</strong> — Isenção de IPI na compra de veículos adaptados para PCD. Válido a cada 2 anos.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>BPC — Benefício de Prestação Continuada</h4>
+                    <p><strong>Art. 94 da Lei 13.146/2015</strong> — Benefício de 1 salário mínimo para PCD sem renda familiar per capita acima de 1/4 do salário mínimo.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Acesso à Educação Inclusiva</h4>
+                    <p><strong>Art. 27 a 30 da Lei 13.146/2015</strong> — Direito à educação inclusiva em todos os níveis. Escolas não podem recusar matrícula de PCD nem cobrar valores adicionais.</p>
+                </div>
+                <div class="legal-item">
+                    <h4>Acessibilidade em Locais Públicos</h4>
+                    <p><strong>Art. 53 da Lei 13.146/2015</strong> — Direito a acessibilidade plena em edificações públicas, transportes, comunicação e serviços. Denuncie barreiras ao MP ou Defensoria.</p>
                 </div>
             </div>
         </div>

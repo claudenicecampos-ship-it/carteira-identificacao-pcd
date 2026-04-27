@@ -329,7 +329,8 @@ function generateQRCode(d) {
   }
   container.innerHTML = '';
 
-  // Dados essenciais para o QR Code (sem a foto para reduzir tamanho)
+  // Dados essenciais para o QR Code (sem a foto para não exceder o limite do QR Code)
+  // A foto será buscada do localStorage pelo ID quando necessário
   const payload = {
     n: d.nome,
     dn: d.dataNascimento,
@@ -358,8 +359,8 @@ function generateQRCode(d) {
     nc: d.numeroCarteira,
     de: d.dataEmissao,
     val: d.validade,
-    cv: d.codigoVerificacao,
-    ft: d.foto ? d.foto.substring(0, 100) + '...' : '' // Apenas referencia
+    cv: d.codigoVerificacao
+    // Foto removida do QR Code - será buscada pelo ID
   };
 
   // Codifica em base64 compactado
@@ -532,9 +533,6 @@ document.getElementById('guiaLegalBtn')?.addEventListener('click', () => guiaLeg
 document.getElementById('closeGuiaLegal')?.addEventListener('click', () => guiaLegalModal?.classList.add('hidden'));
 document.getElementById('denunciaBtn')?.addEventListener('click', () => denunciaModal?.classList.remove('hidden'));
 document.getElementById('closeDenuncia')?.addEventListener('click', () => denunciaModal?.classList.add('hidden'));
-document.getElementById('suporteBtn')?.addEventListener('click', () => {
-  alert('Conectando ao suporte... Em breve você será atendido por um de nossos especialistas.');
-});
 
 guiaLegalModal?.addEventListener('click', e => { if (e.target === guiaLegalModal) guiaLegalModal.classList.add('hidden'); });
 denunciaModal?.addEventListener('click', e => { if (e.target === denunciaModal) denunciaModal.classList.add('hidden'); });
