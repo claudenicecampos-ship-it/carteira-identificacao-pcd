@@ -139,3 +139,15 @@ export const validarCEP = (cep) => {
   const cepLimpo = cep.replace(/\D/g, '');
   return cepLimpo.length === 8;
 };
+
+/**
+ * Gera um código de verificação único
+ */
+export const gerarCodigoVerificacao = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = '';
+  for (let i = 0; i < 8; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};

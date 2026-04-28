@@ -1,4 +1,5 @@
 import { CarteiraService } from '../services/carteiraService.js';
+import { gerarCodigoVerificacao } from '../utils/validacao.js';
 
 export class CarteiraController {
   static async criar(req, res) {
@@ -9,6 +10,7 @@ export class CarteiraController {
         usuario_id: req.usuario_id,
         tipo: body.tipo || body.tipoCarteira || 'PCD',
         numero_carteira: numeroCarteira,
+        codigo_verificacao: body.codigo_verificacao || gerarCodigoVerificacao(),
         descricao: body.descricao || body.descricaoCarteira || 'Carteira GO Card PCD',
         data_nascimento: body.data_nascimento || body.dataNascimento || null,
         endereco: body.endereco || null,
@@ -51,6 +53,20 @@ export class CarteiraController {
   static async buscarMinha(req, res) {
     try {
       const carteira = await CarteiraService.buscarPorUsuario(req.usuario_id);
+      if (carteira) {
+        res.status(200).json({ sucesso: true, data: carteira });
+      } else {
+        res.status(404).json({ sucesso: false, mensagem: 'Carteira não encontrada' });
+      }
+    } catch (erro) {
+      res.status(400).json({ sucesso: false, mensagem: erro.message });
+    }
+  }
+
+  static async buscarPorNumero(req, res) {
+    try {
+      const numeroCarteira = req.params.numeroCarteira;
+      const carteira = await CarteiraService.buscarPorNumero(numeroCarteira);
       if (carteira) {
         res.status(200).json({ sucesso: true, data: carteira });
       } else {

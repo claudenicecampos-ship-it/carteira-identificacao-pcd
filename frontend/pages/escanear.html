@@ -57,9 +57,9 @@
 
                     <!-- Manual Entry -->
                     <div class="manual-entry">
-                        <p>Ou insira o código manualmente:</p>
+                        <p>Ou insira o número da carteira manualmente:</p>
                         <div class="form-group">
-                            <input type="text" id="manualCode" class="input-field" placeholder="Cole o código da carteira aqui...">
+                            <input type="text" id="manualCode" class="input-field" placeholder="Cole o número da carteira aqui...">
                             <button class="btn btn-primary" onclick="verificarManual()">Verificar</button>
                         </div>
                     </div>
@@ -222,43 +222,38 @@
                         </div>
                     </div>
 
-                    <!-- Emergency Info -->
-                    <div class="emergency-card">
-                        <div class="emergency-header">
-                            <div class="emergency-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-                                </svg>
+                    <div class="wallet-divider"></div>
+                    <div class="wallet-emergency-details">
+                        <div class="wallet-fields-row">
+                            <div class="wallet-field">
+                                <span class="wf-label">TIPO SANGUÍNEO</span>
+                                <span id="tipoSanguineoDisplay" class="wf-value">—</span>
                             </div>
-                            <div>
-                                <h3>Informações de Emergência</h3>
-                                <p class="emergency-subtitle">Dados importantes para socorristas</p>
+                            <div class="wallet-field">
+                                <span class="wf-label">CONTATO DE EMERGÊNCIA</span>
+                                <span id="contatoEmergenciaDisplay" class="wf-value">—</span>
                             </div>
                         </div>
-                        <div class="emergency-grid">
-                            <div class="emergency-item">
-                                <span class="label">Tipo Sanguíneo</span>
-                                <span id="tipoSanguineoDisplay" class="value blood-type">—</span>
+                        <div class="wallet-fields-row">
+                            <div class="wallet-field">
+                                <span class="wf-label">NECESSITA ACOMPANHANTE</span>
+                                <span id="acompanhanteEmergenciaDisplay" class="wf-value">—</span>
                             </div>
-                            <div class="emergency-item">
-                                <span class="label">Contato de Emergência</span>
-                                <span id="contatoEmergenciaDisplay" class="value">—</span>
+                            <div class="wallet-field">
+                                <span class="wf-label">COMUNICAÇÃO</span>
+                                <span id="comunicacaoEmergenciaDisplay" class="wf-value">—</span>
                             </div>
-                            <div class="emergency-item">
-                                <span class="label">Necessita Acompanhante</span>
-                                <span id="acompanhanteEmergenciaDisplay" class="value">—</span>
+                        </div>
+                        <div class="wallet-fields-row">
+                            <div class="wallet-field wide">
+                                <span class="wf-label">ALERGIAS</span>
+                                <span id="alergiasEmergenciaDisplay" class="wf-value">—</span>
                             </div>
-                            <div class="emergency-item">
-                                <span class="label">Comunicação</span>
-                                <span id="comunicacaoEmergenciaDisplay" class="value">—</span>
-                            </div>
-                            <div class="emergency-item full-width">
-                                <span class="label">Alergias</span>
-                                <span id="alergiasEmergenciaDisplay" class="value alergias-value">—</span>
-                            </div>
-                            <div class="emergency-item full-width">
-                                <span class="label">Medicações</span>
-                                <span id="medicacoesEmergenciaDisplay" class="value">—</span>
+                        </div>
+                        <div class="wallet-fields-row">
+                            <div class="wallet-field wide">
+                                <span class="wf-label">MEDICAÇÕES</span>
+                                <span id="medicacoesEmergenciaDisplay" class="wf-value">—</span>
                             </div>
                         </div>
                     </div>
@@ -483,6 +478,10 @@
         function exibirCarteira(dados) {
             document.getElementById('resultContainer').classList.remove('hidden');
             
+            // Alterar título para verificada
+            document.querySelector('.vb-text h2').textContent = 'Carteira Verificada';
+            document.querySelector('.vb-text p').textContent = 'Este documento é autêntico e válido conforme a Lei 13.146/2015.';
+            
             // Dados principais
             document.getElementById('nomeDisplay').textContent = dados.nome || '—';
             document.getElementById('dataDisplay').textContent = dados.data_nascimento || '—';
@@ -492,14 +491,14 @@
             
             // Deficiência
             document.getElementById('tipoDefDisplay').textContent = dados.tipo_deficiencia || '—';
-            document.getElementById('grauDefDisplay').textContent = dados.grau || '—';
+            document.getElementById('grauDefDisplay').textContent = dados.grau_deficiencia || dados.grau || '—';
             document.getElementById('cidDisplay').textContent = dados.cid || '—';
             document.getElementById('comunicacaoDisplay').textContent = dados.comunicacao || '—';
             
             // Laudo
             document.getElementById('laudoDisplay').textContent = dados.numero_laudo || '—';
             document.getElementById('dataLaudoDisplay').textContent = dados.data_laudo || '—';
-            document.getElementById('medicoDisplay').textContent = dados.medico_responsavel || '—';
+            document.getElementById('medicoDisplay').textContent = dados.nome_medico || dados.medico_responsavel || '—';
             
             // Validade
             document.getElementById('dataEmissaoDisplay').textContent = dados.data_emissao || '—';
@@ -509,7 +508,7 @@
             // Emergência
             document.getElementById('tipoSanguineoDisplay').textContent = dados.tipo_sanguineo || '—';
             document.getElementById('contatoEmergenciaDisplay').textContent = dados.contato_emergencia || '—';
-            document.getElementById('acompanhanteEmergenciaDisplay').textContent = dados.acompanhante ? 'Sim' : 'Não';
+            document.getElementById('acompanhanteEmergenciaDisplay').textContent = (dados.necessita_acompanhante || dados.acompanhante) ? 'Sim' : 'Não';
             document.getElementById('comunicacaoEmergenciaDisplay').textContent = dados.comunicacao || '—';
             document.getElementById('alergiasEmergenciaDisplay').textContent = dados.alergias || 'Nenhuma';
             document.getElementById('medicacoesEmergenciaDisplay').textContent = dados.medicacoes || 'Nenhuma';
@@ -532,17 +531,6 @@
         // Imprimir
         function imprimirCarteira() {
             window.print();
-        }
-
-        // Guia Legal - abrir em nova aba
-        function abrirGuiaLegal() {
-            window.open('central-direitos.html#guia-legal', '_blank');
-        }
-
-        // Denúncia - abrir página de denúncia
-        function fazerDenuncia() {
-            // Aqui você pode redirecionar para uma página de denúncia ou abrir um modal
-            mostrarToast('Funcionalidade de denúncia em desenvolvimento', 'info');
         }
 
         // Iniciar

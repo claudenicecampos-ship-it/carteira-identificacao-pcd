@@ -89,6 +89,16 @@ export class AutenticacaoService {
     return await UsuarioRepository.emailExiste(email);
   }
 
+  static parseBloqueadoAte(value) {
+    if (!value) return null;
+    if (value instanceof Date) return value;
+    if (typeof value === 'string') {
+      const normalized = value.includes('T') ? value : value.replace(' ', 'T');
+      return new Date(normalized);
+    }
+    return new Date(value);
+  }
+
   /**
    * Verifica se email está bloqueado (sem tentar login)
    */
@@ -96,7 +106,7 @@ export class AutenticacaoService {
     const bloqueio = await LoginBloqueioRepository.buscarPorEmail(email);
     
     if (bloqueio?.bloqueado_ate) {
-      const bloqueadoAte = new Date(bloqueio.bloqueado_ate);
+      const bloqueadoAte = this.parseBloqueadoAte(bloqueio.bloqueado_ate);
       const agora = new Date();
       
       if (bloqueadoAte > agora) {
@@ -125,7 +135,7 @@ export class AutenticacaoService {
     // Verificar bloqueio prévio
     const bloqueio = await LoginBloqueioRepository.buscarPorEmail(email);
     if (bloqueio?.bloqueado_ate) {
-      const bloqueadoAte = new Date(bloqueio.bloqueado_ate);
+      const bloqueadoAte = this.parseBloqueadoAte(bloqueio.bloqueado_ate);
       if (bloqueadoAte > new Date()) {
         // Calcula corretamente o tempo restante em segundos
         const segundosRestantes = Math.ceil((bloqueadoAte.getTime() - Date.now()) / 1000);
@@ -133,8 +143,8 @@ export class AutenticacaoService {
         const segundos = segundosRestantes % 60;
         const erro = new Error(`Conta bloqueada. Tente novamente em ${minutos}m ${segundos}s.`);
         erro.status = 429;
-        erro.retryAfter = falha.segundosRestantes; // Tempo real calculado
-        erro.codigoDesbloqueio = falha.codigoDesbloqueio;
+        erro.retryAfter = segundosRestantes;
+        erro.codigoDesbloqueio = bloqueio.codigo_desbloqueio;
         throw erro;
       }
     }

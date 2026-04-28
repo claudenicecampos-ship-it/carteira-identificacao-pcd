@@ -94,7 +94,7 @@ export class LoginBloqueioRepository {
 
       await this.criarOuAtualizar(email, {
         tentativas,
-        bloqueado_ate: bloqueadoAte ? bloqueadoAte.toISOString().slice(0, 19).replace('T', ' ') : null,
+        bloqueado_ate: bloqueadoAte,
         codigo_desbloqueio: codigoDesbloqueio
       });
 

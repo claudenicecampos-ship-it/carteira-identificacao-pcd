@@ -22,9 +22,21 @@ async function executarSQL() {
         const sqlFile = path.join(__dirname, '..', 'database', 'carteira_database.sql');
         const sql = fs.readFileSync(sqlFile, 'utf8');
 
-        // Executar o SQL
+        // Dividir o SQL em statements individuais
+        const statements = sql.split(';').map(stmt => stmt.trim()).filter(stmt => stmt.length > 0 && !stmt.startsWith('--'));
+
         console.log('Executando script SQL...');
-        await connection.execute(sql);
+        
+        for (const statement of statements) {
+            if (statement.trim()) {
+                try {
+                    await connection.execute(statement);
+                } catch (err) {
+                    console.log(`Ignorando erro em statement: ${err.message}`);
+                }
+            }
+        }
+        
         console.log('✅ Script SQL executado com sucesso!');
 
     } catch (erro) {

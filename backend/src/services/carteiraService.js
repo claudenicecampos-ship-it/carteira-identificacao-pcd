@@ -112,4 +112,11 @@ export class CarteiraService {
   static async buscarPorUsuario(usuario_id) {
     return await CarteiraRepository.buscarPorUsuarioId(usuario_id);
   }
+
+  static async buscarPorNumero(numeroCarteira) {
+    if (!numeroCarteira || typeof numeroCarteira !== 'string') {
+      throw new Error('Código da carteira inválido');
+    }
+    return await CarteiraRepository.buscarPorNumeroCarteira(numeroCarteira.trim());
+  }
 }

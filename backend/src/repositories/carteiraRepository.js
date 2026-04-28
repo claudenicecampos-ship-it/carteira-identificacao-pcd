@@ -8,6 +8,7 @@ export class CarteiraRepository {
         dados.usuario_id || null,
         dados.tipo || null,
         dados.numero_carteira,
+        dados.codigo_verificacao || null,
         dados.descricao || null,
         1, // ativa
         dados.data_nascimento || null,
@@ -41,7 +42,7 @@ export class CarteiraRepository {
       ].map(v => v === undefined ? null : v); // Converte undefined para null
 
       const [resultado] = await conexao.execute(
-        `INSERT INTO carteiras (usuario_id, tipo, numero_carteira, descricao, ativa, data_nascimento, endereco, cidade, estado, cep, telefone, tipo_deficiencia, grau_deficiencia, cid, necessita_acompanhante, numero_laudo, data_laudo, nome_medico, crm_medico, foto, laudo_url, tipo_sanguineo, contato_emergencia, alergias, medicacoes, comunicacao, nome_responsavel, cpf_responsavel, vinculo_responsavel, nome, cpf, rg, sexo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO carteiras (usuario_id, tipo, numero_carteira, codigo_verificacao, descricao, ativa, data_nascimento, endereco, cidade, estado, cep, telefone, tipo_deficiencia, grau_deficiencia, cid, necessita_acompanhante, numero_laudo, data_laudo, nome_medico, crm_medico, foto, laudo_url, tipo_sanguineo, contato_emergencia, alergias, medicacoes, comunicacao, nome_responsavel, cpf_responsavel, vinculo_responsavel, nome, cpf, rg, sexo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         valores
       );
       conexao.release();
@@ -77,6 +78,43 @@ export class CarteiraRepository {
       return resultado.length > 0 ? resultado[0] : null;
     } catch (erro) {
       throw new Error('Erro ao buscar carteira por CPF: ' + erro.message);
+    }
+  }
+
+  static async buscarPorNumeroCarteira(numeroCarteira) {
+    if (!numeroCarteira) return null;
+    try {
+      const conexao = await pool.getConnection();
+      
+      // Tentar buscar por numero_carteira
+      let [resultado] = await conexao.execute(
+        'SELECT * FROM carteiras WHERE numero_carteira = ? AND ativa = 1 LIMIT 1',
+        [numeroCarteira]
+      );
+      
+      // Se não encontrou, tentar buscar por id (se for número)
+      if (resultado.length === 0) {
+        const id = parseInt(numeroCarteira, 10);
+        if (!isNaN(id)) {
+          [resultado] = await conexao.execute(
+            'SELECT * FROM carteiras WHERE id = ? AND ativa = 1 LIMIT 1',
+            [id]
+          );
+        }
+      }
+      
+      // Se ainda não encontrou, tentar buscar por codigo_verificacao
+      if (resultado.length === 0) {
+        [resultado] = await conexao.execute(
+          'SELECT * FROM carteiras WHERE codigo_verificacao = ? AND ativa = 1 LIMIT 1',
+          [numeroCarteira]
+        );
+      }
+      
+      conexao.release();
+      return resultado.length > 0 ? resultado[0] : null;
+    } catch (erro) {
+      throw new Error('Erro ao buscar carteira por código: ' + erro.message);
     }
   }
 }
