@@ -12,10 +12,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (emailSalvo) {
         document.getElementById('email').value = emailSalvo;
         document.getElementById('lembrarMe').checked = true;
+        
+        // Verificar se há bloqueio ativo para o email salvo
+        await verificarBloqueioAoCarregar(emailSalvo);
     }
 
     await verificarBackend();
 });
+
+// Verifica se há bloqueio ativo ao carregar a página
+async function verificarBloqueioAoCarregar(email) {
+    try {
+        const baseUrl = await resolveApiBaseUrl();
+        const resposta = await fetch(`${baseUrl}/api/auth/verificar-bloqueio/${encodeURIComponent(email)}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const dados = await resposta.json();
+        
+        if (dados.sucesso && dados.data && dados.data.bloqueado) {
+            // Há bloqueio ativo, mostrar contagem regressiva
+            const segundosRestantes = dados.data.segundosRestantes;
+            if (segundosRestantes > 0) {
+                exibirContagemRegressiva(segundosRestantes, 'loginForm');
+                desabilitarBotao('loginBtn');
+            }
+        }
+    } catch (erro) {
+        // Se falhar a verificação, não faz nada
+        console.log('Erro ao verificar bloqueio:', erro.message);
+    }
+}
 
 async function verificarBackend() {
     try {
@@ -147,9 +175,12 @@ async function handleLogin(e) {
         if (erro?.status === 429) {
             const retry = erro.headers?.retryAfter;
             if (retry) {
-                // Mostra mensagem com contagem regressiva
                 exibirContagemRegressiva(retry, 'loginForm');
-                habilitarBotao('loginBtn');
+                desabilitarBotao('loginBtn');
+                return;
+            } else {
+                // Se não veio retryAfter, tenta buscar o tempo real do backend
+                await tentarMostrarContadorBloqueio(email);
                 return;
             }
         } else {
@@ -164,19 +195,43 @@ async function handleLogin(e) {
     }
 }
 
+// Consulta o backend para tentar mostrar o contador de bloqueio
+async function tentarMostrarContadorBloqueio(email) {
+    try {
+        const baseUrl = await resolveApiBaseUrl();
+        const resposta = await fetch(`${baseUrl}/api/auth/verificar-bloqueio/${encodeURIComponent(email)}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const dados = await resposta.json();
+        if (dados.sucesso && dados.data && dados.data.bloqueado && dados.data.segundosRestantes > 0) {
+            exibirContagemRegressiva(dados.data.segundosRestantes, 'loginForm');
+            desabilitarBotao('loginBtn');
+        }
+    } catch (erro) {
+        // Não faz nada se falhar
+    }
+}
+
+// Variável global para controlar o intervalo de bloqueio
+let intervaloBloqueio = null;
+let toastBloqueio = null;
+
 // Função para exibir contagem regressiva de bloqueio
 function exibirContagemRegressiva(segundosRestantes, formId) {
-    // FORÇA: sempre 5 minutos (300 segundos)
-    let segundos = Math.min(segundosRestantes, 300);
-    
+    // Se já existe um toast de bloqueio ativo, não cria outro
+    if (toastBloqueio && document.body.contains(toastBloqueio)) {
+        return;
+    }
+    let segundos = parseInt(segundosRestantes, 10);
+    if (isNaN(segundos) || segundos <= 0) segundos = 300;
     // Remove toast anterior se existir
     const toastExistente = document.querySelector('[data-bloqueio-toast]');
     if (toastExistente) toastExistente.remove();
-    
     // Cria container para o toast de bloqueio
-    const toastContainer = document.createElement('div');
-    toastContainer.setAttribute('data-bloqueio-toast', 'true');
-    toastContainer.style.cssText = `
+    toastBloqueio = document.createElement('div');
+    toastBloqueio.setAttribute('data-bloqueio-toast', 'true');
+    toastBloqueio.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
@@ -189,29 +244,34 @@ function exibirContagemRegressiva(segundosRestantes, formId) {
         font-weight: 500;
         min-width: 300px;
     `;
-    document.body.appendChild(toastContainer);
-    
+    document.body.appendChild(toastBloqueio);
     const atualizarMensagem = () => {
         const minutos = Math.floor(segundos / 60);
         const secs = segundos % 60;
         let mensagem;
-        
-        if (minutos > 0) {
-            mensagem = `Sua conta está bloqueada. Tente novamente em ${minutos}m ${secs}s`;
+        if (minutos > 0 && secs > 0) {
+            mensagem = `Sua conta está bloqueada. Tente novamente em ${minutos} minuto(s) e ${secs} segundo(s)`;
+        } else if (minutos > 0) {
+            mensagem = `Sua conta está bloqueada. Tente novamente em ${minutos} minuto(s)`;
         } else {
-            mensagem = `Sua conta está bloqueada. Tente novamente em ${secs}s`;
+            mensagem = `Sua conta está bloqueada. Tente novamente em ${secs} segundo(s)`;
         }
-        
-        toastContainer.textContent = mensagem;
+        toastBloqueio.textContent = mensagem;
     };
-    
     atualizarMensagem();
-    
-    const intervalo = setInterval(() => {
+    // Limpa intervalo anterior se existir
+    if (intervaloBloqueio) {
+        clearInterval(intervaloBloqueio);
+    }
+    intervaloBloqueio = setInterval(() => {
         segundos--;
         if (segundos <= 0) {
-            clearInterval(intervalo);
-            toastContainer.remove();
+            clearInterval(intervaloBloqueio);
+            intervaloBloqueio = null;
+            if (toastBloqueio && document.body.contains(toastBloqueio)) {
+                toastBloqueio.remove();
+                toastBloqueio = null;
+            }
             mostrarToast('Bloqueio expirado! Você pode tentar fazer login novamente.', 'success', 4000);
             habilitarBotao('loginBtn');
             document.getElementById('email').focus();

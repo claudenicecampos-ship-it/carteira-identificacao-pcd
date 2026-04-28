@@ -1,7 +1,7 @@
 import express from 'express';
 import { AutenticacaoController } from '../controllers/autenticacaoController.js';
 import { verificarToken } from '../middlewares/autenticacao.js';
-import { limitadorRecuperacaoSenha } from '../middlewares/rateLimiter.js';
+import { limitadorRecuperacaoSenha, limitadorLogin } from '../middlewares/rateLimiter.js';
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.post('/verificar-email', AutenticacaoController.verificarEmail);
  * @desc Realiza login
  * @access Public
  */
-router.post('/login', AutenticacaoController.login);
+router.post('/login', limitadorLogin, AutenticacaoController.login);
 router.post('/desbloquear', AutenticacaoController.desbloquear);
 
 /**

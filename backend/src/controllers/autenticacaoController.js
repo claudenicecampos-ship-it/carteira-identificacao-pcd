@@ -155,17 +155,13 @@ export class AutenticacaoController {
 
       const bloqueio = await AutenticacaoService.verificarBloqueio(email);
 
-      if (bloqueio.bloqueado) {
-        return res.status(200).json({
-          sucesso: true,
-          bloqueado: true,
-          tempoRestante: bloqueio.segundosRestantes
-        });
-      }
-
       res.status(200).json({
         sucesso: true,
-        bloqueado: false
+        data: {
+          bloqueado: bloqueio.bloqueado,
+          segundosRestantes: bloqueio.segundosRestantes || 0,
+          bloqueadoAte: bloqueio.bloqueadoAte || null
+        }
       });
     } catch (erro) {
       console.error('Erro ao verificar bloqueio:', erro);

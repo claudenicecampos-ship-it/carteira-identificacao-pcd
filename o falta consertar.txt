@@ -1,3 +1,33 @@
-12 quando eu vou em escanear qrcode nao aparece nenhuma informação na minha carteira . o ler qr code ou o codigo vai apenas mostrar as outras informações que nao tem na carteira
-13 fazer a pessoa ser bloqueada por 5 minutos E FAZER MESMO SE A PESSOA SAIUR E ENTRA DENVO ELA VAI ESTA BLOQUEADA
+quando eu vou em escanear qrcode nao aparece nenhuma informação na minha carteira . o ler qr code ou o codigo vai apenas mostrar as outras informações que nao tem na carteira
+faça a carteira se adpitar em tamanho para os campos
 
+
+2. Informações da carteira não aparecem ao escanear/inserir código
+Motivo: O código JS está correto, mas o campo id pode não estar vindo do backend ou do QR code. O campo numeroDisplay depende de dados.id, mas nem sempre está presente.
+Correção:
+Garantir que o backend retorna o campo id ao buscar a carteira.
+Se necessário, criar uma tabela para armazenar os códigos das carteiras e garantir que o código de verificação seja único e pesquisável.
+3. Erro ao buscar carteira
+Motivo: O endpoint /carteiras/:id pode não estar retornando corretamente, ou o código inserido não existe.
+Correção:
+Corrigir o backend para garantir que o endpoint /carteiras/:id funcione e retorne todos os dados necessários.
+Melhorar a mensagem de erro para o usuário.
+4. Mapa interativo não funciona
+Motivo: Não há referência ao mapa nos arquivos lidos até agora. Preciso saber em qual página está o mapa para analisar.
+Correção: Vou pedir para você informar em qual página está o mapa ou o nome do arquivo JS responsável.
+5. Guia Legal e Denúncia – criar abas e corrigir navegação
+Motivo: Os botões existem, mas podem não estar funcionando como abas (tabs) e sim como cards ou links.
+Correção:
+Transformar os cards de "Guia Legal" e "Denúncia" em abas reais, se for esse o comportamento desejado.
+Criar uma aba específica para o Guia Legal, se necessário.
+Próximos Passos
+Corrigir navegação das abas para garantir que todas aparecem corretamente.
+Corrigir exibição dos dados da carteira (backend e frontend).
+Corrigir/garantir endpoint de busca de carteira.
+Solicitar detalhes sobre o mapa interativo.
+Transformar "Guia Legal" em uma aba real.
+
+
+
+
+querr oque você conserte esses erros
