@@ -251,16 +251,7 @@ function markFieldError(fieldName, message) {
 
 function validateFormOnSubmit() {
   const invalidFields = [];
-  const fotoOk = fields.foto?.preview?.classList.contains('has-image');
-  const laudoOk = fields.laudoFile?.preview?.classList.contains('has-file');
 
-  if (!fotoOk) {
-    if (fields.foto?.error) {
-      fields.foto.error.textContent = errorMsg('foto');
-      fields.foto.error.classList.add('show');
-    }
-    invalidFields.push('Foto 3x4');
-  }
   if (!isValidName(fields.nome.input?.value || '')) {
     markFieldError('nome', errorMsg('nome'));
     invalidFields.push('Nome completo');
@@ -320,13 +311,6 @@ function validateFormOnSubmit() {
   if (!isValidCRM(fields.crmMedico.input?.value || '')) {
     markFieldError('crmMedico', errorMsg('crmMedico'));
     invalidFields.push('CRM/CRP/CRFa');
-  }
-  if (!laudoOk) {
-    if (fields.laudoFile?.error) {
-      fields.laudoFile.error.textContent = errorMsg('laudoFile');
-      fields.laudoFile.error.classList.add('show');
-    }
-    invalidFields.push('Laudo médico');
   }
   if (!isValidContatoEmergencia(fields.contatoEmergencia.input?.value || '')) {
     markFieldError('contatoEmergencia', errorMsg('contatoEmergencia'));
@@ -679,6 +663,8 @@ function inicializarEventListeners() {
         submitBtn.innerHTML = '<span class="spinner"></span> Salvando...';
       }
 
+      const fotoFile = fields.foto.input?.files?.[0] || null;
+      const laudoFile = fields.laudoFile.input?.files?.[0] || null;
       const fotoSrc = fotoFileData || (fields.foto.preview?.style.backgroundImage.slice(5, -2) || '');
 
       // Mapeia os campos do formulario para os campos do banco de dados (tabela carteiras)
@@ -693,7 +679,6 @@ function inicializarEventListeners() {
         endereco: document.getElementById('endereco')?.value.trim() || null,
         cidade: fields.cidade.input?.value.trim() || '',
         estado: document.getElementById('estado')?.value || '',
-        cep: document.getElementById('cep')?.value?.replace(/\D/g,'') || null,
         telefone: fields.telefone.input?.value.replace(/\D/g,'') || '',
         
         // Dados da deficiencia
@@ -708,10 +693,6 @@ function inicializarEventListeners() {
         data_laudo: fields.dataLaudo.input?.value || null,
         nome_medico: fields.nomeMedico.input?.value.trim() || '',
         crm_medico: fields.crmMedico.input?.value.trim().toUpperCase() || '',
-        
-        // Arquivos
-        foto: fotoSrc,
-        laudo_url: laudoFileData || null,
         
         // Dados de emergencia
         tipo_sanguineo: document.getElementById('tipoSanguineo')?.value || null,
@@ -757,9 +738,7 @@ function inicializarEventListeners() {
         // Usa a funcao salvarCarteiraBackend do auth.js se disponivel
         if (typeof salvarCarteiraBackend === 'function') {
           console.log('[v0] Usando salvarCarteiraBackend...');
-          const resultado = await salvarCarteiraBackend(dadosCarteira);
-          console.log('[v0] Resultado salvarCarteiraBackend:', resultado);
-
+          const resultado = await salvarCarteiraBackend(dadosCarteira, { foto: fotoFile, laudo: laudoFile });
           if (resultado.sucesso) {
             const dadosCompletos = {
               ...dadosCarteira,
@@ -772,9 +751,7 @@ function inicializarEventListeners() {
             localStorage.setItem('carteira_dados', JSON.stringify(dadosCompletos));
             localStorage.setItem('carteira_cadastrada', 'true');
 
-            if (typeof mostrarNotificacao === 'function') {
-              mostrarNotificacao('Carteira cadastrada com sucesso!', 'success');
-            } else if (typeof mostrarToast === 'function') {
+            if (typeof mostrarToast === 'function') {
               mostrarToast('Carteira cadastrada com sucesso!', 'success');
             }
 
@@ -794,8 +771,20 @@ function inicializarEventListeners() {
               dadosCarteira.usuario_id = usuario.id;
             }
 
-            console.log('[v0] Enviando para API /carteiras:', dadosCarteira);
-            const resposta = await fazerRequisicao('/carteiras', 'POST', dadosCarteira);
+            const formData = new FormData();
+            Object.entries(dadosCarteira).forEach(([key, value]) => {
+              if (value === undefined || value === null) return;
+              formData.append(key, String(value));
+            });
+            if (fotoFile) {
+              formData.append('foto', fotoFile);
+            }
+            if (laudoFile) {
+              formData.append('laudo', laudoFile);
+            }
+
+            console.log('[v0] Enviando FormData para API /carteiras');
+            const resposta = await fazerRequisicao('/carteiras', 'POST', formData);
             console.log('[v0] Resposta da API:', resposta);
 
             if (resposta.sucesso) {
@@ -806,8 +795,8 @@ function inicializarEventListeners() {
               }));
               localStorage.setItem('carteira_cadastrada', 'true');
 
-              if (typeof mostrarNotificacao === 'function') {
-                mostrarNotificacao('Carteira cadastrada com sucesso!', 'success');
+              if (typeof mostrarToast === 'function') {
+                mostrarToast('Carteira cadastrada com sucesso!', 'success');
               }
 
               setTimeout(() => {

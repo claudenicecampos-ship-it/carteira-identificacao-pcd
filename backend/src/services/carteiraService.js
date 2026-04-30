@@ -9,7 +9,6 @@ import {
   validarRG,
   validarTelefone,
   validarCID,
-  validarCEP,
   validarSexo
 } from '../utils/validacao.js';
 
@@ -73,10 +72,6 @@ export class CarteiraService {
 
     if (!validarCRM(dados.crm_medico)) {
       throw new Error('CRM do médico inválido');
-    }
-
-    if (dados.cep && !validarCEP(dados.cep)) {
-      throw new Error('CEP inválido');
     }
 
     if (dados.nome_responsavel && !validarNome(dados.nome_responsavel)) {

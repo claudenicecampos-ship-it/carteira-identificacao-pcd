@@ -14,7 +14,6 @@ export class CarteiraController {
         endereco: body.endereco || null,
         cidade: body.cidade || null,
         estado: body.estado || null,
-        cep: body.cep || null,
         telefone: body.telefone || null,
         tipo_deficiencia: body.tipo_deficiencia || body.tipoDeficiencia || null,
         grau_deficiencia: body.grau_deficiencia || body.grauDeficiencia || null,
@@ -39,7 +38,7 @@ export class CarteiraController {
         rg: body.rg || null,
         sexo: body.sexo || null
       };
-
+    console.log("nomeDoMedico: ",body.nome_medico || body.nomeMedico || null)
       const carteira = await CarteiraService.criarCarteira(dados);
       res.status(201).json({ sucesso: true, mensagem: 'Carteira criada com sucesso', data: carteira });
     } catch (erro) {

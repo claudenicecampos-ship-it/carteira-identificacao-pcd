@@ -6,6 +6,12 @@ export class CarteiraController {
     try {
       const body = req.body;
       const numeroCarteira = body.numero_carteira || body.numeroCarteira || `GO-PCD-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      const files = req.files || {};
+      const fotoFile = files.foto?.[0];
+      const laudoFile = files.laudo?.[0];
+      const fotoPath = fotoFile ? `imgs/${fotoFile.filename}` : (body.foto && !String(body.foto).startsWith('data:') ? body.foto : null);
+      const laudoPath = laudoFile ? `laudos/${laudoFile.filename}` : (body.laudo_url && !String(body.laudo_url).startsWith('data:') ? body.laudo_url : (body.laudoArquivo && !String(body.laudoArquivo).startsWith('data:') ? body.laudoArquivo : null));
+
       const dados = {
         usuario_id: req.usuario_id,
         tipo: body.tipo || body.tipoCarteira || 'PCD',
@@ -16,7 +22,6 @@ export class CarteiraController {
         endereco: body.endereco || null,
         cidade: body.cidade || null,
         estado: body.estado || null,
-        cep: body.cep || null,
         telefone: body.telefone || null,
         tipo_deficiencia: body.tipo_deficiencia || body.tipoDeficiencia || null,
         grau_deficiencia: body.grau_deficiencia || body.grauDeficiencia || null,
@@ -26,8 +31,8 @@ export class CarteiraController {
         data_laudo: body.data_laudo || body.dataLaudo || null,
         nome_medico: body.nome_medico || body.nomeMedico || null,
         crm_medico: body.crm_medico || body.crmMedico || null,
-        foto: body.foto || null,
-        laudo_url: body.laudo_url || body.laudoArquivo || null,
+        foto: fotoPath,
+        laudo_url: laudoPath,
         tipo_sanguineo: body.tipo_sanguineo || body.tipoSanguineo || null,
         contato_emergencia: body.contato_emergencia || body.contatoEmergencia || null,
         alergias: body.alergias || null,
@@ -41,7 +46,7 @@ export class CarteiraController {
         rg: body.rg || null,
         sexo: body.sexo || null
       };
-
+      console.log(dados.nome_medico)
       const carteira = await CarteiraService.criarCarteira(dados);
       res.status(201).json({ sucesso: true, mensagem: 'Carteira criada com sucesso', data: carteira });
     } catch (erro) {

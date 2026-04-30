@@ -3,19 +3,19 @@ import pool from '../config/database.js';
 export class CarteiraRepository {
   static async criar(dados) {
     try {
+      console.log("ok")
       const conexao = await pool.getConnection();
+      console.log("con", conexao)
       const valores = [
         dados.usuario_id || null,
         dados.tipo || null,
         dados.numero_carteira,
-        dados.codigo_verificacao || null,
         dados.descricao || null,
         1, // ativa
         dados.data_nascimento || null,
         dados.endereco || null,
         dados.cidade || null,
         dados.estado || null,
-        dados.cep || null,
         dados.telefone || null,
         dados.tipo_deficiencia || null,
         dados.grau_deficiencia || null,
@@ -40,11 +40,12 @@ export class CarteiraRepository {
         dados.rg || null,
         dados.sexo || null
       ].map(v => v === undefined ? null : v); // Converte undefined para null
-
+      console.log("conexao feita")
       const [resultado] = await conexao.execute(
-        `INSERT INTO carteiras (usuario_id, tipo, numero_carteira, codigo_verificacao, descricao, ativa, data_nascimento, endereco, cidade, estado, cep, telefone, tipo_deficiencia, grau_deficiencia, cid, necessita_acompanhante, numero_laudo, data_laudo, nome_medico, crm_medico, foto, laudo_url, tipo_sanguineo, contato_emergencia, alergias, medicacoes, comunicacao, nome_responsavel, cpf_responsavel, vinculo_responsavel, nome, cpf, rg, sexo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO carteiras (usuario_id, tipo, numero_carteira, descricao, ativa, data_nascimento, endereco, cidade, estado, telefone, tipo_deficiencia, grau_deficiencia, cid, necessita_acompanhante, numero_laudo, data_laudo, nome_medico, crm_medico, foto, laudo_url, tipo_sanguineo, contato_emergencia, alergias, medicacoes, comunicacao, nome_responsavel, cpf_responsavel, vinculo_responsavel, nome, cpf, rg, sexo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         valores
       );
+      console.log("vdd ",resultado);
       conexao.release();
       return resultado.insertId;
     } catch (erro) {

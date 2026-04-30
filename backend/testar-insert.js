@@ -14,7 +14,7 @@ async function testarInsert() {
         const [result] = await conn.execute(
             `INSERT INTO carteiras (
                usuario_id, tipo, numero_carteira, descricao,
-               data_nascimento, endereco, cidade, estado, cep, telefone,
+               data_nascimento, endereco, cidade, estado, telefone,
                tipo_deficiencia, grau_deficiencia, cid, necessita_acompanhante,
                numero_laudo, data_laudo, nome_medico, crm_medico, foto, laudo_url,
                tipo_sanguineo, contato_emergencia, alergias, medicacoes,

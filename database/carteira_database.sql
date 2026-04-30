@@ -38,7 +38,6 @@ CREATE TABLE IF NOT EXISTS carteiras (
     endereco TEXT,
     cidade VARCHAR(100),
     estado VARCHAR(2),
-    cep VARCHAR(10),
     telefone VARCHAR(15),
     tipo_deficiencia VARCHAR(50),
     grau_deficiencia VARCHAR(50),
@@ -48,8 +47,8 @@ CREATE TABLE IF NOT EXISTS carteiras (
     data_laudo DATE,
     nome_medico VARCHAR(255),
     crm_medico VARCHAR(100),
-    foto LONGTEXT,
-    laudo_url LONGTEXT,
+    foto VARCHAR(255),
+    laudo_url VARCHAR(255),
     tipo_sanguineo VARCHAR(5),
     contato_emergencia VARCHAR(255),
     alergias TEXT,
@@ -68,9 +67,6 @@ CREATE TABLE IF NOT EXISTS carteiras (
     INDEX idx_usuario_id (usuario_id),
     INDEX idx_ativa (ativa)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-ALTER TABLE carteiras MODIFY COLUMN foto LONGTEXT;
-ALTER TABLE carteiras MODIFY COLUMN laudo_url LONGTEXT;
 
 -- Tabela de Denúncias
 CREATE TABLE IF NOT EXISTS denuncias (
@@ -200,6 +196,5 @@ SET tentativas = 0,
     ultima_tentativa = NOW(),
     atualizado_em = NOW()
 WHERE email = 'admin@carteira.com';
-
-
+-- drop database carteira
 -- IMPORTANTE: substitua admin@carteira.com pelo email real do usuário bloqueado pelo código que está na coluna codigo_desbloqueio.

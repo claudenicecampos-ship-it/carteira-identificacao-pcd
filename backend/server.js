@@ -1,4 +1,6 @@
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import cors from 'cors';
 import helmet from 'helmet';
 import 'express-async-errors';
@@ -9,6 +11,9 @@ import { sanitizarEntrada } from './src/middlewares/xssProtecao.js';
 import { configurarSegurancaHeaders } from './src/middlewares/segurancaHeaders.js';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 3001;
@@ -32,6 +37,10 @@ app.use(limitadorGeral);
 // Body parsers
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// Uploads estáticos
+app.use('/imgs', express.static(path.join(__dirname, 'imgs')));
+app.use('/laudos', express.static(path.join(__dirname, 'laudos')));
 
 // Sanitizar entrada
 app.use(sanitizarEntrada);

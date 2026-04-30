@@ -20,6 +20,10 @@ export const validarNome = (nome) => {
   return valor.length >= 3 && /^[a-zA-ZÀ-ÿ]+(?:[\s]+[a-zA-ZÀ-ÿ]+)+$/.test(valor);
 };
 
+
+
+
+
 /**
  * Valida CPF com algorítmo de dígitos verificadores
  */

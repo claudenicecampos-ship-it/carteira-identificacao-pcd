@@ -90,9 +90,12 @@ async function fazerRequisicao(endpoint, metodo = 'GET', dados = null) {
 
     let resposta;
     try {
-        const headers = {
-            'Content-Type': 'application/json'
-        };
+        const isFormData = typeof FormData !== 'undefined' && dados instanceof FormData;
+        const headers = {};
+
+        if (!isFormData) {
+            headers['Content-Type'] = 'application/json';
+        }
 
         const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
         if (token) {
@@ -102,7 +105,7 @@ async function fazerRequisicao(endpoint, metodo = 'GET', dados = null) {
         resposta = await fetch(url, {
             method: metodo,
             headers,
-            body: dados ? JSON.stringify(dados) : null,
+            body: dados ? (isFormData ? dados : JSON.stringify(dados)) : null,
             signal: controller.signal
         });
     } catch (erro) {
@@ -384,7 +387,7 @@ async function redirecionarUsuario() {
  * @param {object} dadosCarteira - Dados da carteira
  * @returns {Promise<{sucesso: boolean, carteira?: object, mensagem?: string}>}
  */
-async function salvarCarteiraBackend(dadosCarteira) {
+async function salvarCarteiraBackend(dadosCarteira, arquivos = {}) {
     console.log('[v0] salvarCarteiraBackend chamado');
     
     const usuario = obterUsuario();
@@ -414,11 +417,26 @@ async function salvarCarteiraBackend(dadosCarteira) {
     dadosCarteira.data_validade = validade.toISOString().split('T')[0];
     dadosCarteira.status = 'ativa';
 
-    console.log('[v0] Dados completos para enviar:', dadosCarteira);
+    const formData = new FormData();
+    if (arquivos.foto) {
+        formData.append('foto', arquivos.foto);
+    }
+    if (arquivos.laudo) {
+        formData.append('laudo', arquivos.laudo);
+    }
+
+    Object.entries(dadosCarteira).forEach(([key, value]) => {
+        if (value === undefined || value === null) {
+            return;
+        }
+        formData.append(key, String(value));
+    });
+
+    console.log('[v0] FormData preparado para envio:', formData);
 
     try {
         console.log('[v0] Tentando enviar para API /carteiras...');
-        const resposta = await fazerRequisicao('/carteiras', 'POST', dadosCarteira);
+        const resposta = await fazerRequisicao('/carteiras', 'POST', formData);
         console.log('[v0] Resposta da API:', resposta);
         
         if (resposta.sucesso) {

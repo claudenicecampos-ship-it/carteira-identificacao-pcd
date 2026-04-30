@@ -31,6 +31,16 @@ function setText(id, val) {
   if (el) el.textContent = val || '—';
 }
 
+function buildStaticUrl(filePath) {
+  if (!filePath) return null;
+  if (/^(https?:)?\/\//.test(filePath)) return filePath;
+  if (filePath.startsWith('/')) return filePath;
+  if (filePath.startsWith('imgs/') || filePath.startsWith('laudos/')) {
+    return '/' + filePath;
+  }
+  return filePath;
+}
+
 function checkExpiry(validadeISO) {
   if (!validadeISO) return;
   const validade = new Date(validadeISO);
@@ -83,10 +93,11 @@ function showError(msg) {
 
 function renderCard(d) {
   // Foto
-  if (d.foto) {
+  const fotoUrl = buildStaticUrl(d.foto);
+  if (fotoUrl) {
     const el = document.getElementById('fotoWallet');
     if (el) {
-      el.style.backgroundImage = `url('${d.foto}')`;
+      el.style.backgroundImage = `url('${fotoUrl}')`;
       el.style.backgroundSize = 'cover';
       el.style.backgroundPosition = 'center';
       el.innerHTML = '';
