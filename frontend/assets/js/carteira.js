@@ -62,6 +62,20 @@ function buildStaticUrl(filePath) {
   return filePath;
 }
 
+function buildBackendImageUrl(filePath) {
+  if (!filePath) return null;
+  if (/^(https?:)?\/\//.test(filePath)) return filePath;
+
+  const trimmed = filePath.replace(/^\/+/, '');
+  if (trimmed.startsWith('imgs/')) {
+    return `${ENV_BACKEND_URL}/${trimmed}`;
+  }
+  if (trimmed.startsWith('laudos/')) {
+    return `${ENV_BACKEND_URL}/${trimmed}`;
+  }
+  return `${ENV_BACKEND_URL}/${trimmed}`;
+}
+
 function parseEncodedData(encoded) {
   if (!encoded) return null;
   try {
@@ -222,7 +236,6 @@ async function loadWalletData() {
 
   // Normaliza campos que podem vir com nomes diferentes do banco
   d = normalizarDadosCarteira(d);
-  d.foto = buildStaticUrl(d.foto);
   d.laudoArquivo = buildStaticUrl(d.laudoArquivo || d.laudo_url || d.laudoUrl);
 
   // Gerar / recuperar metadados
@@ -252,16 +265,33 @@ async function loadWalletData() {
   localStorage.setItem('carteira_dados', JSON.stringify(d));
   localStorage.setItem('userRegistration', JSON.stringify(d)); // Compatibilidade
 
-  // Foto
-  const fotoUrl = buildStaticUrl(d.foto);
-  if (fotoUrl) {
-    const el = document.getElementById('fotoWallet');
-    if (el) {
-      el.style.backgroundImage = `url('${fotoUrl}')`;
-      el.style.backgroundSize = 'cover';
-      el.style.backgroundPosition = 'center';
-      el.innerHTML = '';
+  // Foto - Fetch com validação
+  const fotoUrl = buildBackendImageUrl(d.foto);
+  const fotoEl = document.getElementById('fotoWallet');
+  if (fotoEl) {
+    if (fotoUrl) {
+      console.log('[DEBUG] Validando foto:', fotoUrl);
+      // Fetch para verificar se a imagem está acessível
+      fetch(fotoUrl, { method: 'HEAD' })
+        .then(response => {
+          if (response.ok) {
+            console.log('[DEBUG] Foto disponível - atribuindo src:', fotoUrl);
+            fotoEl.src = fotoUrl;
+          } else {
+            console.error('[DEBUG] Foto retornou status:', response.status, fotoUrl);
+            fotoEl.removeAttribute('src');
+          }
+        })
+        .catch(error => {
+          console.error('[DEBUG] Erro ao validar foto:', error, fotoUrl);
+          fotoEl.removeAttribute('src');
+        });
+    } else {
+      console.log('[DEBUG] Nenhum fotoUrl definido');
+      fotoEl.removeAttribute('src');
     }
+  } else {
+    console.error('[DEBUG] Elemento fotoWallet não encontrado');
   }
 
   // Dados pessoais
@@ -334,89 +364,52 @@ function initWalletTabs() {
   });
 }
 
+/**
+ * Gera QR Code que aponta para a página informacoes-carteira.html com o numeroCarteira
+ * @param {object} d - Dados da carteira
+ */
 function generateQRCode(d) {
   const container = document.getElementById('qrcodeWallet');
   if (!container) {
-    console.log('[v0] Container QR Code nao encontrado');
+    console.error('[QR Code] Container não encontrado');
     return;
   }
+  
   container.innerHTML = '';
 
-  // Dados essenciais para o QR Code (sem a foto para não exceder o limite do QR Code)
-  // A foto será buscada do localStorage pelo ID quando necessário
-  const payload = {
-    n: d.nome,
-    dn: d.dataNascimento,
-    sx: d.sexo,
-    cpf: d.cpf,
-    rg: d.rg,
-    tel: d.telefone,
-    end: d.endereco,
-    cid: d.cidade,
-    uf: d.estado,
-    td: d.tipoDeficiencia,
-    gd: d.grauDeficiencia,
-    cd: d.cid,
-    na: d.necessitaAcompanhante,
-    com: d.comunicacao,
-    nl: d.numeroLaudo,
-    dl: d.dataLaudo,
-    nm: d.nomeMedico,
-    crm: d.crmMedico,
-    nr: d.nomeResponsavel,
-    vr: d.vinculoResponsavel,
-    ts: d.tipoSanguineo,
-    al: d.alergias,
-    med: d.medicacoes,
-    ce: d.contatoEmergencia,
-    nc: d.numeroCarteira,
-    de: d.dataEmissao,
-    val: d.validade,
-    cv: d.codigoVerificacao
-    // Foto removida do QR Code - será buscada pelo ID
-  };
-
-  // Codifica em base64 compactado
-  const jsonStr = JSON.stringify(payload);
-  const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
-  
-  // URL da pagina de verificacao
+  // Gera URL simples que aponta para a página de informações
+  // Exemplo: informacoes-carteira.html?id=GC1234ABCD
   const baseUrl = window.location.origin + window.location.pathname.replace('carteira.html', '');
-  const verifyURL = `${baseUrl}carteira.html?d=${encoded}`;
+  const qrUrl = `${baseUrl}informacoes-carteira.html?id=${encodeURIComponent(d.numeroCarteira)}`;
 
-  console.log('[v0] QR Code URL length:', verifyURL.length);
+  console.log('[QR Code] Gerando QR para:', qrUrl);
 
-  // Verificar se a biblioteca QRCode esta disponivel
+  // Verifica se a biblioteca QRCode está disponível
   if (typeof QRCode === 'undefined') {
-    console.log('[v0] Biblioteca QRCode nao carregada, tentando fallback');
+    console.error('[QR Code] Biblioteca QRCode não carregada');
     container.innerHTML = `
       <div style="width:130px;height:130px;display:flex;align-items:center;justify-content:center;background:#f0f0f0;border-radius:8px;">
-        <span style="color:#666;font-size:10px;text-align:center;">QR Code<br>Carregando...</span>
+        <span style="color:#666;font-size:10px;text-align:center;">QR Code<br>Erro ao carregar</span>
       </div>
     `;
-    // Tentar carregar a biblioteca novamente
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-    script.onload = () => generateQRCode(d);
-    document.head.appendChild(script);
     return;
   }
 
   try {
     new QRCode(container, {
-      text: verifyURL,
+      text: qrUrl,
       width: 130,
       height: 130,
       colorDark: '#1e3a5f',
       colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.L // L = menor redundancia = mais dados
+      correctLevel: QRCode.CorrectLevel.H
     });
-    console.log('[v0] QR Code gerado com sucesso');
-  } catch (e) {
-    console.log('[v0] Erro ao gerar QR Code:', e);
+    console.log('[QR Code] Gerado com sucesso para carteira:', d.numeroCarteira);
+  } catch (error) {
+    console.error('[QR Code] Erro ao gerar:', error);
     container.innerHTML = `
       <div style="width:130px;height:130px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px dashed #ccc;border-radius:8px;">
-        <span style="color:#999;font-size:10px;text-align:center;">Erro QR<br>${e.message}</span>
+        <span style="color:#999;font-size:10px;text-align:center;">Erro QR</span>
       </div>
     `;
   }

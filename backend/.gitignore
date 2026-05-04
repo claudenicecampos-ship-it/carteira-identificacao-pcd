@@ -1,0 +1,7 @@
+imgs/*
+!imgs/.gitkeep
+
+laudos/*
+!laudos/.gitkeep
+
+node_modules/

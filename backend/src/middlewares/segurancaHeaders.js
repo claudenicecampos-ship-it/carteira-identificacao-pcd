@@ -9,8 +9,11 @@ export const configurarSegurancaHeaders = helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'https:'],
+      imgSrc: ["'self'", 'data:', 'https:', 'http:'],
     },
+  },
+  crossOriginResourcePolicy: {
+    policy: "cross-origin",
   },
   hsts: {
     maxAge: 31536000, // 1 ano

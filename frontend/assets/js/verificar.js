@@ -94,13 +94,12 @@ function showError(msg) {
 function renderCard(d) {
   // Foto
   const fotoUrl = buildStaticUrl(d.foto);
-  if (fotoUrl) {
-    const el = document.getElementById('fotoWallet');
-    if (el) {
-      el.style.backgroundImage = `url('${fotoUrl}')`;
-      el.style.backgroundSize = 'cover';
-      el.style.backgroundPosition = 'center';
-      el.innerHTML = '';
+  const fotoEl = document.getElementById('fotoWallet');
+  if (fotoEl) {
+    if (fotoUrl) {
+      fotoEl.src = fotoUrl;
+    } else {
+      fotoEl.removeAttribute('src');
     }
   }
 

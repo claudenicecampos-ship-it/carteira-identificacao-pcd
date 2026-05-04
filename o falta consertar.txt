@@ -1,9 +1,7 @@
-quando eu vou em escanear qrcode nao aparece nenhuma informação na minha carteira . o ler qr code ou o codigo vai apenas mostrar as outras informações que nao tem na carteira
+quando eu vou em escanear qrcode nao aparece nenhuma informação na minha carteira . 
+o ler qr code ou o codigo vai apenas mostrar as outras informações que nao tem na carteira
 faça a carteira se adpitar em tamanho para os campos
 
-fazer a carterai de verificação ficar ficar do tamnho padrao 1050 x 600
+fazer a carteira de verificação ficar ficar do tamnho padrao 1050 x 600
 
 
-falata alimentar o front com as imagens
-
-e fazer quando  a cadastro da carteira for criado for reduirecionado para a carteira gerada 

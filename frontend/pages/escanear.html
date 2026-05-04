@@ -1,556 +1,195 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escanear Carteira - GO Card PCD</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/carteira.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escanear QR Code - GO Card PCD</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .scanner-container {
+      width: 100%;
+      max-width: 960px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.18);
+      padding: 32px;
+    }
+    .scanner-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .scanner-header h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #1e3a5f;
+    }
+    .scanner-header p {
+      margin: 0;
+      color: #506184;
+    }
+    .scanner-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .scanner-panel {
+      background: #f8f9fb;
+      border-radius: 14px;
+      padding: 22px;
+      border: 1px solid #e3e9f3;
+    }
+    .scanner-panel h2 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #33415b;
+    }
+    .scanner-panel label {
+      font-size: 13px;
+      color: #5e6d85;
+      margin-bottom: 8px;
+      display: block;
+      font-weight: 600;
+    }
+    .scanner-panel input,
+    .scanner-panel button {
+      width: 100%;
+      font-size: 14px;
+    }
+    .scanner-panel input {
+      padding: 12px 14px;
+      border: 1px solid #d1d9e6;
+      border-radius: 10px;
+      background: white;
+      margin-bottom: 16px;
+    }
+    .scanner-panel button {
+      padding: 12px 16px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      background: #667eea;
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .scanner-panel button:hover {
+      transform: translateY(-1px);
+      background: #5569d4;
+    }
+    .scanner-feedback {
+      margin-top: 16px;
+      min-height: 60px;
+      color: #1e3a5f;
+      font-weight: 600;
+    }
+    .scanner-feedback.error {
+      color: #b02a37;
+    }
+    .scanner-preview {
+      width: 100%;
+      border-radius: 14px;
+      background: #e7edf9;
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .scanner-preview img,
+    .scanner-preview video {
+      width: 100%;
+      height: auto;
+      max-height: 360px;
+      object-fit: contain;
+    }
+    .manual-block {
+      display: grid;
+      gap: 14px;
+    }
+    .action-row {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .action-row a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: 1px solid #d1d9e6;
+      text-decoration: none;
+      color: #33415b;
+      background: white;
+      font-weight: 600;
+    }
+    .scanner-footer {
+      margin-top: 28px;
+      text-align: center;
+      color: #6b7a96;
+      font-size: 14px;
+    }
+    @media (max-width: 860px) {
+      .scanner-body {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="main-header">
-            <div class="header-content">
-                <div class="logo">
-                    <div class="logo-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                    </div>
-                    <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
-                </div>
-               <nav class="nav-links">
-                    <a href="carteira.html" class="nav-link">Verificar Carteira</a>
-                    <a href="central-direitos.html" class="nav-link">Central de Direitos</a>
-                    <a href="comunidade.html" class="nav-link ">Comunidade</a>
-                    <a href="escanear.html" class="nav-link active">Escanear QR Code</a>
-                </nav>
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="container-wide">
-                <!-- Page Header -->
-                <div class="page-header">
-                    <h1>Escanear Carteira</h1>
-                    <p>Aponte a câmera para o QR Code da carteira GO Card PCD para verificar as informações.</p>
-                </div>
-
-                <!-- Scanner Area -->
-                <div class="scanner-container">
-                    <div class="scanner-card">
-                        <div id="reader" class="qr-reader"></div>
-                        <div class="scanner-instructions">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="3" y1="9" x2="21" y2="9"></line>
-                                <line x1="9" y1="21" x2="9" y2="9"></line>
-                            </svg>
-                            <p>Posicione o QR Code dentro da área de scanning</p>
-                        </div>
-                    </div>
-
-                    <!-- Manual Entry -->
-                    <div class="manual-entry">
-                        <p>Ou insira o número da carteira manualmente:</p>
-                        <div class="form-group">
-                            <input type="text" id="manualCode" class="input-field" placeholder="Cole o número da carteira aqui...">
-                            <button class="btn btn-primary" onclick="verificarManual()">Verificar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Result Container (hidden initially) -->
-                <div id="resultContainer" class="result-container hidden">
-                    <!-- Verified Banner -->
-                    <div class="verificacao-banner">
-                        <div class="vb-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="32" height="32">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                            </svg>
-                        </div>
-                        <div class="vb-text">
-                            <h2>Carteira Verificada</h2>
-                            <p>Este documento é autêntico e válido conforme a Lei 13.146/2015.</p>
-                        </div>
-                        <div class="vb-stamp">AUTÊNTICO</div>
-                    </div>
-
-                    <!-- Wallet Display -->
-                    <div class="wallet-card verified-wallet">
-                        <div class="wallet-top-bar">
-                            <div class="wallet-top-left">
-                                <div class="wallet-gov-logo">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28">
-                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                                        <polyline points="9 22 9 12 15 12 15 22"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div class="wallet-republic">REPÚBLICA FEDERATIVA DO BRASIL</div>
-                                    <div class="wallet-subtitle-gov">Ministério dos Direitos Humanos</div>
-                                </div>
-                            </div>
-                            <div class="wallet-lei-badge">Lei 13.146/2015</div>
-                        </div>
-
-                        <div class="wallet-title-bar">
-                            <div class="wallet-isa-symbol">
-                                <svg viewBox="0 0 50 50" width="40" height="40">
-                                    <circle cx="25" cy="8" r="6" fill="white"/>
-                                    <path d="M16 18 L25 16 L34 18 L32 28 L38 38 L34 36 L29 28 L26 38 L21 38 L24 28 L20 28 L17 38 L13 36 L18 26 Z" fill="white"/>
-                                </svg>
-                            </div>
-                            <div class="wallet-title-text">
-                                <h1>CARTEIRA DE IDENTIFICAÇÃO</h1>
-                                <h2>DA PESSOA COM DEFICIÊNCIA</h2>
-                            </div>
-                            <div class="wallet-status-badge">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                    <polyline points="22 4 12 14.01 9 11.01"/>
-                                </svg>
-                                ATIVO
-                            </div>
-                        </div>
-
-                        <div class="wallet-body">
-                            <div class="wallet-main-row">
-                                <div class="wallet-photo-col">
-                                    <div id="fotoDisplay" class="foto-wallet"></div>
-                                    <div class="wallet-photo-label">FOTO DO TITULAR</div>
-                                </div>
-                                <div class="wallet-info-col">
-                                    <div class="wallet-field wide">
-                                        <span class="wf-label">NOME COMPLETO</span>
-                                        <span id="nomeDisplay" class="wf-value name-value">—</span>
-                                    </div>
-                                    <div class="wallet-fields-row">
-                                        <div class="wallet-field">
-                                            <span class="wf-label">DATA DE NASCIMENTO</span>
-                                            <span id="dataDisplay" class="wf-value">—</span>
-                                        </div>
-                                        <div class="wallet-field">
-                                            <span class="wf-label">CPF</span>
-                                            <span id="cpfDisplay" class="wf-value">—</span>
-                                        </div>
-                                    </div>
-                                    <div class="wallet-fields-row">
-                                        <div class="wallet-field">
-                                            <span class="wf-label">MUNICÍPIO / UF</span>
-                                            <span id="cidadeDisplay" class="wf-value">—</span>
-                                        </div>
-                                        <div class="wallet-field">
-                                            <span class="wf-label">Nº DA CARTEIRA</span>
-                                            <span id="numeroDisplay" class="wf-value">—</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="wallet-divider"></div>
-
-                            <div class="wallet-deficiencia-row">
-                                <div class="wallet-def-block">
-                                    <div class="wallet-field">
-                                        <span class="wf-label">TIPO DE DEFICIÊNCIA</span>
-                                        <span id="tipoDefDisplay" class="wf-value wf-accent">—</span>
-                                    </div>
-                                </div>
-                                <div class="wallet-def-block">
-                                    <div class="wallet-field">
-                                        <span class="wf-label">GRAU</span>
-                                        <span id="grauDefDisplay" class="wf-value">—</span>
-                                    </div>
-                                </div>
-                                <div class="wallet-def-block">
-                                    <div class="wallet-field">
-                                        <span class="wf-label">CID-10 / CID-11</span>
-                                        <span id="cidDisplay" class="wf-value wf-cid">—</span>
-                                    </div>
-                                </div>
-                                <div class="wallet-def-block">
-                                    <div class="wallet-field">
-                                        <span class="wf-label">COMUNICAÇÃO</span>
-                                        <span id="comunicacaoDisplay" class="wf-value">—</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="wallet-divider"></div>
-
-                            <div class="wallet-laudo-qr-row">
-                                <div class="wallet-laudo-col">
-                                    <div class="wallet-fields-row">
-                                        <div class="wallet-field">
-                                            <span class="wf-label">Nº DO LAUDO</span>
-                                            <span id="laudoDisplay" class="wf-value">—</span>
-                                        </div>
-                                        <div class="wallet-field">
-                                            <span class="wf-label">DATA DO LAUDO</span>
-                                            <span id="dataLaudoDisplay" class="wf-value">—</span>
-                                        </div>
-                                    </div>
-                                    <div class="wallet-field">
-                                        <span class="wf-label">PROFISSIONAL RESPONSÁVEL</span>
-                                        <span id="medicoDisplay" class="wf-value">—</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="wallet-footer-bar">
-                            <div class="validity-grid">
-                                <div class="validity-item">
-                                    <span class="vl-label">DATA DE EMISSÃO</span>
-                                    <span id="dataEmissaoDisplay" class="vl-value">—</span>
-                                </div>
-                                <div class="validity-item">
-                                    <span class="vl-label">VÁLIDA ATÉ</span>
-                                    <span id="dataValidadeDisplay" class="vl-value">—</span>
-                                </div>
-                                <div class="validity-item">
-                                    <span class="vl-label">CÓDIGO DE VERIFICAÇÃO</span>
-                                    <span id="codigoVerificacaoDisplay" class="vl-value">—</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="wallet-divider"></div>
-                    <div class="wallet-emergency-details">
-                        <div class="wallet-fields-row">
-                            <div class="wallet-field">
-                                <span class="wf-label">TIPO SANGUÍNEO</span>
-                                <span id="tipoSanguineoDisplay" class="wf-value">—</span>
-                            </div>
-                            <div class="wallet-field">
-                                <span class="wf-label">CONTATO DE EMERGÊNCIA</span>
-                                <span id="contatoEmergenciaDisplay" class="wf-value">—</span>
-                            </div>
-                        </div>
-                        <div class="wallet-fields-row">
-                            <div class="wallet-field">
-                                <span class="wf-label">NECESSITA ACOMPANHANTE</span>
-                                <span id="acompanhanteEmergenciaDisplay" class="wf-value">—</span>
-                            </div>
-                            <div class="wallet-field">
-                                <span class="wf-label">COMUNICAÇÃO</span>
-                                <span id="comunicacaoEmergenciaDisplay" class="wf-value">—</span>
-                            </div>
-                        </div>
-                        <div class="wallet-fields-row">
-                            <div class="wallet-field wide">
-                                <span class="wf-label">ALERGIAS</span>
-                                <span id="alergiasEmergenciaDisplay" class="wf-value">—</span>
-                            </div>
-                        </div>
-                        <div class="wallet-fields-row">
-                            <div class="wallet-field wide">
-                                <span class="wf-label">MEDICAÇÕES</span>
-                                <span id="medicacoesEmergenciaDisplay" class="wf-value">—</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="action-buttons">
-                        <button class="btn btn-primary" onclick="imprimirCarteira()">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 6 2 18 2 18 9"/>
-                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                                <rect x="6" y="14" width="12" height="8"/>
-                            </svg>
-                            Imprimir
-                        </button>
-                        <button class="btn btn-secondary" onclick="novaVerificacao()">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
-                            </svg>
-                            Nova Verificação
-                        </button>
-                    </div>
-
-                    <!-- Botões de Socorro -->
-                    <div class="quick-actions" style="margin-top: 24px;">
-                        <button class="quick-action-card" id="guiaLegalBtn">
-                            <div class="quick-action-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                    <polyline points="14 2 14 8 20 8"></polyline>
-                                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                                </svg>
-                            </div>
-                            <h3>Guia Legal Rápido</h3>
-                            <p>Leis e artigos que garantem seus direitos</p>
-                        </button>
-                        <button class="quick-action-card" id="denunciaBtn">
-                            <div class="quick-action-icon socorro">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                                    <line x1="12" y1="9" x2="12" y2="13"></line>
-                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                                </svg>
-                            </div>
-                            <h3>Fazer Denúncia</h3>
-                            <p>Direito negado? Registre uma denúncia</p>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <footer class="main-footer">
-            <p>&copy; 2025 GO Card PCD — Garantindo Dignidade e Direitos</p>
-        </footer>
+  <div class="scanner-container">
+    <div class="scanner-header">
+      <div>
+        <h1>Escanear QR Code</h1>
+        <p>Carregue uma foto do QR Code ou use o número da carteira como fallback.</p>
+      </div>
+      <div class="action-row">
+        <a href="index.html">Início</a>
+        <a href="carteira.html">Minha Carteira</a>
+      </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="toast"></div>
+    <div class="scanner-body">
+      <div class="scanner-panel">
+        <h2>Foto do QR Code</h2>
+        <label for="qrFile">Selecione uma imagem do QR</label>
+        <input id="qrFile" type="file" accept="image/*" />
+        <button id="decodeBtn" type="button">Decodificar QR</button>
+        <div id="scannerMessage" class="scanner-feedback">Insira a imagem do QR Code para carregar a carteira automaticamente.</div>
+      </div>
 
-    <script src="../assets/js/auth.js"></script>
-    <script>
-        // Corrige navegação ativa
-        document.addEventListener('DOMContentLoaded', function() {
-            const navs = [
-                { id: 'navCarteira', page: 'carteira.html' },
-                { id: 'navCentral', page: 'central-direitos.html' },
-                { id: 'navComunidade', page: 'comunidade.html' },
-                { id: 'navEscanear', page: 'escanear.html' }
-            ];
-            navs.forEach(nav => {
-                const el = document.getElementById(nav.id);
-                if (el && window.location.pathname.endsWith(nav.page)) {
-                    el.classList.add('active');
-                } else if (el) {
-                    el.classList.remove('active');
-                }
-            });
-        });
-        let html5QrcodeScanner = null;
+      <div class="scanner-panel">
+        <h2>Fallback: número da carteira</h2>
+        <label for="fallbackNumber">Número da Carteira</label>
+        <input id="fallbackNumber" type="text" placeholder="Ex: GC1234ABCD" />
+        <button id="openInfoBtn" type="button">Abrir informações</button>
+        <div id="manualMessage" class="scanner-feedback">Se o QR falhar, use o número da carteira para acessar a página.</div>
+      </div>
+    </div>
 
-        // Inicializar scanner
-        function initScanner() {
-            html5QrcodeScanner = new Html5Qrcode("reader");
-            
-            const config = { 
-                fps: 10,
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0
-            };
-            
-            html5QrcodeScanner.start(
-                { facingMode: "environment" },
-                config,
-                onScanSuccess,
-                onScanFailure
-            ).catch(err => {
-                console.error("Erro ao iniciar scanner:", err);
-                mostrarToast('Erro ao acessar câmera. Use a entrada manual.', 'error');
-            });
-        }
+    <div class="scanner-preview" id="previewContainer">
+      <span>Pré-visualização do QR não disponível até selecionar imagem.</span>
+    </div>
 
-        // Sucesso ao escanear
-        function onScanSuccess(decodedText, decodedResult) {
-            html5QrcodeScanner.stop();
-            processarQRCode(decodedText);
-        }
+    <div class="scanner-footer">
+      <p>Esta página redireciona para a tela de informações da carteira, onde os dados são exibidos.</p>
+    </div>
+  </div>
 
-        // Falha ao escanear
-        function onScanFailure(error) {
-            // Silencioso - apenas continua tentando
-        }
-
-        // Processar QR Code
-        function processarQRCode(data) {
-            try {
-                // Verificar se é uma URL com parâmetros
-                if (data.includes('?d=')) {
-                    // Extrair os dados codificados da URL
-                    const urlParams = new URLSearchParams(data.split('?')[1]);
-                    const encodedData = urlParams.get('d');
-                    
-                    if (encodedData) {
-                        // Decodificar os dados
-                        const jsonStr = decodeURIComponent(escape(atob(encodedData)));
-                        const carteiraData = JSON.parse(jsonStr);
-                        
-                        // Converter para formato de exibição
-                        const dadosFormatados = {
-                            id: carteiraData.nc || carteiraData.id,
-                            nome: carteiraData.n,
-                            data_nascimento: carteiraData.dn,
-                            cpf: carteiraData.cpf,
-                            municipio: carteiraData.cid,
-                            uf: carteiraData.uf,
-                            tipo_deficiencia: carteiraData.td,
-                            grau: carteiraData.gd,
-                            cid: carteiraData.cd,
-                            comunicacao: carteiraData.com,
-                            numero_laudo: carteiraData.nl,
-                            data_laudo: carteiraData.dl,
-                            medico_responsavel: carteiraData.nm,
-                            data_emissao: carteiraData.de,
-                            data_validade: carteiraData.val,
-                            codigo_verificacao: carteiraData.cv,
-                            tipo_sanguineo: carteiraData.ts,
-                            contato_emergencia: carteiraData.ce,
-                            acompanhante: carteiraData.na === 'Sim',
-                            alergias: carteiraData.al,
-                            medicacoes: carteiraData.med,
-                            foto: carteiraData.ft,
-                            numeroCarteira: carteiraData.nc
-                        };
-                        
-                        exibirCarteira(dadosFormatados);
-                        return;
-                    }
-                }
-                
-                // Tentar decodificar como JSON direto
-                let carteiraData;
-                try {
-                    carteiraData = JSON.parse(data);
-                } catch (e) {
-                    // Se não for JSON, pode ser um ID
-                    buscarCarteiraPorId(data);
-                    return;
-                }
-
-                if (carteiraData && carteiraData.id) {
-                    buscarCarteiraPorId(carteiraData.id);
-                } else {
-                    mostrarToast('QR Code inválido', 'error');
-                }
-            } catch (err) {
-                console.error('Erro ao processar QR Code:', err);
-                mostrarToast('Erro ao processar QR Code', 'error');
-            }
-        }
-
-        // Buscar carteira por ID
-        async function buscarCarteiraPorId(id) {
-            try {
-                const resposta = await fazerRequisicao(`/carteiras/${id}`, 'GET');
-                
-                if (resposta.sucesso && resposta.data) {
-                    exibirCarteira(resposta.data);
-                } else {
-                    mostrarToast('Carteira não encontrada. Verifique o código e tente novamente.', 'error');
-                }
-            } catch (err) {
-                console.error('Erro ao buscar carteira:', err);
-                // Tentar buscar no localStorage como fallback
-                const carteiraDados = localStorage.getItem('carteira_dados');
-                if (carteiraDados) {
-                    try {
-                        const dados = JSON.parse(carteiraDados);
-                        if (dados.numeroCarteira === id || dados.id === id) {
-                            exibirCarteira(dados);
-                            mostrarToast('Carteira encontrada nos dados locais', 'success');
-                            return;
-                        }
-                    } catch (e) {
-                        // Continua
-                    }
-                }
-                mostrarToast('Erro ao buscar carteira. O código pode estar inválido ou expirado.', 'error');
-            }
-        }
-
-        // Verificação manual
-        function verificarManual() {
-            const code = document.getElementById('manualCode').value.trim();
-            if (!code) {
-                mostrarToast('Por favor, insira um código', 'warning');
-                return;
-            }
-            processarQRCode(code);
-        }
-
-        // Exibir carteira
-        function exibirCarteira(dados) {
-            document.getElementById('resultContainer').classList.remove('hidden');
-            
-            // Alterar título para verificada
-            document.querySelector('.vb-text h2').textContent = 'Carteira Verificada';
-            document.querySelector('.vb-text p').textContent = 'Este documento é autêntico e válido conforme a Lei 13.146/2015.';
-            
-            // Dados principais
-            document.getElementById('nomeDisplay').textContent = dados.nome || '—';
-            document.getElementById('dataDisplay').textContent = dados.data_nascimento || '—';
-            document.getElementById('cpfDisplay').textContent = dados.cpf || '—';
-            document.getElementById('cidadeDisplay').textContent = `${dados.municipio || ''}/${dados.uf || ''}`;
-            document.getElementById('numeroDisplay').textContent = dados.numeroCarteira || dados.id || '—';
-            
-            // Deficiência
-            document.getElementById('tipoDefDisplay').textContent = dados.tipo_deficiencia || '—';
-            document.getElementById('grauDefDisplay').textContent = dados.grau_deficiencia || dados.grau || '—';
-            document.getElementById('cidDisplay').textContent = dados.cid || '—';
-            document.getElementById('comunicacaoDisplay').textContent = dados.comunicacao || '—';
-            
-            // Laudo
-            document.getElementById('laudoDisplay').textContent = dados.numero_laudo || '—';
-            document.getElementById('dataLaudoDisplay').textContent = dados.data_laudo || '—';
-            document.getElementById('medicoDisplay').textContent = dados.nome_medico || dados.medico_responsavel || '—';
-            
-            // Validade
-            document.getElementById('dataEmissaoDisplay').textContent = dados.data_emissao || '—';
-            document.getElementById('dataValidadeDisplay').textContent = dados.data_validade || '—';
-            document.getElementById('codigoVerificacaoDisplay').textContent = dados.codigo_verificacao || '—';
-            
-            // Emergência
-            document.getElementById('tipoSanguineoDisplay').textContent = dados.tipo_sanguineo || '—';
-            document.getElementById('contatoEmergenciaDisplay').textContent = dados.contato_emergencia || '—';
-            document.getElementById('acompanhanteEmergenciaDisplay').textContent = (dados.necessita_acompanhante || dados.acompanhante) ? 'Sim' : 'Não';
-            document.getElementById('comunicacaoEmergenciaDisplay').textContent = dados.comunicacao || '—';
-            document.getElementById('alergiasEmergenciaDisplay').textContent = dados.alergias || 'Nenhuma';
-            document.getElementById('medicacoesEmergenciaDisplay').textContent = dados.medicacoes || 'Nenhuma';
-            
-            // Foto
-            if (dados.foto) {
-                document.getElementById('fotoDisplay').style.backgroundImage = `url(${dados.foto})`;
-            }
-            
-            mostrarToast('Carteira verificada com sucesso!', 'success');
-        }
-
-        // Nova verificação
-        function novaVerificacao() {
-            document.getElementById('resultContainer').classList.add('hidden');
-            document.getElementById('manualCode').value = '';
-            initScanner();
-        }
-
-        // Imprimir
-        function imprimirCarteira() {
-            window.print();
-        }
-
-        // Iniciar
-        document.addEventListener('DOMContentLoaded', function() {
-            initScanner();
-            
-            // Adicionar event listeners para os botões de Guia Legal e Denúncia
-            const guiaLegalBtn = document.getElementById('guiaLegalBtn');
-            const denunciaBtn = document.getElementById('denunciaBtn');
-            
-            if (guiaLegalBtn) {
-                guiaLegalBtn.addEventListener('click', abrirGuiaLegal);
-                guiaLegalBtn.style.cursor = 'pointer';
-            }
-            
-            if (denunciaBtn) {
-                denunciaBtn.addEventListener('click', fazerDenuncia);
-                denunciaBtn.style.cursor = 'pointer';
-            }
-        });
-    </script>
+  <canvas id="qrCanvas" hidden></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="../assets/js/qr-scanner.js"></script>
 </body>
 </html>

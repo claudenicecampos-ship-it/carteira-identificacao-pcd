@@ -9,6 +9,7 @@ export class CarteiraController {
       const files = req.files || {};
       const fotoFile = files.foto?.[0];
       const laudoFile = files.laudo?.[0];
+      // Armazena o caminho relativo para a pasta pública /imgs do backend.
       const fotoPath = fotoFile ? `imgs/${fotoFile.filename}` : (body.foto && !String(body.foto).startsWith('data:') ? body.foto : null);
       const laudoPath = laudoFile ? `laudos/${laudoFile.filename}` : (body.laudo_url && !String(body.laudo_url).startsWith('data:') ? body.laudo_url : (body.laudoArquivo && !String(body.laudoArquivo).startsWith('data:') ? body.laudoArquivo : null));
 

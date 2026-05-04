@@ -60,6 +60,7 @@ app.get('/health', (req, res) => {
 // Páginas estáticas do frontend (em produção)
 app.use(express.static('./frontend'));
 
+
 // Tratamento de rotas não encontradas
 app.use((req, res) => {
   res.status(404).json({

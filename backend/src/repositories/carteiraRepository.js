@@ -104,14 +104,6 @@ export class CarteiraRepository {
         }
       }
       
-      // Se ainda não encontrou, tentar buscar por codigo_verificacao
-      if (resultado.length === 0) {
-        [resultado] = await conexao.execute(
-          'SELECT * FROM carteiras WHERE codigo_verificacao = ? AND ativa = 1 LIMIT 1',
-          [numeroCarteira]
-        );
-      }
-      
       conexao.release();
       return resultado.length > 0 ? resultado[0] : null;
     } catch (erro) {

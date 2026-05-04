@@ -12,8 +12,11 @@ export const configurarSegurancaHeaders = helmet({
       imgSrc: ["'self'", 'data:', 'https:'],
     },
   },
+  crossOriginResourcePolicy: {
+    policy: "cross-origin",
+  },
   hsts: {
-    maxAge: 31536000, // 1 ano
+    maxAge: 31536000,
     includeSubDomains: true,
     preload: true,
   },
