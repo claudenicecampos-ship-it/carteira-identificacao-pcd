@@ -81,6 +81,12 @@ async function resolveApiBaseUrl() {
 /**
  * Faz requisicao para o backend (API)
  */
+function limparCacheCarteiraLocal() {
+    localStorage.removeItem('carteira_dados');
+    localStorage.removeItem('userRegistration');
+    localStorage.removeItem('carteira_cadastrada');
+}
+
 async function fazerRequisicao(endpoint, metodo = 'GET', dados = null) {
     const baseUrl = await resolveApiBaseUrl();
     const url = `${baseUrl}/api${endpoint}`;
@@ -348,6 +354,11 @@ async function verificarCarteiraExistente(usuarioId) {
         }
         return { temCarteira: false, carteira: null };
     } catch (erro) {
+        if (erro.status === 404) {
+            limparCacheCarteiraLocal();
+            return { temCarteira: false, carteira: null };
+        }
+
         // Se backend nao disponivel, verifica localStorage
         const carteiraLocal = localStorage.getItem('carteira_dados');
         if (carteiraLocal) {
@@ -484,6 +495,11 @@ async function buscarCarteiraUsuario() {
         }
         return null;
     } catch (erro) {
+        if (erro.status === 404) {
+            limparCacheCarteiraLocal();
+            return null;
+        }
+
         // Retorna dados do localStorage se backend nao disponivel
         const carteiraLocal = localStorage.getItem('carteira_dados');
         if (carteiraLocal) {

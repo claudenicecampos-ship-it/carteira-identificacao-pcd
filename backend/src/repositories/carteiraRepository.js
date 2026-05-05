@@ -1,11 +1,19 @@
 import pool from '../config/database.js';
+import { logger } from '../utils/logger.js';
 
 export class CarteiraRepository {
   static async criar(dados) {
     try {
-      console.log("ok")
+      logger.info('Iniciando repositório de criação de carteira', {
+        usuario_id: dados.usuario_id,
+        numero_carteira: dados.numero_carteira,
+        cpf: dados.cpf,
+        nome: dados.nome,
+        tem_foto: !!dados.foto,
+        tem_laudo: !!dados.laudo_url
+      });
       const conexao = await pool.getConnection();
-      console.log("con", conexao)
+      logger.info('Conexão obtida para criar carteira');
       const valores = [
         dados.usuario_id || null,
         dados.tipo || null,
@@ -40,20 +48,21 @@ export class CarteiraRepository {
         dados.rg || null,
         dados.sexo || null
       ].map(v => v === undefined ? null : v); // Converte undefined para null
-      console.log("conexao feita")
       const [resultado] = await conexao.execute(
         `INSERT INTO carteiras (usuario_id, tipo, numero_carteira, descricao, ativa, data_nascimento, endereco, cidade, estado, telefone, tipo_deficiencia, grau_deficiencia, cid, necessita_acompanhante, numero_laudo, data_laudo, nome_medico, crm_medico, foto, laudo_url, tipo_sanguineo, contato_emergencia, alergias, medicacoes, comunicacao, nome_responsavel, cpf_responsavel, vinculo_responsavel, nome, cpf, rg, sexo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         valores
       );
-      console.log("vdd ",resultado);
+      logger.info('Insert de carteira executado com sucesso', { insertId: resultado.insertId });
       conexao.release();
       return resultado.insertId;
     } catch (erro) {
+      logger.error('Erro ao criar carteira no repositório', { mensagem: erro.message, usuario_id: dados.usuario_id, numero_carteira: dados.numero_carteira, stack: erro.stack });
       throw new Error('Erro ao criar carteira: ' + erro.message);
     }
   }
 
   static async buscarPorUsuarioId(usuario_id) {
+    logger.info('Verificando carteira existente por usuário', { usuario_id });
     try {
       const conexao = await pool.getConnection();
       const [resultado] = await conexao.execute(
@@ -61,14 +70,25 @@ export class CarteiraRepository {
         [usuario_id]
       );
       conexao.release();
+      if (resultado.length > 0) {
+        logger.info('Carteira existente encontrada para usuário', { usuario_id, carteira_id: resultado[0].id });
+      } else {
+        logger.info('Nenhuma carteira ativa encontrada para usuário', { usuario_id });
+      }
       return resultado.length > 0 ? resultado[0] : null;
     } catch (erro) {
+      logger.error('Erro ao buscar carteira por usuário', { mensagem: erro.message, usuario_id, stack: erro.stack });
       throw new Error('Erro ao buscar carteira: ' + erro.message);
     }
   }
 
   static async buscarPorCpf(cpf) {
-    if (!cpf) return null;
+    if (!cpf) {
+      logger.info('Busca por CPF ignorada porque CPF não foi informado');
+      return null;
+    }
+
+    logger.info('Verificando carteira existente por CPF', { cpf });
     try {
       const conexao = await pool.getConnection();
       const [resultado] = await conexao.execute(
@@ -76,8 +96,14 @@ export class CarteiraRepository {
         [cpf.replace(/\D/g, '')]
       );
       conexao.release();
+      if (resultado.length > 0) {
+        logger.info('CPF já cadastrado em carteira existente', { cpf, carteira_id: resultado[0].id });
+      } else {
+        logger.info('CPF não encontrado em carteira existente', { cpf });
+      }
       return resultado.length > 0 ? resultado[0] : null;
     } catch (erro) {
+      logger.error('Erro ao buscar carteira por CPF', { mensagem: erro.message, cpf, stack: erro.stack });
       throw new Error('Erro ao buscar carteira por CPF: ' + erro.message);
     }
   }

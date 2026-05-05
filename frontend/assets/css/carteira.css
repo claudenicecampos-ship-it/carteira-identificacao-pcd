@@ -2,7 +2,7 @@
 
 /* ==================== WALLET CONTAINER ==================== */
 .wallet-container {
-  max-width: 960px;
+  max-width: 1050px;
   margin: 0 auto;
 }
 
@@ -14,6 +14,8 @@
   box-shadow: 0 24px 60px rgba(0,0,0,0.35);
   overflow: hidden;
   position: relative;
+  width: 1050px;
+  height: 650px;
 }
 
 .wallet-card::before {
@@ -30,7 +32,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 28px;
+  padding: 12px 24px;
   background: rgba(0,0,0,0.25);
   border-bottom: 1px solid rgba(255,255,255,0.12);
 }
@@ -83,7 +85,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 20px 28px 16px;
+  padding: 16px 24px 12px;
   background: rgba(255,255,255,0.05);
   border-bottom: 2px solid rgba(255,255,255,0.1);
 }
@@ -143,13 +145,13 @@
 
 /* ===== BODY ===== */
 .wallet-body {
-  padding: 24px 28px;
+  padding: 22px 26px;
 }
 
 /* Linha principal: foto + dados */
 .wallet-main-row {
   display: flex;
-  gap: 24px;
+  gap: 20px;
   align-items: flex-start;
 }
 
@@ -162,8 +164,8 @@
 }
 
 .foto-wallet {
-  width: 130px;
-  height: 165px;
+  width: 110px;
+  height: 140px;
   border: 3px solid rgba(255,255,255,0.35);
   border-radius: var(--radius-lg);
   background-color: rgba(255,255,255,0.08);
@@ -183,14 +185,14 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 11px;
 }
 
 /* Campos de informação */
 .wallet-field {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .wallet-field.wide {
@@ -199,7 +201,7 @@
 
 .wallet-fields-row {
   display: flex;
-  gap: 20px;
+  gap: 16px;
 }
 
 .wallet-fields-row .wallet-field {
@@ -207,7 +209,7 @@
 }
 
 .wf-label {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
   letter-spacing: 1.2px;
   text-transform: uppercase;
@@ -215,14 +217,14 @@
 }
 
 .wf-value {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: rgba(255,255,255,0.95);
   line-height: 1.3;
 }
 
 .wf-value.name-value {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
   color: white;
 }
@@ -235,28 +237,28 @@
 .wf-value.wf-cid {
   color: #93c5fd;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 11px;
 }
 
 /* Divisor */
 .wallet-divider {
   height: 1px;
   background: rgba(255,255,255,0.1);
-  margin: 16px 0;
+  margin: 12px 0;
 }
 
 /* Linha deficiência */
 .wallet-deficiencia-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 12px;
 }
 
 .wallet-def-block {
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: var(--radius-md);
-  padding: 12px 14px;
+  padding: 10px 12px;
 }
 
 /* Linha laudo + QR */
@@ -316,7 +318,7 @@
 .wallet-card-tabs {
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .tab-button {
@@ -346,7 +348,7 @@
 .wallet-card-inner {
   position: relative;
   width: 100%;
-  min-height: 720px;
+  min-height: 650px;
   transform-style: preserve-3d;
   transition: transform 0.7s ease;
 }
@@ -374,7 +376,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 720px;
+  min-height: 650px;
 }
 
 .wallet-back-title {
@@ -420,14 +422,14 @@
 /* ===== RODAPÉ OFICIAL ===== */
 .wallet-footer-bar {
   background: rgba(0,0,0,0.3);
-  padding: 18px 28px;
+  padding: 14px 24px;
   border-top: 2px solid rgba(255,255,255,0.08);
 }
 
 .validity-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 12px;
 }
 
@@ -446,13 +448,13 @@
 }
 
 .vl-value {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   color: rgba(255,255,255,0.9);
 }
 
 .wallet-footer-legal {
-  font-size: 10px;
+  font-size: 9px;
   color: rgba(255,255,255,0.4);
   text-align: center;
   line-height: 1.5;
@@ -656,88 +658,6 @@
   font-weight: 500;
 }
 
-/* ==================== SOCORRO CARD ==================== */
-.socorro-card {
-  background: linear-gradient(135deg, var(--primary-50) 0%, var(--white) 100%);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  margin-top: 24px;
-  box-shadow: var(--shadow-md);
-  border: 2px solid var(--primary-200);
-}
-
-.socorro-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.socorro-icon {
-  width: 48px;
-  height: 48px;
-  background: var(--primary-600);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--white);
-}
-
-.socorro-icon svg {
-  width: 24px;
-  height: 24px;
-}
-
-.socorro-header h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--gray-900);
-  margin-bottom: 2px;
-}
-
-.socorro-subtitle {
-  font-size: 13px;
-  color: var(--gray-500);
-}
-
-.socorro-actions {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.socorro-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 16px;
-  background: var(--white);
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--gray-700);
-}
-
-.socorro-btn:hover {
-  border-color: var(--primary-500);
-  background: var(--primary-50);
-  color: var(--primary-700);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.socorro-btn svg {
-  width: 24px;
-  height: 24px;
-  color: var(--primary-600);
-}
-
 /* ==================== ALERTS SECTION ==================== */
 .alerts-section {
   margin-top: 32px;
@@ -906,7 +826,6 @@
   .main-footer,
   .action-buttons,
   .emergency-card,
-  .socorro-card,
   .alerts-section,
   .modal,
   .verificacao-banner {
@@ -940,7 +859,6 @@
   .validity-grid { grid-template-columns: repeat(2, 1fr); }
   .emergency-grid { grid-template-columns: 1fr; }
   .emergency-item.full-width { grid-column: 1; }
-  .socorro-actions { grid-template-columns: 1fr; }
   .action-buttons { flex-direction: column; }
   .action-buttons .btn { width: 100%; justify-content: center; }
 }

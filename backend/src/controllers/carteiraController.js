@@ -1,5 +1,6 @@
 import { CarteiraService } from '../services/carteiraService.js';
 import { gerarCodigoVerificacao } from '../utils/validacao.js';
+import { logger } from '../utils/logger.js';
 
 export class CarteiraController {
   static async criar(req, res) {
@@ -12,6 +13,16 @@ export class CarteiraController {
       // Armazena o caminho relativo para a pasta pública /imgs do backend.
       const fotoPath = fotoFile ? `imgs/${fotoFile.filename}` : (body.foto && !String(body.foto).startsWith('data:') ? body.foto : null);
       const laudoPath = laudoFile ? `laudos/${laudoFile.filename}` : (body.laudo_url && !String(body.laudo_url).startsWith('data:') ? body.laudo_url : (body.laudoArquivo && !String(body.laudoArquivo).startsWith('data:') ? body.laudoArquivo : null));
+
+      logger.info('Iniciando fluxo de criação de carteira', {
+        usuario_id: req.usuario_id,
+        numero_carteira: numeroCarteira,
+        tipo: body.tipo || body.tipoCarteira || 'PCD',
+        upload_foto: !!fotoFile,
+        upload_laudo: !!laudoFile,
+        fonte_foto: fotoFile ? 'upload' : body.foto ? 'body' : 'nenhuma',
+        fonte_laudo: laudoFile ? 'upload' : body.laudo_url ? 'body_url' : body.laudoArquivo ? 'body_file' : 'nenhuma'
+      });
 
       const dados = {
         usuario_id: req.usuario_id,
@@ -47,10 +58,22 @@ export class CarteiraController {
         rg: body.rg || null,
         sexo: body.sexo || null
       };
-      console.log(dados.nome_medico)
+
+      logger.info('Dados de criação de carteira preparados', {
+        usuario_id: dados.usuario_id,
+        numero_carteira: dados.numero_carteira,
+        nome: dados.nome,
+        cpf: dados.cpf,
+        tipo_deficiencia: dados.tipo_deficiencia,
+        grau_deficiencia: dados.grau_deficiencia,
+        tem_foto: !!dados.foto,
+        tem_laudo: !!dados.laudo_url
+      });
+
       const carteira = await CarteiraService.criarCarteira(dados);
       res.status(201).json({ sucesso: true, mensagem: 'Carteira criada com sucesso', data: carteira });
     } catch (erro) {
+      logger.error('Falha no fluxo de criação de carteira', { usuario_id: req.usuario_id, mensagem: erro.message, stack: erro.stack });
       const status = erro.status || 400;
       res.status(status).json({ sucesso: false, mensagem: erro.message });
     }

@@ -2307,7 +2307,6 @@ select.input-field {
   .action-buttons,
   .support-card,
   .emergency-card,
-  .socorro-card,
   .alerts-section,
   .modal {
     display: none !important;

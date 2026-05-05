@@ -313,6 +313,14 @@ async function verificarCarteiraERedirect() {
             window.location.href = 'cadastro_carteira.html';
         }
     } catch (erro) {
+        if (erro.status === 404) {
+            localStorage.removeItem('carteira_dados');
+            localStorage.removeItem('userRegistration');
+            localStorage.removeItem('carteira_cadastrada');
+            window.location.href = 'cadastro_carteira.html';
+            return;
+        }
+
         // Fallback: verificar localStorage
         const carteiraDados = localStorage.getItem('carteira_dados');
         const carteiraLocal = localStorage.getItem('userRegistration');
