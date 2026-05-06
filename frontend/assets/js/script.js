@@ -72,9 +72,19 @@ let fields = {};
 let submitBtn = null;
 
 // ===== VALIDADORES =====
-function isValidName(v) { 
+function isValidName(v) {
   const trimmed = v.trim();
-  return trimmed.length >= 3 && /^[a-záéíóúàâêôãõçñ\s]+$/i.test(trimmed) && trimmed.includes(' '); 
+  if (trimmed.length < 3 || !/^[a-záéíóúàâêôãõçñ\s]+$/i.test(trimmed)) return false;
+
+  const parts = trimmed.split(/\s+/);
+  if (parts.length < 2) {
+    // Avisa se só tem primeiro nome
+    if (typeof mostrarToast === 'function') {
+      mostrarToast('Por favor, digite o nome completo (nome e sobrenome).', 'warning');
+    }
+    return false;
+  }
+  return true;
 }
 
 function isValidDate(v) { 
@@ -144,8 +154,17 @@ function isValidLaudo(v) { return v.trim().length >= 3; }
 
 function isValidMedico(v) {
   const trimmed = v.trim();
-  if (trimmed.length < 3) return false;
-  return /^[a-zA-ZÀ-ÖØ-öø-ÿ\s.'-]+$/i.test(trimmed);
+  if (trimmed.length < 3 || !/^[a-záéíóúàâêôãõçñ\s]+$/i.test(trimmed)) return false;
+
+  const parts = trimmed.split(/\s+/);
+  if (parts.length < 2) {
+    // Avisa se só tem primeiro nome
+    if (typeof mostrarToast === 'function') {
+      mostrarToast('Por favor, digite o nome completo do médico (nome e sobrenome).', 'warning');
+    }
+    return false;
+  }
+  return true;
 }
 
 function isValidCRM(v) {
@@ -229,7 +248,7 @@ function errorMsg(f) {
     crmMedico: 'Formato inválido. Ex: CRM-SP 123456',
     contatoEmergencia: 'Contato de emergência inválido. Use (11) 99999-9999',
     dataLaudo: 'Data do laudo inválida',
-    laudoFile: 'Anexe o laudo médico (PDF ou imagem)',
+    laudoFile: 'Anexe o laudo médico (PDF)',
     nomeResponsavel: 'Nome do responsável inválido',
     cpfResponsavel: 'CPF do responsável inválido',
     vinculoResponsavel: 'Vínculo inválido',
@@ -330,12 +349,8 @@ function buildInvalidFieldMessage(fieldsList) {
 function showInvalidFieldSummary(invalidFields) {
   const message = buildInvalidFieldMessage(invalidFields);
   if (!message) return;
-  if (typeof mostrarNotificacao === 'function') {
-    mostrarNotificacao(message, 'error');
-  } else if (typeof mostrarToast === 'function') {
+  if (typeof mostrarToast === 'function') {
     mostrarToast(message, 'error');
-  } else {
-    alert(message);
   }
 }
 
@@ -594,10 +609,10 @@ function inicializarEventListeners() {
       }
       
       // Validar tipo de arquivo
-      const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+      const validTypes = ['application/pdf'];
       if (!validTypes.includes(file.type)) {
         if (fields.laudoFile.error) {
-          fields.laudoFile.error.textContent = 'Formato inválido. Use PDF, JPG ou PNG.';
+          fields.laudoFile.error.textContent = 'Formato inválido. Use apenas PDF.';
           fields.laudoFile.error.classList.add('show');
         }
         e.target.value = '';
@@ -730,7 +745,7 @@ function inicializarEventListeners() {
         if (typeof mostrarToast === 'function') {
           mostrarToast('Já existe uma carteira cadastrada para este usuário. Redirecionando...', 'info');
         }
-        setTimeout(() => window.location.href = 'carteira.html', 1200);
+        window.location.href = 'carteira.html';
         return;
       }
 
@@ -755,9 +770,7 @@ function inicializarEventListeners() {
               mostrarToast('Carteira cadastrada com sucesso!', 'success');
             }
 
-            setTimeout(() => {
-              window.location.href = 'carteira.html';
-            }, 1500);
+            window.location.href = 'carteira.html';
             return;
           }
         } else {
@@ -799,9 +812,7 @@ function inicializarEventListeners() {
                 mostrarToast('Carteira cadastrada com sucesso!', 'success');
               }
 
-              setTimeout(() => {
-                window.location.href = 'carteira.html';
-              }, 1500);
+              window.location.href = 'carteira.html';
               return;
             }
           }
@@ -812,7 +823,7 @@ function inicializarEventListeners() {
 
         if (erro.status && erro.status < 500) {
           if (typeof mostrarToast === 'function') {
-            mostrarToast(erro.message, 'error');
+            mostrarToast('Erro: ' + erro.message, 'error');
           }
           return;
         }
@@ -830,9 +841,11 @@ function inicializarEventListeners() {
           mostrarNotificacao('Carteira salva localmente. Sera sincronizada quando o servidor estiver disponivel.', 'warning');
         }
 
-        setTimeout(() => {
-          window.location.href = 'carteira.html';
-        }, 2000);
+        if (typeof mostrarToast === 'function') {
+          mostrarToast('Carteira salva localmente devido a erro no servidor. Redirecionando...', 'warning');
+        }
+
+        window.location.href = 'carteira.html';
         return;
       } finally {
         // Reabilita o botao
@@ -859,9 +872,11 @@ function inicializarEventListeners() {
       localStorage.setItem('carteira_dados', JSON.stringify(dadosCarteira));
       localStorage.setItem('carteira_cadastrada', 'true');
       
+      alert('Carteira criada localmente. Redirecionando...');
+      
       setTimeout(() => {
         window.location.href = 'carteira.html';
-      }, 1000);
+      }, 5000);
     });
   } else {
     console.error('registrationForm nao encontrado!');

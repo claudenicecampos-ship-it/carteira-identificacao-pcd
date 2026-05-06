@@ -5,190 +5,177 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escanear QR Code - GO Card PCD</title>
   <link rel="stylesheet" href="../assets/css/styles.css">
-  <style>
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    .scanner-container {
-      width: 100%;
-      max-width: 960px;
-      background: #ffffff;
-      border-radius: 18px;
-      box-shadow: 0 18px 50px rgba(0,0,0,0.18);
-      padding: 32px;
-    }
-    .scanner-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-    .scanner-header h1 {
-      margin: 0;
-      font-size: 28px;
-      color: #1e3a5f;
-    }
-    .scanner-header p {
-      margin: 0;
-      color: #506184;
-    }
-    .scanner-body {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-    .scanner-panel {
-      background: #f8f9fb;
-      border-radius: 14px;
-      padding: 22px;
-      border: 1px solid #e3e9f3;
-    }
-    .scanner-panel h2 {
-      margin-top: 0;
-      font-size: 18px;
-      color: #33415b;
-    }
-    .scanner-panel label {
-      font-size: 13px;
-      color: #5e6d85;
-      margin-bottom: 8px;
-      display: block;
-      font-weight: 600;
-    }
-    .scanner-panel input,
-    .scanner-panel button {
-      width: 100%;
-      font-size: 14px;
-    }
-    .scanner-panel input {
-      padding: 12px 14px;
-      border: 1px solid #d1d9e6;
-      border-radius: 10px;
-      background: white;
-      margin-bottom: 16px;
-    }
-    .scanner-panel button {
-      padding: 12px 16px;
-      border: none;
-      border-radius: 10px;
-      color: white;
-      background: #667eea;
-      cursor: pointer;
-      transition: transform .2s ease, background .2s ease;
-    }
-    .scanner-panel button:hover {
-      transform: translateY(-1px);
-      background: #5569d4;
-    }
-    .scanner-feedback {
-      margin-top: 16px;
-      min-height: 60px;
-      color: #1e3a5f;
-      font-weight: 600;
-    }
-    .scanner-feedback.error {
-      color: #b02a37;
-    }
-    .scanner-preview {
-      width: 100%;
-      border-radius: 14px;
-      background: #e7edf9;
-      min-height: 260px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .scanner-preview img,
-    .scanner-preview video {
-      width: 100%;
-      height: auto;
-      max-height: 360px;
-      object-fit: contain;
-    }
-    .manual-block {
-      display: grid;
-      gap: 14px;
-    }
-    .action-row {
-      margin-top: 18px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .action-row a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 18px;
-      border-radius: 10px;
-      border: 1px solid #d1d9e6;
-      text-decoration: none;
-      color: #33415b;
-      background: white;
-      font-weight: 600;
-    }
-    .scanner-footer {
-      margin-top: 28px;
-      text-align: center;
-      color: #6b7a96;
-      font-size: 14px;
-    }
-    @media (max-width: 860px) {
-      .scanner-body {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="scanner-container">
-    <div class="scanner-header">
-      <div>
-        <h1>Escanear QR Code</h1>
-        <p>Carregue uma foto do QR Code ou use o número da carteira como fallback.</p>
-      </div>
-      <div class="action-row">
-        <a href="index.html">Início</a>
-        <a href="carteira.html">Minha Carteira</a>
-      </div>
-    </div>
+  <div class="app-container">
 
-    <div class="scanner-body">
-      <div class="scanner-panel">
-        <h2>Foto do QR Code</h2>
-        <label for="qrFile">Selecione uma imagem do QR</label>
-        <input id="qrFile" type="file" accept="image/*" />
-        <button id="decodeBtn" type="button">Decodificar QR</button>
-        <div id="scannerMessage" class="scanner-feedback">Insira a imagem do QR Code para carregar a carteira automaticamente.</div>
+    <!-- HEADER -->
+    <header class="main-header">
+      <div class="header-content">
+        <a href="index.html" class="logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
+        </a>
+        <nav class="nav-links">
+          <a href="carteira.html" class="nav-link">Verificar Carteira</a>
+          <a href="central-direitos.html" class="nav-link">Central de Direitos</a>
+          <a href="comunidade.html" class="nav-link">Comunidade</a>
+          <a href="escanear.html" class="nav-link active">Escanear QR Code</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- Hero -->
+      <div class="page-hero">
+        <div class="page-hero-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <path d="M14 14h.01M14 17h3M17 14v3M20 17v3M20 14h.01"/>
+          </svg>
+        </div>
+        <div class="page-hero-text">
+          <h1>Escanear QR Code</h1>
+          <p>Carregue a imagem do QR Code ou informe o número da carteira para acessar as informações.</p>
+        </div>
       </div>
 
-      <div class="scanner-panel">
-        <h2>Fallback: número da carteira</h2>
-        <label for="fallbackNumber">Número da Carteira</label>
-        <input id="fallbackNumber" type="text" placeholder="Ex: GC1234ABCD" />
-        <button id="openInfoBtn" type="button">Abrir informações</button>
-        <div id="manualMessage" class="scanner-feedback">Se o QR falhar, use o número da carteira para acessar a página.</div>
+      <!-- Grid principal -->
+      <div class="scan-grid">
+
+        <!-- Painel QR Code -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-header-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <path d="M14 14h.01M14 17h3M17 14v3M20 17v3M20 14h.01"/>
+              </svg>
+            </div>
+            <div>
+              <h2>Foto do QR Code</h2>
+              <p>Selecione a imagem para leitura automática</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="upload-area">
+              <input id="qrFile" type="file" accept="image/*" />
+              <div class="upload-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+              </div>
+              <p>Clique ou arraste a imagem do QR Code</p>
+              <span>PNG, JPG ou JPEG</span>
+            </div>
+            <button id="decodeBtn" class="btn-scan" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              Decodificar QR Code
+            </button>
+            <div id="scannerMessage" class="feedback-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4"/>
+                <path d="M12 8h.01"/>
+              </svg>
+              Insira a imagem do QR Code para carregar a carteira automaticamente.
+            </div>
+          </div>
+        </div>
+
+        <!-- Painel Fallback -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-header-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+              </svg>
+            </div>
+            <div>
+              <h2>Número da Carteira</h2>
+              <p>Acesso alternativo caso o QR Code falhe</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label" for="fallbackNumber">Número da Carteira</label>
+              <input id="fallbackNumber" class="form-input" type="text" placeholder="Ex: GC1234ABCD" />
+            </div>
+            <button id="openInfoBtn" class="btn-scan" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+              Abrir Informações
+            </button>
+            <div id="manualMessage" class="feedback-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              Se o QR Code falhar, use o número da carteira para acessar as informações.
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="scanner-preview" id="previewContainer">
-      <span>Pré-visualização do QR não disponível até selecionar imagem.</span>
-    </div>
+      <!-- Preview -->
+      <div class="preview-card" style="margin-bottom: 24px;">
+        <div class="preview-header">
+          <div class="preview-dot" id="previewDot"></div>
+          <h3>Pré-visualização</h3>
+        </div>
+        <div class="preview-body" id="previewContainer">
+          <div class="preview-placeholder">
+            <div class="preview-placeholder-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M3 7h2M3 12h2M3 17h2M19 7h2M19 12h2M19 17h2"/>
+              </svg>
+            </div>
+            <p>A pré-visualização do QR Code aparecerá aqui após selecionar a imagem.</p>
+          </div>
+        </div>
+      </div>
 
-    <div class="scanner-footer">
-      <p>Esta página redireciona para a tela de informações da carteira, onde os dados são exibidos.</p>
-    </div>
+      <!-- Info strip -->
+      <div class="info-strip">
+        <div class="info-strip-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <p>Esta página redireciona para a tela de informações da carteira, onde todos os dados do titular são exibidos com segurança. O acesso é protegido e registrado conforme a Lei 13.146/2015.</p>
+      </div>
+
+    </main>
+
+    <footer class="main-footer">
+      <p>&copy; 2025 GO Card PCD — Garantindo Dignidade e Direitos | Lei 13.146/2015</p>
+    </footer>
   </div>
 
-  <canvas id="qrCanvas" hidden></canvas>
+  <canvas id="qrCanvas"></canvas>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
   <script src="../assets/js/qr-scanner.js"></script>
 </body>

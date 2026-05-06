@@ -1,9 +1,12 @@
-fazer a carteira de verificação ficar ficar do tamnho padrao 1050 x 600
+na tela do administrador
+querro que faça com que a conta do administrador(admin@carteira.com) nao possa ser desativada. querro que tambem tire os campos id e ordene pelo nome
 
+depois do bloqueio 
+quando o tempo de bloqueio  e finalizado ou desbloqueado manualmente atravez do banco de dados, e recarrego a pagina e tendo colocar as informações validas ou invalidas ele ficar em um lupo infito carregando
 
-nos filhos da div wallet-card reduza oo tamanho deles proporcionalmente para caper mais informaçoes
-informaçoes:FOTO DO TITULAR ,NOME COMPLETO,DATA DE NASCIMENTO,SEXO,CPF,RG,MUNICÍPIO,ACOMPANHANTE,TIPO DE DEFICIÊNCIA,GRAU,CID-10 / CID-11,COMUNICAÇÃO,Nº DO LAUDO,DATA DO LAUDO,PROFISSIONAL RESPONSÁVEL, CRM / CRP / CRFa,RESPONSÁVEL LEGAL,Nº DA CARTEIRA,DATA DE EMISSÃO,VÁLIDA ATÉ,CÓDIGO DE VERIFICAÇÃO,Documento emitido com base na Lei nº 13.146, de 6 de julho de 2015 (Estatuto da Pessoa com Deficiência).
-Válido em todo o território nacional para acesso a direitos, benefícios e serviços públicos e privados.
-querro que o div wallet-card fique do tamanho proporcional a 1050 x 600
+no bloqueio
+o toast atualiza a cada segundo o tempo ate o desbloqueio acretido que o banco de dados e consutado a cada segundo para calcular esse tempo e com isso o erro  Too Many Requests 429 ?
 
-pode a proporção levemente de div wallet-card para comportar melhor as novas informações
+localstorage
+armazenamento de dados sensiveis nos campos de userRegistration,carteira_user,carteira_cadastrada,carteira_dados nO aermazene no localstorage
+

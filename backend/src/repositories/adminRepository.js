@@ -32,7 +32,6 @@ export class AdminRepository {
                 c.endereco,
                 c.cidade,
                 c.estado,
-                c.cep,
                 c.telefone,
                 c.tipo_deficiencia,
                 c.grau_deficiencia,

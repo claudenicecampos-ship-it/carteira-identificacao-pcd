@@ -61,12 +61,15 @@ app.get('/health', (req, res) => {
 app.use(express.static('./frontend'));
 
 
-// Tratamento de rotas não encontradas
-app.use((req, res) => {
-  res.status(404).json({
-    sucesso: false,
-    mensagem: 'Rota não encontrada'
-  });
+// Tratamento de erros não tratados
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
 });
 
 // Tratamento de erros

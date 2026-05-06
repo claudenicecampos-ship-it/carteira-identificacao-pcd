@@ -5,379 +5,325 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Informações da Carteira - GO Card PCD</title>
   <link rel="stylesheet" href="../assets/css/styles.css">
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .info-container {
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-      max-width: 900px;
-      width: 100%;
-      padding: 40px;
-      animation: slideIn 0.3s ease-out;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .info-header {
-      text-align: center;
-      margin-bottom: 40px;
-      border-bottom: 2px solid #667eea;
-      padding-bottom: 20px;
-    }
-
-    .info-header h1 {
-      color: #333;
-      margin: 0;
-      font-size: 28px;
-    }
-
-    .info-header .card-number {
-      color: #667eea;
-      font-weight: bold;
-      margin-top: 10px;
-      font-size: 16px;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-      margin-bottom: 30px;
-    }
-
-    .info-section {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 10px;
-      border-left: 4px solid #667eea;
-    }
-
-    .info-section h2 {
-      color: #667eea;
-      font-size: 16px;
-      text-transform: uppercase;
-      margin: 0 0 15px 0;
-      letter-spacing: 1px;
-    }
-
-    .info-field {
-      margin-bottom: 12px;
-    }
-
-    .info-field label {
-      display: block;
-      color: #666;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-      font-weight: 600;
-    }
-
-    .info-field .value {
-      color: #333;
-      font-size: 16px;
-      font-weight: 500;
-    }
-
-    .info-photo {
-      grid-column: 1 / -1;
-      text-align: center;
-    }
-
-    .info-photo img {
-      max-width: 200px;
-      height: 250px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      object-fit: cover;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #667eea;
-      font-size: 18px;
-    }
-
-    .error-container {
-      background: #fee;
-      border: 2px solid #f88;
-      border-radius: 10px;
-      padding: 20px;
-      text-align: center;
-      color: #c33;
-    }
-
-    .error-container h2 {
-      margin-top: 0;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 30px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    .btn-secondary {
-      background: #f0f0f0;
-      color: #333;
-      border: 2px solid #ddd;
-    }
-
-    .btn-secondary:hover {
-      background: #e8e8e8;
-    }
-
-    .print-hide {
-      display: none;
-    }
-
-    @media print {
-      .action-buttons {
-        display: none;
-      }
-      body {
-        background: white;
-      }
-      .info-container {
-        box-shadow: none;
-        padding: 20px;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .info-container {
-        padding: 20px;
-      }
-      .info-grid {
-        gap: 15px;
-      }
-      .info-header h1 {
-        font-size: 22px;
-      }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="info-container">
-    <div class="info-header">
-      <h1>Informações da Carteira</h1>
-      <div class="card-number" id="cardNumberDisplay"></div>
-    </div>
+  <div class="app-container">
 
-    <div id="loadingState" class="loading">
-      Carregando informações da carteira...
-    </div>
+    <!-- HEADER -->
+    <header class="main-header">
+      <div class="header-content">
+        <a href="index.html" class="logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <span class="logo-text">GO Card <span class="highlight">PCD</span></span>
+        </a>
+        <nav class="nav-links">
+          <a href="carteira.html" class="nav-link">Verificar Carteira</a>
+          <a href="central-direitos.html" class="nav-link">Central de Direitos</a>
+          <a href="comunidade.html" class="nav-link">Comunidade</a>
+          <a href="escanear.html" class="nav-link">Escanear QR Code</a>
+        </nav>
+      </div>
+    </header>
 
-    <div id="errorState" class="error-container" style="display: none;">
-      <h2>Erro ao carregar carteira</h2>
-      <p id="errorMessage"></p>
-    </div>
+    <!-- MAIN -->
+    <main class="main-content">
 
-    <div id="contentState" style="display: none;">
-      <div class="info-grid">
-        <!-- Foto -->
-        <div class="info-photo">
-          <img id="fotoDisplay" src="" alt="Foto do titular" />
+      <!-- Estado de carregamento -->
+      <div id="loadingState" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Carregando informações da carteira...</p>
+      </div>
+
+      <!-- Estado de erro -->
+      <div id="errorState" class="error-state" style="display: none;">
+        <h2>Erro ao carregar carteira</h2>
+        <p id="errorMessage"></p>
+      </div>
+
+      <!-- Conteúdo -->
+      <div id="contentState" style="display: none;">
+
+        <!-- Hero -->
+        <div class="page-hero">
+          <div class="page-hero-left">
+            <div class="page-hero-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+              </svg>
+            </div>
+            <div class="page-hero-text">
+              <h1>Informações da Carteira</h1>
+              <p>Dados oficiais do titular — Documento verificado eletronicamente</p>
+            </div>
+          </div>
+          <div class="card-number-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <rect x="2" y="5" width="20" height="14" rx="2"/>
+              <line x1="2" y1="10" x2="22" y2="10"/>
+            </svg>
+            <span id="cardNumberDisplay">—</span>
+          </div>
         </div>
 
-        <!-- Dados Pessoais -->
-        <div class="info-section">
-          <h2>Dados Pessoais</h2>
-          <div class="info-field">
-            <label>Nome Completo</label>
-            <div class="value" id="nomeDisplay">—</div>
+        <!-- Banner verificado -->
+        <div class="verified-banner">
+          <div class="verified-banner-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
           </div>
-          <div class="info-field">
-            <label>Data de Nascimento</label>
-            <div class="value" id="dataNascimentoDisplay">—</div>
+          <div class="verified-banner-text">
+            <h3>Documento Verificado</h3>
+            <p>Esta carteira foi verificada eletronicamente e é autêntica. Emitida conforme a Lei 13.146/2015.</p>
           </div>
-          <div class="info-field">
-            <label>Sexo</label>
-            <div class="value" id="sexoDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>CPF</label>
-            <div class="value" id="cpfDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>RG</label>
-            <div class="value" id="rgDisplay">—</div>
-          </div>
+          <div class="verified-stamp">AUTÊNTICO</div>
         </div>
 
-        <!-- Endereço -->
-        <div class="info-section">
-          <h2>Endereço</h2>
-          <div class="info-field">
-            <label>Endereço Completo</label>
-            <div class="value" id="enderecoDisplay">—</div>
+        <!-- Foto + dados primários -->
+        <div class="top-section">
+
+          <!-- Foto -->
+          <div class="foto-card">
+            <img id="fotoDisplay" src="" alt="Foto do titular" />
+            <div class="foto-card-label">Foto do Titular</div>
+            <div class="foto-status">
+              <div class="foto-status-dot"></div>
+              Ativo
+            </div>
           </div>
-          <div class="info-field">
-            <label>Cidade / Estado</label>
-            <div class="value" id="cidadeDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>Telefone</label>
-            <div class="value" id="telefoneDisplay">—</div>
+
+          <!-- Dados primários -->
+          <div class="info-primary-card">
+            <div class="fields-grid cols-2" style="gap: 18px;">
+              <div class="info-field full">
+                <label>Nome Completo</label>
+                <div class="value" id="nomeDisplay" style="font-size:20px; font-weight:700; color: var(--primary-900);">—</div>
+              </div>
+              <div class="info-field">
+                <label>Data de Nascimento</label>
+                <div class="value" id="dataNascimentoDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Sexo</label>
+                <div class="value" id="sexoDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>CPF</label>
+                <div class="value" id="cpfDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>RG</label>
+                <div class="value" id="rgDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Município / UF</label>
+                <div class="value" id="cidadeDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Telefone</label>
+                <div class="value" id="telefoneDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Acompanhante</label>
+                <div class="value" id="acompanhanteDisplay">—</div>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Deficiência -->
-        <div class="info-section">
-          <h2>Informações sobre Deficiência</h2>
-          <div class="info-field">
-            <label>Tipo de Deficiência</label>
-            <div class="value" id="tipoDeficienciaDisplay">—</div>
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h2>Informações sobre Deficiência</h2>
           </div>
-          <div class="info-field">
-            <label>Grau da Deficiência</label>
-            <div class="value" id="grauDeficienciaDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>CID</label>
-            <div class="value" id="cidDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>Necessita Acompanhante</label>
-            <div class="value" id="acompanhanteDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>Comunicação Especial</label>
-            <div class="value" id="comunicacaoDisplay">—</div>
+          <div class="section-card-body">
+            <div class="fields-grid cols-4">
+              <div class="info-field">
+                <label>Tipo de Deficiência</label>
+                <div class="value value-accent" id="tipoDeficienciaDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Grau</label>
+                <div class="value" id="grauDeficienciaDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>CID-10 / CID-11</label>
+                <div class="value" id="cidDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Comunicação</label>
+                <div class="value" id="comunicacaoDisplay">—</div>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Laudo Médico -->
-        <div class="info-section">
-          <h2>Laudo Médico</h2>
-          <div class="info-field">
-            <label>Número do Laudo</label>
-            <div class="value" id="numeroLaudoDisplay">—</div>
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-icon indigo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <h2>Laudo Médico</h2>
           </div>
-          <div class="info-field">
-            <label>Data do Laudo</label>
-            <div class="value" id="dataLaudoDisplay">—</div>
+          <div class="section-card-body">
+            <div class="fields-grid cols-3">
+              <div class="info-field">
+                <label>Nº do Laudo</label>
+                <div class="value" id="numeroLaudoDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Data do Laudo</label>
+                <div class="value" id="dataLaudoDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>CRM / CRP / CRFa</label>
+                <div class="value" id="crmDisplay">—</div>
+              </div>
+              <div class="info-field full">
+                <label>Profissional Responsável</label>
+                <div class="value" id="medicoDisplay">—</div>
+              </div>
+            </div>
           </div>
-          <div class="info-field">
-            <label>Médico Responsável</label>
-            <div class="value" id="medicoDisplay">—</div>
+        </div>
+
+        <!-- Responsável Legal (condicional) -->
+        <div class="section-card" id="responsavelSection" style="display: none;">
+          <div class="section-card-header">
+            <div class="section-card-icon amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <h2>Responsável Legal</h2>
           </div>
-          <div class="info-field">
-            <label>CRM do Médico</label>
-            <div class="value" id="crmDisplay">—</div>
+          <div class="section-card-body">
+            <div class="fields-grid cols-3">
+              <div class="info-field">
+                <label>Nome do Responsável</label>
+                <div class="value" id="nomeResponsavelDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>CPF do Responsável</label>
+                <div class="value" id="cpfResponsavelDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Vínculo</label>
+                <div class="value" id="vinculoResponsavelDisplay">—</div>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Saúde e Emergência -->
-        <div class="info-section">
-          <h2>Saúde e Emergência</h2>
-          <div class="info-field">
-            <label>Tipo Sanguíneo</label>
-            <div class="value" id="tipoSanguineoDisplay">—</div>
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-icon red">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+              </svg>
+            </div>
+            <h2>Saúde e Emergência</h2>
           </div>
-          <div class="info-field">
-            <label>Alergias</label>
-            <div class="value" id="alergiasDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>Medicações</label>
-            <div class="value" id="medicacoesDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>Contato de Emergência</label>
-            <div class="value" id="contatoEmergenciaDisplay">—</div>
-          </div>
-        </div>
-
-        <!-- Responsável Legal -->
-        <div class="info-section" id="responsavelSection" style="display: none;">
-          <h2>Responsável Legal</h2>
-          <div class="info-field">
-            <label>Nome do Responsável</label>
-            <div class="value" id="nomeResponsavelDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>CPF do Responsável</label>
-            <div class="value" id="cpfResponsavelDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>Vínculo</label>
-            <div class="value" id="vinculoResponsavelDisplay">—</div>
+          <div class="section-card-body">
+            <div class="fields-grid cols-2" style="margin-bottom: 16px;">
+              <div class="info-field">
+                <label>Tipo Sanguíneo</label>
+                <div class="value" id="tipoSanguineoDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Contato de Emergência</label>
+                <div class="value" id="contatoEmergenciaDisplay">—</div>
+              </div>
+            </div>
+            <div class="fields-grid cols-2">
+              <div class="info-field">
+                <label>Alergias</label>
+                <div class="value value-alergias" id="alergiasDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Medicações de Uso Contínuo</label>
+                <div class="value" id="medicacoesDisplay">—</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Metadados da Carteira -->
-        <div class="info-section">
-          <h2>Carteira PCD</h2>
-          <div class="info-field">
-            <label>Número da Carteira</label>
-            <div class="value" id="numeroCarteiraDisplay">—</div>
+        <!-- Dados da Carteira -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <div class="section-card-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+              </svg>
+            </div>
+            <h2>Dados da Carteira PCD</h2>
           </div>
-          <div class="info-field">
-            <label>Data de Emissão</label>
-            <div class="value" id="dataEmissaoDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>Data de Validade</label>
-            <div class="value" id="dataValidadeDisplay">—</div>
-          </div>
-          <div class="info-field">
-            <label>Código de Verificação</label>
-            <div class="value" id="codigoVerificacaoDisplay">—</div>
+          <div class="section-card-body">
+            <div class="fields-grid cols-4">
+              <div class="info-field">
+                <label>Nº da Carteira</label>
+                <div class="value" id="numeroCarteiraDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Data de Emissão</label>
+                <div class="value" id="dataEmissaoDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Válida Até</label>
+                <div class="value" id="dataValidadeDisplay">—</div>
+              </div>
+              <div class="info-field">
+                <label>Código de Verificação</label>
+                <div class="value" id="codigoVerificacaoDisplay">—</div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="action-buttons">
-        <button class="btn btn-primary" onclick="window.print()">Imprimir</button>
-        <button class="btn btn-secondary" onclick="window.history.back()">Voltar</button>
-      </div>
-    </div>
+        <!-- Botões -->
+        <div class="action-row">
+          <button class="btn-action primary" onclick="window.print()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 6 2 18 2 18 9"/>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            Imprimir
+          </button>
+          <button class="btn-action secondary" onclick="window.history.back()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            Voltar
+          </button>
+        </div>
+
+      </div><!-- /contentState -->
+
+    </main>
+
+    <footer class="main-footer">
+      <p>&copy; 2025 GO Card PCD — Garantindo Dignidade e Direitos | Lei 13.146/2015</p>
+    </footer>
   </div>
 
   <script src="../assets/js/config.js"></script>
