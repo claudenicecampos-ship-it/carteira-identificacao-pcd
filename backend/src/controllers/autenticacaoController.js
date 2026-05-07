@@ -198,6 +198,33 @@ export class AutenticacaoController {
     }
   }
 
+  static async removerBloqueio(req, res) {
+    try {
+      const { id } = req.body;
+
+      if (!id) {
+        return res.status(400).json({
+          sucesso: false,
+          mensagem: 'Id do bloqueio é obrigatório'
+        });
+      }
+
+      await AutenticacaoService.removerBloqueio(id);
+
+      res.status(200).json({
+        sucesso: true,
+        mensagem: 'Bloqueio removido com sucesso'
+      });
+    } catch (erro) {
+      console.error('Erro ao remover bloqueio:', erro);
+      const status = erro.message === 'Bloqueio de login não encontrado' ? 404 : 400;
+      res.status(status).json({
+        sucesso: false,
+        mensagem: erro.message
+      });
+    }
+  }
+
   /**
    * POST /api/auth/renovar-token
    */

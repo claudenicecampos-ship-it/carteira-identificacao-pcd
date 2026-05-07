@@ -15,6 +15,34 @@ export class LoginBloqueioRepository {
     }
   }
 
+  static async buscarPorId(id) {
+    try {
+      const conexao = await pool.getConnection();
+      const [resultado] = await conexao.execute(
+        'SELECT * FROM login_bloqueios WHERE id = ?',
+        [id]
+      );
+      conexao.release();
+      return resultado.length > 0 ? resultado[0] : null;
+    } catch (erro) {
+      throw new Error('Erro ao buscar bloqueio de login por id: ' + erro.message);
+    }
+  }
+
+  static async removerPorId(id) {
+    try {
+      const conexao = await pool.getConnection();
+      await conexao.execute(
+        'DELETE FROM login_bloqueios WHERE id = ?',
+        [id]
+      );
+      conexao.release();
+      return true;
+    } catch (erro) {
+      throw new Error('Erro ao remover bloqueio de login: ' + erro.message);
+    }
+  }
+
   static async criarOuAtualizar(email, dados) {
     try {
       const conexao = await pool.getConnection();

@@ -47,7 +47,7 @@ async function carregarUsuarios() {
 
     try {
         const resposta = await fazerRequisicao('/admin/usuarios', 'GET');
-        const usuarios = resposta.data || [];
+        let usuarios = resposta.data || [];
 
         atualizarResumo({
             usuarios: usuarios.length,
@@ -60,11 +60,13 @@ async function carregarUsuarios() {
             return;
         }
 
+        // Ordenar por nome
+        usuarios = usuarios.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+
         container.innerHTML = `
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Nome</th>
                         <th>Email</th>
                         <th>Role</th>
@@ -76,16 +78,15 @@ async function carregarUsuarios() {
                 <tbody>
                     ${usuarios.map(usuario => `
                         <tr>
-                            <td>${usuario.id}</td>
                             <td>${usuario.nome}</td>
                             <td>${usuario.email}</td>
                             <td>${usuario.role || 'user'}</td>
                             <td><span class="status-badge ${usuario.ativo ? 'ativo' : 'inativo'}">${usuario.ativo ? 'Ativo' : 'Inativo'}</span></td>
                             <td>${formatarData(usuario.criado_em)}</td>
                             <td class="admin-card-actions">
-                                <button class="btn btn-secondary" onclick="alterarUsuarioStatus(${usuario.id}, ${usuario.ativo ? 0 : 1})">
+                                ${usuario.email !== 'admin@carteira.com' ? `<button class="btn btn-secondary" onclick="alterarUsuarioStatus(${usuario.id}, ${usuario.ativo ? 0 : 1})">
                                     ${usuario.ativo ? 'Desativar' : 'Ativar'}
-                                </button>
+                                </button>` : '<span class="text-muted">Protegido</span>'}
                             </td>
                         </tr>
                     `).join('')}
@@ -110,7 +111,7 @@ async function carregarCarteiras() {
 
     try {
         const resposta = await fazerRequisicao('/admin/carteiras', 'GET');
-        const carteiras = resposta.data || [];
+        let carteiras = resposta.data || [];
 
         atualizarResumo({
             usuarios: parseInt(document.getElementById('totalUsers').textContent, 10) || 0,
@@ -123,11 +124,13 @@ async function carregarCarteiras() {
             return;
         }
 
+        // Ordenar por nome do usuário
+        carteiras = carteiras.sort((a, b) => (a.usuario_nome || '').localeCompare(b.usuario_nome || '', 'pt-BR'));
+
         container.innerHTML = `
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Usuário</th>
                         <th>Email</th>
                         <th>Tipo</th>
@@ -140,7 +143,6 @@ async function carregarCarteiras() {
                 <tbody>
                     ${carteiras.map(carteira => `
                         <tr>
-                            <td>${carteira.id}</td>
                             <td>${carteira.usuario_nome || '—'}</td>
                             <td>${carteira.usuario_email || '—'}</td>
                             <td>${carteira.tipo || '—'}</td>
@@ -175,7 +177,7 @@ async function carregarDenuncias() {
 
     try {
         const resposta = await fazerRequisicao('/admin/denuncias', 'GET');
-        const denuncias = resposta.data || [];
+        let denuncias = resposta.data || [];
 
         atualizarResumo({
             usuarios: parseInt(document.getElementById('totalUsers').textContent, 10) || 0,
@@ -188,11 +190,13 @@ async function carregarDenuncias() {
             return;
         }
 
+        // Ordenar por título
+        denuncias = denuncias.sort((a, b) => a.titulo.localeCompare(b.titulo, 'pt-BR'));
+
         container.innerHTML = `
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Título</th>
                         <th>Tipo</th>
                         <th>Localidade</th>
@@ -205,7 +209,6 @@ async function carregarDenuncias() {
                 <tbody>
                     ${denuncias.map(denuncia => `
                         <tr>
-                            <td>${denuncia.id}</td>
                             <td>${denuncia.titulo}</td>
                             <td>${denuncia.tipo_denuncia || '—'}</td>
                             <td>${denuncia.localidade || '—'}</td>

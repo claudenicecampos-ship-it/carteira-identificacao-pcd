@@ -1,12 +1,10 @@
-na tela do administrador
-querro que faça com que a conta do administrador(admin@carteira.com) nao possa ser desativada. querro que tambem tire os campos id e ordene pelo nome
+1- tela de do administrador
+fazer com que o administrador desativada uma carteira ou um usuario vai aparecer um campo de descrição para informa porque foi desativado e quando o usuario tentar a acessar a  carteira desativata vai aparecer a decrição pra ele. 
+e ele pode solicitar ao administrado para que ele possa criar uma nova carteira  e ele so podera criar apenas quando o administrador permitir.a carteira  desativada mesmo criando uma nova elas nao serao removidas e ficarão salvas no banco de dados. e o usuario pode criar a nova carterai  com as mesma informações que a anterior
 
-depois do bloqueio 
-quando o tempo de bloqueio  e finalizado ou desbloqueado manualmente atravez do banco de dados, e recarrego a pagina e tendo colocar as informações validas ou invalidas ele ficar em um lupo infito carregando
-
-no bloqueio
+4- no bloqueio
 o toast atualiza a cada segundo o tempo ate o desbloqueio acretido que o banco de dados e consutado a cada segundo para calcular esse tempo e com isso o erro  Too Many Requests 429 ?
 
-localstorage
+5- localstorage
 armazenamento de dados sensiveis nos campos de userRegistration,carteira_user,carteira_cadastrada,carteira_dados nO aermazene no localstorage
 

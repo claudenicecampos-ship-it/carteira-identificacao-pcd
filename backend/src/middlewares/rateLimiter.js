@@ -1,4 +1,30 @@
-import rateLimit from 'express-rate-limit';
+import rateLimit, { MemoryStore } from 'express-rate-limit';
+import { LoginBloqueioRepository } from '../repositories/loginBloqueioRepository.js';
+
+const loginStore = new MemoryStore();
+
+export function resetLoginRateLimit(email) {
+  if (!email || typeof email !== 'string') return;
+  const key = email.toLowerCase();
+  if (typeof loginStore.resetKey === 'function') {
+    loginStore.resetKey(key, () => {});
+  }
+}
+
+export async function sincronizarLimitadorLogin(req, res, next) {
+  const email = req.body?.email;
+  if (email && typeof email === 'string') {
+    try {
+      const bloqueio = await LoginBloqueioRepository.buscarPorEmail(email.toLowerCase());
+      if (!bloqueio?.bloqueado_ate) {
+        resetLoginRateLimit(email);
+      }
+    } catch (erro) {
+      console.error('Erro ao sincronizar limitador de login:', erro.message);
+    }
+  }
+  next();
+}
 
 /**
  * Limitador geral de requisições
@@ -15,6 +41,7 @@ export const limitadorGeral = rateLimit({
  * Limitador específico para login (mais restritivo)
  */
 export const limitadorLogin = rateLimit({
+  store: loginStore,
   windowMs: 5 * 60 * 1000, // 5 minutos
   max: 3, // 3 tentativas
   message: { sucesso: false, mensagem: 'Muitas tentativas de login. Tente novamente em 5 minutos' },

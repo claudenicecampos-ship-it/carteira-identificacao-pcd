@@ -219,6 +219,18 @@ body {
   color: var(--primary-700);
 }
 
+.nav-link-login {
+  background: var(--primary-600);
+  color: white;
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+}
+
+.nav-link-login:hover {
+  background: var(--primary-700);
+  color: white;
+}
+
 /* ==================== MAIN CONTENT ==================== */
 .main-content {
   flex: 1;

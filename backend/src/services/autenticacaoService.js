@@ -3,6 +3,7 @@ import { SessaoRepository } from '../repositories/sessaoRepository.js';
 import { RecuperacaoSenhaRepository } from '../repositories/recuperacaoSenhaRepository.js';
 import { CarteiraRepository } from '../repositories/carteiraRepository.js';
 import { LoginBloqueioRepository } from '../repositories/loginBloqueioRepository.js';
+import { resetLoginRateLimit } from '../middlewares/rateLimiter.js';
 import { criptografarSenha, compararSenha, validarForçaSenha } from '../utils/criptografia.js';
 import { gerarToken, gerarRefreshToken } from '../utils/token.js';
 import { gerarQRCode, validarQRCode } from '../utils/qrcode.js';
@@ -129,6 +130,16 @@ export class AutenticacaoService {
     return { bloqueado: false };
   }
 
+  static async removerBloqueio(id) {
+    const bloqueio = await LoginBloqueioRepository.buscarPorId(id);
+    if (!bloqueio) {
+      throw new Error('Bloqueio de login não encontrado');
+    }
+
+    await LoginBloqueioRepository.removerPorId(id);
+    return bloqueio;
+  }
+
   /**   * Login de usuário
    */
   static async login(email, senha, endereco_ip = '', user_agent = '') {
@@ -189,7 +200,7 @@ export class AutenticacaoService {
       throw erro;
     }
 
-    await LoginBloqueioRepository.resetarBloqueio(email);
+    resetLoginRateLimit(email);
 
     // Gerar tokens
     const token = gerarToken(usuario.id, usuario.email, usuario.role || 'user');
@@ -299,6 +310,7 @@ export class AutenticacaoService {
       throw new Error('Código inválido ou bloqueio não encontrado');
     }
 
+    resetLoginRateLimit(email);
     return { mensagem: 'Bloqueio removido com sucesso' };
   }
 

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     data_nascimento DATE,
     qr_code VARCHAR(191) UNIQUE,
     role VARCHAR(20) DEFAULT 'user',
-    ativo BOOLEAN DEFAULT TRUE,
+    ativo BOOLEAN DEFAULT TRUE, -- conta desativada
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_email (email),
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS carteiras (
     tipo VARCHAR(50) NOT NULL,
     numero_carteira VARCHAR(100) UNIQUE NOT NULL,
     descricao TEXT,
-    ativa BOOLEAN DEFAULT TRUE,
+    ativa BOOLEAN DEFAULT TRUE, -- carteira desativada
     data_nascimento DATE,
     endereco TEXT,
     cidade VARCHAR(100),
@@ -168,6 +168,20 @@ CREATE TABLE IF NOT EXISTS login_bloqueios (
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DELIMITER $$
+CREATE TRIGGER trg_auditoria_after_insert_login
+AFTER INSERT ON auditoria
+FOR EACH ROW
+BEGIN
+  IF NEW.acao = 'LOGIN' AND NEW.tabela = 'usuarios' THEN
+    DELETE lb
+    FROM login_bloqueios lb
+    JOIN usuarios u ON u.id = NEW.registro_id
+    WHERE lb.email = u.email;
+  END IF;
+END$$
+DELIMITER ;
 
 -- Código de desbloqueio de exemplo para uso manual
 INSERT INTO login_bloqueios (email, tentativas, bloqueado_ate, codigo_desbloqueio) VALUES
