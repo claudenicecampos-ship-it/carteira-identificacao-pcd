@@ -10,6 +10,7 @@
 </head>
 <body>
     <div class="app-container">
+        <div id="toast" class="toast"></div>
         <!-- Header -->
         <header class="main-header">
             <div class="header-content">
@@ -524,8 +525,7 @@
             try {
                 const resposta = await fazerRequisicao('/denuncias', 'POST', dados);
                 if (resposta.sucesso) {
-                    const protocolo = resposta.data?.id ? 'DEN' + String(resposta.data.id).padStart(6, '0') : '';
-                    mostrarToast('Denuncia registrada com sucesso! ' + protocolo, 'success');
+                    mostrarToast('Denuncia registrada com sucesso', 'success');
                     denunciaModal?.classList.add('hidden');
                     e.target.reset();
                     const preview = document.querySelector('.laudo-preview');

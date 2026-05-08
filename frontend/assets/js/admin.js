@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function carregarPainelAdmin() {
-    atualizarResumo({ usuarios: 0, carteiras: 0, denuncias: 0 });
+    atualizarResumo({ usuarios: 0, carteiras: 0, denuncias: 0, resolvidas: 0 });
     await Promise.all([
         carregarUsuarios(),
         carregarCarteiras(),
@@ -30,10 +30,11 @@ async function carregarPainelAdmin() {
     ]);
 }
 
-function atualizarResumo({ usuarios, carteiras, denuncias }) {
+function atualizarResumo({ usuarios, carteiras, denuncias, resolvidas = 0 }) {
     document.getElementById('totalUsers').textContent = usuarios;
     document.getElementById('totalCarteiras').textContent = carteiras;
     document.getElementById('totalDenuncias').textContent = denuncias;
+    document.getElementById('totalResolvidas').textContent = resolvidas;
 }
 
 async function carregarUsuarios() {
@@ -52,7 +53,8 @@ async function carregarUsuarios() {
         atualizarResumo({
             usuarios: usuarios.length,
             carteiras: parseInt(document.getElementById('totalCarteiras').textContent, 10) || 0,
-            denuncias: parseInt(document.getElementById('totalDenuncias').textContent, 10) || 0
+            denuncias: parseInt(document.getElementById('totalDenuncias').textContent, 10) || 0,
+            resolvidas: parseInt(document.getElementById('totalResolvidas').textContent, 10) || 0
         });
 
         if (usuarios.length === 0) {
@@ -116,7 +118,8 @@ async function carregarCarteiras() {
         atualizarResumo({
             usuarios: parseInt(document.getElementById('totalUsers').textContent, 10) || 0,
             carteiras: carteiras.length,
-            denuncias: parseInt(document.getElementById('totalDenuncias').textContent, 10) || 0
+            denuncias: parseInt(document.getElementById('totalDenuncias').textContent, 10) || 0,
+            resolvidas: parseInt(document.getElementById('totalResolvidas').textContent, 10) || 0
         });
 
         if (carteiras.length === 0) {
@@ -178,11 +181,14 @@ async function carregarDenuncias() {
     try {
         const resposta = await fazerRequisicao('/admin/denuncias', 'GET');
         let denuncias = resposta.data || [];
+        const resolvidas = denuncias.filter(d => String(d.status).toLowerCase() === 'resolvida').length;
+        const pendentes = denuncias.length - resolvidas;
 
         atualizarResumo({
             usuarios: parseInt(document.getElementById('totalUsers').textContent, 10) || 0,
             carteiras: parseInt(document.getElementById('totalCarteiras').textContent, 10) || 0,
-            denuncias: denuncias.length
+            denuncias: pendentes,
+            resolvidas
         });
 
         if (denuncias.length === 0) {
@@ -255,7 +261,7 @@ async function resolverDenuncia(id) {
         const resposta = await fazerRequisicao(`/denuncias/${id}/resolver`, 'PATCH');
         if (resposta.sucesso) {
             mostrarToast('Denúncia marcada como resolvida', 'success');
-            carregarDenuncias();
+            await carregarDenuncias();
         }
     } catch (erro) {
         mostrarToast('Erro ao resolver denúncia: ' + erro.message, 'error');
