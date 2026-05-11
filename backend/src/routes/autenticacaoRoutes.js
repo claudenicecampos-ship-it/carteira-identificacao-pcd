@@ -20,6 +20,13 @@ router.post('/registrar', AutenticacaoController.registrar);
 router.post('/verificar-email', AutenticacaoController.verificarEmail);
 
 /**
+ * @route POST /api/auth/verificar-cpf
+ * @desc Verifica se CPF existe
+ * @access Public
+ */
+router.post('/verificar-cpf', AutenticacaoController.verificarCpf);
+
+/**
  * @route POST /api/auth/login
  * @desc Realiza login
  * @access Public

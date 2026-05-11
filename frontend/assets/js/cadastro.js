@@ -68,9 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function proximoStep() {
+async function proximoStep() {
     if (stepAtual === 1) {
         if (validarStep1()) {
+            const duplicadosValidos = await verificarDuplicados();
+            if (!duplicadosValidos) {
+                return;
+            }
+
             stepAtual = 2;
             mostrarStep();
         }
@@ -164,6 +169,38 @@ function validarStep1() {
     return true;
 }
 
+async function verificarDuplicados() {
+    const email = document.getElementById('email').value.trim();
+    const cpf = document.getElementById('cpf').value;
+    const cpfLimpo = removerFormatacaoCPF(cpf);
+
+    if (!email || !cpfLimpo) {
+        return true;
+    }
+
+    try {
+        const [respostaVerificacaoEmail, respostaVerificacaoCpf] = await Promise.all([
+            fazerRequisicao('/auth/verificar-email', 'POST', { email }),
+            fazerRequisicao('/auth/verificar-cpf', 'POST', { cpf: cpfLimpo })
+        ]);
+
+        if (respostaVerificacaoEmail.sucesso && respostaVerificacaoEmail.existe) {
+            mostrarErro('email', '❌ Email já cadastrado');
+            return false;
+        }
+
+        if (respostaVerificacaoCpf.sucesso && respostaVerificacaoCpf.existe) {
+            mostrarErro('cpf', '❌ CPF já cadastrado');
+            return false;
+        }
+
+        return true;
+    } catch (erro) {
+        mostrarToast(`Erro ao verificar dados: ${erro.message}`, 'error');
+        return false;
+    }
+}
+
 /**
  * Valida CPF usando algoritmo de dígitos verificadores
  */
@@ -250,22 +287,30 @@ async function handleCadastro(e) {
         const email = document.getElementById('email').value.trim();
 
         // Verificar se email já existe
-        const respostaVerificacao = await fazerRequisicao('/auth/verificar-email', 'POST', { email });
+        const cpf = document.getElementById('cpf').value;
+        const cpfLimpo = removerFormatacaoCPF(cpf);
 
-        if (respostaVerificacao.sucesso && respostaVerificacao.existe) {
-            // Email encontrado, redirecionar para login
-            mostrarToast('Email já cadastrado. Faça login.', 'info');
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 2000);
+        const [respostaVerificacaoEmail, respostaVerificacaoCpf] = await Promise.all([
+            fazerRequisicao('/auth/verificar-email', 'POST', { email }),
+            fazerRequisicao('/auth/verificar-cpf', 'POST', { cpf: cpfLimpo })
+        ]);
+
+        if (respostaVerificacaoEmail.sucesso && respostaVerificacaoEmail.existe) {
+            mostrarErro('email', '❌ Email já cadastrado');
+            habilitarBotao('cadastroBtn');
             return;
         }
 
-        // Email não encontrado, prosseguir com cadastro
+        if (respostaVerificacaoCpf.sucesso && respostaVerificacaoCpf.existe) {
+            mostrarErro('cpf', '❌ CPF já cadastrado');
+            habilitarBotao('cadastroBtn');
+            return;
+        }
+
         const dados = {
             nome: document.getElementById('nome').value.trim(),
             email: email,
-            cpf: removerFormatacaoCPF(document.getElementById('cpf').value),
+            cpf: cpfLimpo,
             telefone: document.getElementById('telefone').value,
             data_nascimento: document.getElementById('data_nascimento').value,
             senha: document.getElementById('senha').value
@@ -293,7 +338,13 @@ async function handleCadastro(e) {
             }, 1000);
         }
     } catch (erro) {
-        mostrarToast(erro.message, 'error');
+        if (erro.message.includes('Email já cadastrado')) {
+            mostrarErro('email', '❌ Email já cadastrado');
+        } else if (erro.message.includes('CPF já cadastrado')) {
+            mostrarErro('cpf', '❌ CPF já cadastrado');
+        } else {
+            mostrarToast(erro.message, 'error');
+        }
         habilitarBotao('cadastroBtn');
     }
 }

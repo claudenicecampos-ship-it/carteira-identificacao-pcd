@@ -90,6 +90,10 @@ export class AutenticacaoService {
     return await UsuarioRepository.emailExiste(email);
   }
 
+  static async verificarCpfExiste(cpf) {
+    return await UsuarioRepository.cpfExiste(cpf);
+  }
+
   static parseBloqueadoAte(value) {
     if (!value) return null;
     if (value instanceof Date) return value;

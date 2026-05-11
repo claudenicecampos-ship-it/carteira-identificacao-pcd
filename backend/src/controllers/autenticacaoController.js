@@ -81,6 +81,32 @@ export class AutenticacaoController {
     }
   }
 
+  static async verificarCpf(req, res) {
+    try {
+      const { cpf } = req.body;
+
+      if (!cpf) {
+        return res.status(400).json({
+          sucesso: false,
+          mensagem: 'CPF é obrigatório'
+        });
+      }
+
+      const existe = await AutenticacaoService.verificarCpfExiste(cpf);
+
+      res.status(200).json({
+        sucesso: true,
+        existe
+      });
+    } catch (erro) {
+      console.error('Erro ao verificar CPF:', erro);
+      res.status(500).json({
+        sucesso: false,
+        mensagem: 'Erro interno do servidor'
+      });
+    }
+  }
+
   /**
    * POST /api/auth/login
    */
