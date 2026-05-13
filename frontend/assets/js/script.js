@@ -70,6 +70,8 @@ let laudoFileData = null;
 let fotoFileData = null;
 let fields = {};
 let submitBtn = null;
+let editMode = false;
+let editingWalletData = null;
 
 // ===== VALIDADORES =====
 function isValidName(v) {
@@ -268,9 +270,25 @@ function markFieldError(fieldName, message) {
   }
 }
 
+function markSimpleError(fieldName, message) {
+  const f = fields[fieldName];
+  if (!f) return;
+  if (f.input) f.input.classList.add('invalid');
+  if (f.preview) f.preview.classList.add('invalid');
+  if (f.check) f.check.classList.remove('show');
+  if (f.error) {
+    f.error.textContent = message;
+    f.error.classList.add('show');
+  }
+}
+
 function validateFormOnSubmit() {
   const invalidFields = [];
 
+  if (!fields.foto?.preview?.classList.contains('has-image')) {
+    markSimpleError('foto', errorMsg('foto'));
+    invalidFields.push('Foto');
+  }
   if (!isValidName(fields.nome.input?.value || '')) {
     markFieldError('nome', errorMsg('nome'));
     invalidFields.push('Nome completo');
@@ -311,6 +329,10 @@ function validateFormOnSubmit() {
     markFieldError('grauDeficiencia', 'Selecione o grau da deficiência');
     invalidFields.push('Grau da deficiência');
   }
+  if (!document.getElementById('necessitaAcompanhante')?.value) {
+    markSimpleError('necessitaAcompanhante', 'Selecione se necessita de acompanhante');
+    invalidFields.push('Necessidade de acompanhante');
+  }
   if (!isValidCID(fields.cid.input?.value || '')) {
     markFieldError('cid', errorMsg('cid'));
     invalidFields.push('CID');
@@ -330,6 +352,29 @@ function validateFormOnSubmit() {
   if (!isValidCRM(fields.crmMedico.input?.value || '')) {
     markFieldError('crmMedico', errorMsg('crmMedico'));
     invalidFields.push('CRM/CRP/CRFa');
+  }
+  if (!fields.laudoFile?.preview?.classList.contains('has-file')) {
+    markSimpleError('laudoFile', errorMsg('laudoFile'));
+    invalidFields.push('Laudo medico');
+  }
+  if (!isValidOptionalName(fields.nomeResponsavel.input?.value || '')) {
+    markFieldError('nomeResponsavel', errorMsg('nomeResponsavel'));
+    invalidFields.push('Nome do responsavel');
+  }
+  if (!isValidOptionalCPF(fields.cpfResponsavel.input?.value || '')) {
+    markFieldError('cpfResponsavel', errorMsg('cpfResponsavel'));
+    invalidFields.push('CPF do responsavel');
+  }
+  if (!isValidOptionalVinculo(fields.vinculoResponsavel.input?.value || '')) {
+    markFieldError('vinculoResponsavel', errorMsg('vinculoResponsavel'));
+    invalidFields.push('Vinculo do responsavel');
+  }
+  const nomeResponsavel = fields.nomeResponsavel.input?.value.trim() || '';
+  const cpfResponsavel = fields.cpfResponsavel.input?.value.trim() || '';
+  if ((nomeResponsavel && !cpfResponsavel) || (cpfResponsavel && !nomeResponsavel)) {
+    markFieldError('nomeResponsavel', 'Nome e CPF do responsavel devem ser preenchidos juntos');
+    markFieldError('cpfResponsavel', 'Nome e CPF do responsavel devem ser preenchidos juntos');
+    invalidFields.push('Dados do responsavel');
   }
   if (!isValidContatoEmergencia(fields.contatoEmergencia.input?.value || '')) {
     markFieldError('contatoEmergencia', errorMsg('contatoEmergencia'));
@@ -354,6 +399,184 @@ function showInvalidFieldSummary(invalidFields) {
   }
 }
 
+function setSubmitLoading(message) {
+  if (!submitBtn) return;
+  submitBtn.disabled = true;
+  submitBtn.classList.add('loading');
+  submitBtn.innerHTML = `<span class="spinner"></span> ${message}`;
+}
+
+function resetSubmitButton() {
+  if (!submitBtn) return;
+  submitBtn.disabled = false;
+  submitBtn.classList.remove('loading');
+  submitBtn.innerHTML = `
+    <span>${editMode ? 'Salvar Alterações da Carteira' : 'Gerar Carteira GO Card PCD'}</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M5 12h14"></path>
+      <path d="m12 5 7 7-7 7"></path>
+    </svg>
+  `;
+}
+
+function toDateInputValue(value) {
+  if (!value) return '';
+  return String(value).slice(0, 10);
+}
+
+function normalizeWalletDataForForm(data) {
+  if (!data) return null;
+  const d = { ...data };
+  const map = {
+    data_nascimento: 'dataNascimento',
+    tipo_deficiencia: 'tipoDeficiencia',
+    grau_deficiencia: 'grauDeficiencia',
+    necessita_acompanhante: 'necessitaAcompanhante',
+    numero_laudo: 'numeroLaudo',
+    data_laudo: 'dataLaudo',
+    nome_medico: 'nomeMedico',
+    crm_medico: 'crmMedico',
+    tipo_sanguineo: 'tipoSanguineo',
+    contato_emergencia: 'contatoEmergencia',
+    nome_responsavel: 'nomeResponsavel',
+    cpf_responsavel: 'cpfResponsavel',
+    vinculo_responsavel: 'vinculoResponsavel',
+    laudo_url: 'laudoArquivo'
+  };
+
+  Object.entries(map).forEach(([from, to]) => {
+    if (d[from] !== undefined && d[to] === undefined) d[to] = d[from];
+  });
+
+  if (typeof d.necessitaAcompanhante === 'boolean') {
+    d.necessitaAcompanhante = d.necessitaAcompanhante ? 'Sim' : 'Não';
+  } else if (String(d.necessitaAcompanhante).toLowerCase() === 'true' || d.necessitaAcompanhante === 1) {
+    d.necessitaAcompanhante = 'Sim';
+  } else if (String(d.necessitaAcompanhante).toLowerCase() === 'false' || d.necessitaAcompanhante === 0) {
+    d.necessitaAcompanhante = 'Não';
+  }
+
+  return d;
+}
+
+function setInputValue(id, value) {
+  const el = document.getElementById(id);
+  if (!el || value === undefined || value === null) return;
+
+  el.value = value;
+  if (el.tagName === 'SELECT' && el.value !== String(value)) {
+    const normalizedValue = String(value)
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+    const option = Array.from(el.options).find(opt => {
+      const normalizedOption = String(opt.value)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+      return normalizedOption === normalizedValue;
+    });
+    if (option) el.value = option.value;
+  }
+}
+
+function resolveAssetUrl(path) {
+  if (!path) return '';
+  if (/^(data:|https?:\/\/)/.test(path)) return path;
+  const clean = String(path).replace(/^\/+/, '');
+  const base = typeof API_BASE_URL === 'string' ? API_BASE_URL : 'http://localhost:3001';
+  if (clean.startsWith('imgs/') || clean.startsWith('laudos/')) return `${base}/${clean}`;
+  return path;
+}
+
+async function loadWalletDataForEdit() {
+  let data = null;
+  if (typeof buscarCarteiraUsuario === 'function') {
+    data = await buscarCarteiraUsuario();
+  }
+
+  if (!data) {
+    const cached = localStorage.getItem('carteira_dados') || localStorage.getItem('userRegistration');
+    if (cached) data = JSON.parse(cached);
+  }
+
+  return normalizeWalletDataForForm(data);
+}
+
+async function preencherFormularioEdicao() {
+  if (!editMode) return;
+
+  try {
+    editingWalletData = await loadWalletDataForEdit();
+    if (!editingWalletData) {
+      if (typeof mostrarToast === 'function') {
+        mostrarToast('Nenhuma carteira encontrada para editar.', 'error');
+      }
+      return;
+    }
+
+    setInputValue('nome', editingWalletData.nome);
+    setInputValue('dataNascimento', toDateInputValue(editingWalletData.dataNascimento));
+    setInputValue('sexo', editingWalletData.sexo);
+    setInputValue('cpf', maskCPF(editingWalletData.cpf || ''));
+    setInputValue('rg', maskRG(editingWalletData.rg || ''));
+    setInputValue('telefone', maskTelefone(editingWalletData.telefone || ''));
+    setInputValue('cidade', editingWalletData.cidade);
+    setInputValue('endereco', editingWalletData.endereco);
+    setInputValue('estado', editingWalletData.estado);
+    setInputValue('tipoDeficiencia', editingWalletData.tipoDeficiencia);
+    setInputValue('grauDeficiencia', editingWalletData.grauDeficiencia);
+    setInputValue('cid', String(editingWalletData.cid || '').toUpperCase());
+    setInputValue('necessitaAcompanhante', editingWalletData.necessitaAcompanhante);
+    setInputValue('numeroLaudo', editingWalletData.numeroLaudo);
+    setInputValue('dataLaudo', toDateInputValue(editingWalletData.dataLaudo));
+    setInputValue('nomeMedico', editingWalletData.nomeMedico);
+    setInputValue('crmMedico', editingWalletData.crmMedico);
+    setInputValue('tipoSanguineo', editingWalletData.tipoSanguineo);
+    setInputValue('contatoEmergencia', editingWalletData.contatoEmergencia);
+    setInputValue('alergias', editingWalletData.alergias);
+    setInputValue('medicacoes', editingWalletData.medicacoes);
+    setInputValue('comunicacao', editingWalletData.comunicacao);
+    setInputValue('nomeResponsavel', editingWalletData.nomeResponsavel);
+    setInputValue('cpfResponsavel', maskCPF(editingWalletData.cpfResponsavel || ''));
+    setInputValue('vinculoResponsavel', editingWalletData.vinculoResponsavel);
+
+    const fotoUrl = resolveAssetUrl(editingWalletData.foto);
+    if (fotoUrl && fields.foto?.preview) {
+      fields.foto.preview.style.backgroundImage = `url('${fotoUrl}')`;
+      fields.foto.preview.classList.add('has-image');
+      const svgIcon = fields.foto.preview.querySelector('svg');
+      if (svgIcon) svgIcon.style.display = 'none';
+    }
+
+    const laudoName = editingWalletData.laudoArquivo || editingWalletData.laudo_url;
+    if (laudoName && fields.laudoFile?.preview) {
+      fields.laudoFile.preview.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--success-500); width: 24px; height: 24px;">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span style="color: var(--success-600); font-weight: 500">Laudo já anexado</span>
+      `;
+      fields.laudoFile.preview.classList.add('has-file');
+    }
+
+    Object.entries(fields).forEach(([name, field]) => {
+      if (field.input && field.input.value) setValid(name, true, field.input.value);
+    });
+
+    resetSubmitButton();
+    if (typeof mostrarToast === 'function') {
+      mostrarToast('Dados carregados para edição.', 'info');
+    }
+  } catch (erro) {
+    console.error('Erro ao carregar dados para edicao:', erro);
+    if (typeof mostrarToast === 'function') {
+      mostrarToast('Não foi possível carregar os dados da carteira.', 'error');
+    }
+  }
+}
+
 function checkForm() {
   const fotoOk = fields.foto?.preview?.classList.contains('has-image');
   const laudoOk = fields.laudoFile?.preview?.classList.contains('has-file');
@@ -368,6 +591,7 @@ function checkForm() {
     && !!document.getElementById('estado')?.value
     && !!document.getElementById('tipoDeficiencia')?.value
     && !!document.getElementById('grauDeficiencia')?.value
+    && !!document.getElementById('necessitaAcompanhante')?.value
     && isValidCID(fields.cid.input?.value || '')
     && isValidLaudo(fields.numeroLaudo.input?.value || '')
     && isValidDate(fields.dataLaudo.input?.value || '')
@@ -383,6 +607,7 @@ function checkForm() {
 // Inicializar quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🔧 Inicializando Script - DOMContentLoaded disparado');
+  editMode = new URLSearchParams(window.location.search).get('editar') === '1';
   
   // ===== CAMPOS =====
   fields = {
@@ -398,6 +623,7 @@ document.addEventListener('DOMContentLoaded', function() {
     estado: { input: document.getElementById('estado'), error: document.getElementById('estadoError') },
     tipoDeficiencia: { input: document.getElementById('tipoDeficiencia'), error: document.getElementById('tipoDeficienciaError') },
     grauDeficiencia: { input: document.getElementById('grauDeficiencia'), error: document.getElementById('grauDeficienciaError') },
+    necessitaAcompanhante: { input: document.getElementById('necessitaAcompanhante'), error: null },
     cid: { input: document.getElementById('cid'), error: document.getElementById('cidError'), check: document.getElementById('cidCheck') },
     numeroLaudo: { input: document.getElementById('numeroLaudo'), error: document.getElementById('laudoError'), check: document.getElementById('laudoCheck') },
     dataLaudo: { input: document.getElementById('dataLaudo'), error: document.getElementById('dataLaudoError'), check: document.getElementById('dataLaudoCheck') },
@@ -418,6 +644,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Adicionar todos os event listeners aqui
   inicializarEventListeners();
+  preencherFormularioEdicao();
 });
 
 function inicializarEventListeners() {
@@ -502,6 +729,7 @@ function inicializarEventListeners() {
   document.getElementById('estado')?.addEventListener('change', () => checkForm());
   document.getElementById('tipoDeficiencia')?.addEventListener('change', () => checkForm());
   document.getElementById('grauDeficiencia')?.addEventListener('change', () => checkForm());
+  document.getElementById('necessitaAcompanhante')?.addEventListener('change', () => checkForm());
 
   // ===== UPLOAD DE FOTO - CORRIGIDO COM LOGGING =====
   if (fields.foto.input) {
@@ -671,12 +899,7 @@ function inicializarEventListeners() {
         return;
       }
       
-      // Desabilita o botao durante o envio
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.classList.add('loading');
-        submitBtn.innerHTML = '<span class="spinner"></span> Salvando...';
-      }
+      setSubmitLoading('Verificando...');
 
       const fotoFile = fields.foto.input?.files?.[0] || null;
       const laudoFile = fields.laudoFile.input?.files?.[0] || null;
@@ -735,21 +958,76 @@ function inicializarEventListeners() {
         if (typeof mostrarToast === 'function') {
           mostrarToast('Você precisa estar logado para gerar a carteira.', 'error');
         }
-        setTimeout(() => window.location.href = 'login.html', 1200);
+        resetSubmitButton();
         return;
       }
 
-      const { temCarteira, carteira: carteiraExistente } = await verificarCarteiraExistente(usuario.id);
-      if (temCarteira && carteiraExistente) {
+      const { temCarteira, carteira: carteiraExistente } = editMode
+        ? { temCarteira: false, carteira: null }
+        : await verificarCarteiraExistente(usuario.id);
+      if (!editMode && temCarteira && carteiraExistente) {
         localStorage.setItem('carteira_dados', JSON.stringify(carteiraExistente));
         if (typeof mostrarToast === 'function') {
-          mostrarToast('Já existe uma carteira cadastrada para este usuário. Redirecionando...', 'info');
+          mostrarToast('Já existe uma carteira cadastrada para este usuário.', 'error');
         }
-        window.location.href = 'carteira.html';
+        resetSubmitButton();
         return;
       }
 
       try {
+        const originalCpf = String(editingWalletData?.cpf || '').replace(/\D/g, '');
+        const cpfFoiAlterado = dadosCarteira.cpf !== originalCpf;
+        if ((!editMode || cpfFoiAlterado) && typeof verificarCpfCarteiraExistente === 'function') {
+          const verificacaoCpf = await verificarCpfCarteiraExistente(dadosCarteira.cpf);
+          if (verificacaoCpf.existe) {
+            markFieldError('cpf', 'CPF ja cadastrado em outra carteira');
+            if (typeof mostrarToast === 'function') {
+              mostrarToast('Este CPF ja esta cadastrado em uma carteira.', 'error');
+            }
+            resetSubmitButton();
+            return;
+          }
+        }
+      } catch (erro) {
+        if (erro.status === 400) {
+          markFieldError('cpf', erro.message || 'CPF invalido');
+          if (typeof mostrarToast === 'function') {
+            mostrarToast('CPF invalido. Confira os digitos antes de gerar.', 'error');
+          }
+        } else if (typeof mostrarToast === 'function') {
+          mostrarToast('Nao foi possivel verificar se o CPF ja existe. Tente novamente.', 'error');
+        }
+        resetSubmitButton();
+        return;
+      }
+
+      try {
+        setSubmitLoading('Salvando...');
+        if (editMode && typeof atualizarCarteiraBackend === 'function') {
+          const resultado = await atualizarCarteiraBackend(dadosCarteira, { foto: fotoFile, laudo: laudoFile });
+          if (resultado.sucesso) {
+            const dadosCompletos = {
+              ...editingWalletData,
+              ...dadosCarteira,
+              ...resultado.carteira
+            };
+            localStorage.setItem('carteira_dados', JSON.stringify(dadosCompletos));
+            localStorage.setItem('userRegistration', JSON.stringify(dadosCompletos));
+            localStorage.setItem('carteira_cadastrada', 'true');
+
+            if (typeof mostrarToast === 'function') {
+              mostrarToast('Carteira atualizada com sucesso!', 'success');
+            }
+
+            window.location.href = 'carteira.html';
+            return;
+          }
+        }
+
+        if (editMode) {
+          throw new Error('Nao foi possivel iniciar a edicao da carteira.');
+        }
+
         // Usa a funcao salvarCarteiraBackend do auth.js se disponivel
         if (typeof salvarCarteiraBackend === 'function') {
           console.log('[v0] Usando salvarCarteiraBackend...');
@@ -820,63 +1098,13 @@ function inicializarEventListeners() {
       } catch (erro) {
         console.error('[v0] Erro ao salvar carteira:', erro);
         console.error('[v0] Stack:', erro.stack);
-
-        if (erro.status && erro.status < 500) {
-          if (typeof mostrarToast === 'function') {
-            mostrarToast('Erro: ' + erro.message, 'error');
-          }
-          return;
-        }
-
-        const timestamp = Date.now().toString(36).toUpperCase();
-        const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-        dadosCarteira.numero_carteira = `GO-PCD-${timestamp}-${random}`;
-        dadosCarteira.data_emissao = new Date().toISOString().split('T')[0];
-        dadosCarteira.data_validade = new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-        localStorage.setItem('carteira_dados', JSON.stringify(dadosCarteira));
-        localStorage.setItem('carteira_cadastrada', 'true');
-
-        if (typeof mostrarNotificacao === 'function') {
-          mostrarNotificacao('Carteira salva localmente. Sera sincronizada quando o servidor estiver disponivel.', 'warning');
-        }
-
         if (typeof mostrarToast === 'function') {
-          mostrarToast('Carteira salva localmente devido a erro no servidor. Redirecionando...', 'warning');
+          mostrarToast(erro.message || 'Nao foi possivel gerar a carteira. Corrija os dados e tente novamente.', 'error');
         }
-
-        window.location.href = 'carteira.html';
         return;
       } finally {
-        // Reabilita o botao
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.classList.remove('loading');
-          submitBtn.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-            Gerar Carteira Digital
-          `;
-        }
+        resetSubmitButton();
       }
-
-      // Fallback final: salva localmente
-      const timestamp = Date.now().toString(36).toUpperCase();
-      const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-      dadosCarteira.numero_carteira = `GO-PCD-${timestamp}-${random}`;
-      dadosCarteira.data_emissao = new Date().toISOString().split('T')[0];
-      dadosCarteira.data_validade = new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      
-      localStorage.setItem('carteira_dados', JSON.stringify(dadosCarteira));
-      localStorage.setItem('carteira_cadastrada', 'true');
-      
-      alert('Carteira criada localmente. Redirecionando...');
-      
-      setTimeout(() => {
-        window.location.href = 'carteira.html';
-      }, 5000);
     });
   } else {
     console.error('registrationForm nao encontrado!');

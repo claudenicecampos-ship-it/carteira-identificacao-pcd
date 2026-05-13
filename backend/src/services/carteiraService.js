@@ -129,6 +129,99 @@ export class CarteiraService {
     return { id: carteiraId, ...dados };
   }
 
+  static validarDadosCarteira(dados) {
+    if (!validarNome(dados.nome)) {
+      throw this.logAndThrow('Nome do titular invalido', { nome: dados.nome, usuario_id: dados.usuario_id });
+    }
+    if (!validarData(dados.data_nascimento)) {
+      throw this.logAndThrow('Data de nascimento invalida', { data_nascimento: dados.data_nascimento, usuario_id: dados.usuario_id });
+    }
+    if (!validarSexo(dados.sexo)) {
+      throw this.logAndThrow('Sexo invalido', { sexo: dados.sexo, usuario_id: dados.usuario_id });
+    }
+    if (!validarCPF(dados.cpf)) {
+      throw this.logAndThrow('CPF invalido', { cpf: dados.cpf, usuario_id: dados.usuario_id });
+    }
+    if (!validarRG(dados.rg)) {
+      throw this.logAndThrow('RG invalido', { rg: dados.rg, usuario_id: dados.usuario_id });
+    }
+    if (!validarTelefone(dados.telefone)) {
+      throw this.logAndThrow('Telefone invalido', { telefone: dados.telefone, usuario_id: dados.usuario_id });
+    }
+    if (!validarCidade(dados.cidade)) {
+      throw this.logAndThrow('Cidade invalida', { cidade: dados.cidade, usuario_id: dados.usuario_id });
+    }
+    if (!validarEstado(dados.estado)) {
+      throw this.logAndThrow('Estado invalido', { estado: dados.estado, usuario_id: dados.usuario_id });
+    }
+    if (!dados.tipo_deficiencia) {
+      throw this.logAndThrow('Tipo de deficiencia e obrigatorio', { usuario_id: dados.usuario_id });
+    }
+    if (!dados.grau_deficiencia) {
+      throw this.logAndThrow('Grau da deficiencia e obrigatorio', { usuario_id: dados.usuario_id });
+    }
+    if (!validarCID(dados.cid)) {
+      throw this.logAndThrow('CID invalido', { cid: dados.cid, usuario_id: dados.usuario_id });
+    }
+    if (!dados.numero_laudo || typeof dados.numero_laudo !== 'string' || dados.numero_laudo.trim().length < 3) {
+      throw this.logAndThrow('Numero do laudo invalido', { numero_laudo: dados.numero_laudo, usuario_id: dados.usuario_id });
+    }
+    if (!validarData(dados.data_laudo)) {
+      throw this.logAndThrow('Data do laudo invalida', { data_laudo: dados.data_laudo, usuario_id: dados.usuario_id });
+    }
+    if (!validarNome(dados.nome_medico)) {
+      throw this.logAndThrow('Nome do medico invalido', { nome_medico: dados.nome_medico, usuario_id: dados.usuario_id });
+    }
+    if (!validarCRM(dados.crm_medico)) {
+      throw this.logAndThrow('CRM do medico invalido', { crm_medico: dados.crm_medico, usuario_id: dados.usuario_id });
+    }
+    if (dados.nome_responsavel && !validarNome(dados.nome_responsavel)) {
+      throw this.logAndThrow('Nome do responsavel invalido', { nome_responsavel: dados.nome_responsavel, usuario_id: dados.usuario_id });
+    }
+    if (dados.cpf_responsavel && !validarCPF(dados.cpf_responsavel)) {
+      throw this.logAndThrow('CPF do responsavel invalido', { cpf_responsavel: dados.cpf_responsavel, usuario_id: dados.usuario_id });
+    }
+    if ((dados.nome_responsavel && !dados.cpf_responsavel) || (dados.cpf_responsavel && !dados.nome_responsavel)) {
+      throw this.logAndThrow('Nome e CPF do responsavel devem ser preenchidos juntos', { nome_responsavel: dados.nome_responsavel, cpf_responsavel: dados.cpf_responsavel, usuario_id: dados.usuario_id });
+    }
+  }
+
+  static async atualizarCarteira(usuario_id, dados) {
+    const carteiraExistente = await CarteiraRepository.buscarPorUsuarioId(usuario_id);
+    if (!carteiraExistente) {
+      const erro = new Error('Carteira nao encontrada para edicao');
+      erro.status = 404;
+      throw erro;
+    }
+
+    const dadosAtualizados = {
+      ...carteiraExistente,
+      ...dados,
+      usuario_id,
+      numero_carteira: carteiraExistente.numero_carteira,
+      foto: dados.foto || carteiraExistente.foto,
+      laudo_url: dados.laudo_url || carteiraExistente.laudo_url
+    };
+
+    this.validarDadosCarteira(dadosAtualizados);
+
+    const cpfExistente = await CarteiraRepository.buscarPorCpf(dadosAtualizados.cpf);
+    if (cpfExistente && Number(cpfExistente.usuario_id) !== Number(usuario_id)) {
+      const erro = new Error('CPF ja cadastrado em outra carteira');
+      erro.status = 409;
+      throw erro;
+    }
+
+    const atualizado = await CarteiraRepository.atualizarPorUsuarioId(usuario_id, dadosAtualizados);
+    if (!atualizado) {
+      const erro = new Error('Carteira nao encontrada para edicao');
+      erro.status = 404;
+      throw erro;
+    }
+
+    return await CarteiraRepository.buscarPorUsuarioId(usuario_id);
+  }
+
   static async buscarPorUsuario(usuario_id) {
     return await CarteiraRepository.buscarPorUsuarioId(usuario_id);
   }
@@ -138,5 +231,13 @@ export class CarteiraService {
       throw new Error('Código da carteira inválido');
     }
     return await CarteiraRepository.buscarPorNumeroCarteira(numeroCarteira.trim());
+  }
+  static async verificarCpf(cpf) {
+    if (!validarCPF(cpf)) {
+      throw this.logAndThrow('CPF invalido', { cpf });
+    }
+
+    const carteira = await CarteiraRepository.buscarPorCpf(cpf);
+    return { existe: !!carteira };
   }
 }

@@ -372,6 +372,19 @@ async function verificarCarteiraExistente(usuarioId) {
     }
 }
 
+async function verificarCpfCarteiraExistente(cpf) {
+    const cpfLimpo = String(cpf || '').replace(/\D/g, '');
+    if (cpfLimpo.length !== 11) {
+        throw new Error('CPF invalido');
+    }
+
+    const resposta = await fazerRequisicao(`/carteiras/verificar-cpf/${cpfLimpo}`, 'GET');
+    return {
+        existe: !!resposta?.data?.existe,
+        carteira: resposta?.data?.carteira || null
+    };
+}
+
 /**
  * Redireciona usuario baseado se tem carteira ou nao
  */
@@ -460,20 +473,37 @@ async function salvarCarteiraBackend(dadosCarteira, arquivos = {}) {
         throw new Error(resposta.mensagem || 'Erro ao salvar carteira');
     } catch (erro) {
         console.warn('[v0] Erro ao enviar para API:', erro.message);
-
-        if (erro.status && erro.status < 500) {
-            throw erro;
-        }
-
-        console.log('[v0] Salvando apenas no localStorage como fallback...');
-        
-        localStorage.setItem('carteira_dados', JSON.stringify(dadosCarteira));
-        return { 
-            sucesso: true, 
-            carteira: dadosCarteira,
-            mensagem: 'Carteira salva localmente. Sera sincronizada quando o servidor estiver disponivel.'
-        };
+        throw erro;
     }
+}
+
+async function atualizarCarteiraBackend(dadosCarteira, arquivos = {}) {
+    const usuario = obterUsuario();
+    if (!usuario) {
+        throw new Error('Usuario nao autenticado');
+    }
+
+    const formData = new FormData();
+    if (arquivos.foto) {
+        formData.append('foto', arquivos.foto);
+    }
+    if (arquivos.laudo) {
+        formData.append('laudo', arquivos.laudo);
+    }
+
+    Object.entries(dadosCarteira).forEach(([key, value]) => {
+        if (value === undefined || value === null) {
+            return;
+        }
+        formData.append(key, String(value));
+    });
+
+    const resposta = await fazerRequisicao('/carteiras/minha', 'PUT', formData);
+    const carteiraFinal = resposta.data || dadosCarteira;
+    localStorage.setItem('carteira_dados', JSON.stringify(carteiraFinal));
+    localStorage.setItem('userRegistration', JSON.stringify(carteiraFinal));
+    localStorage.setItem('carteira_cadastrada', 'true');
+    return { sucesso: true, carteira: carteiraFinal };
 }
 
 /**

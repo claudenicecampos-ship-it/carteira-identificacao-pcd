@@ -108,6 +108,70 @@ export class CarteiraRepository {
     }
   }
 
+  static async atualizarPorUsuarioId(usuario_id, dados) {
+    try {
+      logger.info('Atualizando carteira por usuario', {
+        usuario_id,
+        cpf: dados.cpf,
+        numero_carteira: dados.numero_carteira,
+        tem_foto: !!dados.foto,
+        tem_laudo: !!dados.laudo_url
+      });
+
+      const conexao = await pool.getConnection();
+      const valores = [
+        dados.tipo || null,
+        dados.numero_carteira,
+        dados.descricao || null,
+        dados.data_nascimento || null,
+        dados.endereco || null,
+        dados.cidade || null,
+        dados.estado || null,
+        dados.telefone || null,
+        dados.tipo_deficiencia || null,
+        dados.grau_deficiencia || null,
+        dados.cid || null,
+        dados.necessita_acompanhante ? 1 : 0,
+        dados.numero_laudo || null,
+        dados.data_laudo || null,
+        dados.nome_medico || null,
+        dados.crm_medico || null,
+        dados.foto || null,
+        dados.laudo_url || null,
+        dados.tipo_sanguineo || null,
+        dados.contato_emergencia || null,
+        dados.alergias || null,
+        dados.medicacoes || null,
+        dados.comunicacao || null,
+        dados.nome_responsavel || null,
+        dados.cpf_responsavel || null,
+        dados.vinculo_responsavel || null,
+        dados.nome || null,
+        dados.cpf || null,
+        dados.rg || null,
+        dados.sexo || null,
+        usuario_id
+      ].map(v => v === undefined ? null : v);
+
+      const [resultado] = await conexao.execute(
+        `UPDATE carteiras
+         SET tipo = ?, numero_carteira = ?, descricao = ?, data_nascimento = ?, endereco = ?, cidade = ?, estado = ?, telefone = ?, tipo_deficiencia = ?, grau_deficiencia = ?, cid = ?, necessita_acompanhante = ?, numero_laudo = ?, data_laudo = ?, nome_medico = ?, crm_medico = ?, foto = ?, laudo_url = ?, tipo_sanguineo = ?, contato_emergencia = ?, alergias = ?, medicacoes = ?, comunicacao = ?, nome_responsavel = ?, cpf_responsavel = ?, vinculo_responsavel = ?, nome = ?, cpf = ?, rg = ?, sexo = ?
+         WHERE usuario_id = ? AND ativa = 1`,
+        valores
+      );
+      conexao.release();
+      return resultado.affectedRows > 0;
+    } catch (erro) {
+      logger.error('Erro ao atualizar carteira no repositorio', { mensagem: erro.message, usuario_id, stack: erro.stack });
+      throw new Error('Erro ao atualizar carteira: ' + erro.message);
+    }
+  }
+
+  static async cpfExiste(cpf) {
+    const carteira = await this.buscarPorCpf(cpf);
+    return !!carteira;
+  }
+
   static async buscarPorNumeroCarteira(numeroCarteira) {
     if (!numeroCarteira) return null;
     try {
