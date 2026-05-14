@@ -1,5 +1,6 @@
 import { CarteiraService } from '../services/carteiraService.js';
 import { gerarCodigoVerificacao } from '../utils/validacao.js';
+import { gerarQRCode } from '../utils/qrcode.js';
 import { logger } from '../utils/logger.js';
 
 export class CarteiraController {
@@ -58,6 +59,9 @@ export class CarteiraController {
       const fotoPath = fotoFile ? `imgs/${fotoFile.filename}` : (body.foto && !String(body.foto).startsWith('data:') ? body.foto : null);
       const laudoPath = laudoFile ? `laudos/${laudoFile.filename}` : (body.laudo_url && !String(body.laudo_url).startsWith('data:') ? body.laudo_url : (body.laudoArquivo && !String(body.laudoArquivo).startsWith('data:') ? body.laudoArquivo : null));
 
+      // Gera QR code único
+      const { qrCode, codigoUnico } = await gerarQRCode();
+
       logger.info('Iniciando fluxo de criação de carteira', {
         usuario_id: req.usuario_id,
         numero_carteira: numeroCarteira,
@@ -65,7 +69,8 @@ export class CarteiraController {
         upload_foto: !!fotoFile,
         upload_laudo: !!laudoFile,
         fonte_foto: fotoFile ? 'upload' : body.foto ? 'body' : 'nenhuma',
-        fonte_laudo: laudoFile ? 'upload' : body.laudo_url ? 'body_url' : body.laudoArquivo ? 'body_file' : 'nenhuma'
+        fonte_laudo: laudoFile ? 'upload' : body.laudo_url ? 'body_url' : body.laudoArquivo ? 'body_file' : 'nenhuma',
+        codigo_qr: codigoUnico
       });
 
       const dados = {
@@ -100,7 +105,8 @@ export class CarteiraController {
         nome: body.nome || null,
         cpf: body.cpf || null,
         rg: body.rg || null,
-        sexo: body.sexo || null
+        sexo: body.sexo || null,
+        codigo_qr: codigoUnico
       };
 
       logger.info('Dados de criação de carteira preparados', {
@@ -111,11 +117,12 @@ export class CarteiraController {
         tipo_deficiencia: dados.tipo_deficiencia,
         grau_deficiencia: dados.grau_deficiencia,
         tem_foto: !!dados.foto,
-        tem_laudo: !!dados.laudo_url
+        tem_laudo: !!dados.laudo_url,
+        codigo_qr: dados.codigo_qr
       });
 
       const carteira = await CarteiraService.criarCarteira(dados);
-      res.status(201).json({ sucesso: true, mensagem: 'Carteira criada com sucesso', data: carteira });
+      res.status(201).json({ sucesso: true, mensagem: 'Carteira criada com sucesso', data: { ...carteira, qrCodeBase64: qrCode, codigo_qr: codigoUnico } });
     } catch (erro) {
       logger.error('Falha no fluxo de criação de carteira', { usuario_id: req.usuario_id, mensagem: erro.message, stack: erro.stack });
       const status = erro.status || 400;
@@ -152,7 +159,7 @@ export class CarteiraController {
 
   static async atualizarMinha(req, res) {
     try {
-      const dados = this.prepararDadosCarteira(req);
+      const dados = CarteiraController.prepararDadosCarteira(req);
       const carteira = await CarteiraService.atualizarCarteira(req.usuario_id, dados);
       res.status(200).json({ sucesso: true, mensagem: 'Carteira atualizada com sucesso', data: carteira });
     } catch (erro) {

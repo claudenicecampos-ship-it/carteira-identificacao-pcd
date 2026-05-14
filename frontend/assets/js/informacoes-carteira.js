@@ -84,6 +84,16 @@ function formatPhone(tel) {
   return tel;
 }
 
+function generateVerifyCode(cpf, numero) {
+  const raw = (cpf || '') + (numero || '') + 'GOCARD2025';
+  let hash = 0;
+  for (let i = 0; i < raw.length; i++) {
+    hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+    hash |= 0;
+  }
+  return 'VER-' + Math.abs(hash).toString(36).toUpperCase().slice(0, 8);
+}
+
 /**
  * Constrói URL da imagem de backend
  * @param {string} filePath - Caminho do arquivo
@@ -200,7 +210,6 @@ function showContent() {
  */
 function normalizeWalletData(data) {
   const normalized = { ...data };
-  
   const fieldMapping = {
     'data_nascimento': 'dataNascimento',
     'tipo_deficiencia': 'tipoDeficiencia',
@@ -216,22 +225,57 @@ function normalizeWalletData(data) {
     'cpf_responsavel': 'cpfResponsavel',
     'vinculo_responsavel': 'vinculoResponsavel',
     'numero_carteira': 'numeroCarteira',
+    'codigo_verificacao': 'codigoVerificacao',
     'data_emissao': 'dataEmissao',
     'data_validade': 'dataValidade',
     'laudo_url': 'laudoArquivo',
+    'laudoUrl': 'laudoArquivo',
   };
-
   Object.entries(fieldMapping).forEach(([dbField, appField]) => {
     if (normalized[dbField] !== undefined && normalized[appField] === undefined) {
       normalized[appField] = normalized[dbField];
     }
   });
-
-  // Normaliza booleanos
+  // Normaliza necessitaAcompanhante para texto
   if (typeof normalized.necessitaAcompanhante === 'boolean') {
     normalized.necessitaAcompanhante = normalized.necessitaAcompanhante ? 'Sim' : 'Não';
+  } else if (typeof normalized.necessitaAcompanhante === 'number') {
+    normalized.necessitaAcompanhante = normalized.necessitaAcompanhante === 1 ? 'Sim' : 'Não';
+  } else if (typeof normalized.necessitaAcompanhante === 'string') {
+    const val = normalized.necessitaAcompanhante.trim().toLowerCase();
+    if (val === '' || val === 'null' || val === 'undefined') {
+      normalized.necessitaAcompanhante = '—';
+    } else if (["sim", "true", "1", "s"].includes(val)) {
+      normalized.necessitaAcompanhante = 'Sim';
+    } else if (["não", "nao", "false", "0", "n"].includes(val)) {
+      normalized.necessitaAcompanhante = 'Não';
+    } else {
+      normalized.necessitaAcompanhante = val.charAt(0).toUpperCase() + val.slice(1);
+    }
   }
-
+  // Gera número da carteira se não existir
+  if (!normalized.numeroCarteira && !normalized.numero_carteira) {
+    normalized.numeroCarteira = `GC${Date.now().toString().slice(-8)}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+  } else if (normalized.numero_carteira && !normalized.numeroCarteira) {
+    normalized.numeroCarteira = normalized.numero_carteira;
+  }
+  // Data de emissão
+  if (!normalized.dataEmissao && !normalized.data_emissao) {
+    normalized.dataEmissao = new Date().toISOString();
+  } else if (normalized.data_emissao && !normalized.dataEmissao) {
+    normalized.dataEmissao = normalized.data_emissao;
+  }
+  // Data de validade (5 anos)
+  if (!normalized.dataValidade && !normalized.data_validade) {
+    normalized.dataValidade = new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000).toISOString();
+  } else if (normalized.data_validade && !normalized.dataValidade) {
+    normalized.dataValidade = normalized.data_validade;
+  }
+  // Código de verificação
+  if (!normalized.codigoVerificacao) {
+    const params = new URLSearchParams(window.location.search);
+    normalized.codigoVerificacao = params.get('cv') || generateVerifyCode(normalized.cpf, normalized.numeroCarteira);
+  }
   return normalized;
 }
 
@@ -386,7 +430,66 @@ async function initializePage() {
 }
 
 // ============================================================================
-// INITIALIZATION
-// ============================================================================
-
-document.addEventListener('DOMContentLoaded', initializePage);
+// PDF DOWNLOAD (substitui impressão)
+document.addEventListener('DOMContentLoaded', () => {
+  initializePage();
+  // Remove botão de imprimir se existir
+  const printBtn = document.getElementById('printBtn');
+  if (printBtn) printBtn.remove();
+  // Adiciona evento para baixar PDF
+  const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+  if (downloadPdfBtn) {
+    downloadPdfBtn.addEventListener('click', async () => {
+      const content = document.getElementById('contentState');
+      if (!content) return;
+      downloadPdfBtn.innerHTML = '<span>Gerando PDF...</span>';
+      downloadPdfBtn.disabled = true;
+      try {
+        if (typeof html2canvas === 'undefined') {
+          throw new Error('Biblioteca html2canvas não carregada');
+        }
+        const canvas = await html2canvas(content, {
+          backgroundColor: '#fff',
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          logging: false
+        });
+        // Corrige acesso ao jsPDF para UMD
+        let jsPDFConstructor = null;
+        if (typeof jsPDF !== 'undefined') {
+          jsPDFConstructor = jsPDF;
+        } else if (window.jspdf && window.jspdf.jsPDF) {
+          jsPDFConstructor = window.jspdf.jsPDF;
+        }
+        if (!jsPDFConstructor) {
+          // Fallback: baixar como imagem
+          const link = document.createElement('a');
+          link.href = canvas.toDataURL('image/png');
+          link.download = `carteira-informacoes-${Date.now()}.png`;
+          link.click();
+          alert('PDF não disponível. Imagem PNG baixada.');
+          return;
+        }
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = imgWidth / imgHeight;
+        const pdfWidth = 210; // A4 width em mm
+        const pdfHeight = pdfWidth / ratio;
+        const pdf = new jsPDFConstructor({
+          orientation: pdfHeight > pdfWidth ? 'portrait' : 'landscape',
+          unit: 'mm',
+          format: [pdfWidth, pdfHeight]
+        });
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`carteira-informacoes-${Date.now()}.pdf`);
+      } catch (e) {
+        alert('Erro ao gerar PDF. Tente novamente.');
+      } finally {
+        downloadPdfBtn.innerHTML = 'Baixar PDF';
+        downloadPdfBtn.disabled = false;
+      }
+    });
+  }
+});

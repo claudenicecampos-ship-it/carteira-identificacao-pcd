@@ -5,3 +5,4 @@ e ele pode solicitar ao administrado para que ele possa criar uma nova carteira 
 5- localstorage
 armazenamento de dados sensiveis nos campos de userRegistration,carteira_user,carteira_cadastrada,carteira_dados nO aermazene no localstorage
  
+melhorar o pdf

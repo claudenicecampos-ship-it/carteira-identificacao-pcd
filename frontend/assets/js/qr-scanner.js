@@ -28,6 +28,23 @@ function redirectToInfoPage(numeroCarteira) {
     showScannerMessage('Digite o número da carteira antes de continuar.', true);
     return;
   }
+  try {
+    const decodedUrl = new URL(sanitized, window.location.href);
+    const id = decodedUrl.searchParams.get('id') || decodedUrl.searchParams.get('numero_carteira');
+    if (id) {
+      const targetParams = new URLSearchParams();
+      targetParams.set('id', id);
+      ['cv', 'q'].forEach(param => {
+        const value = decodedUrl.searchParams.get(param);
+        if (value) targetParams.set(param, value);
+      });
+      window.location.href = `informacoes-carteira.html?${targetParams.toString()}`;
+      return;
+    }
+  } catch (erro) {
+    // O QR pode conter apenas o numero da carteira.
+  }
+
   window.location.href = `informacoes-carteira.html?id=${encodeURIComponent(sanitized)}`;
 }
 

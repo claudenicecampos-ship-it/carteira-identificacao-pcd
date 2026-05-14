@@ -160,6 +160,7 @@ function normalizarDadosCarteira(dados) {
     'cpf_responsavel': 'cpfResponsavel',
     'vinculo_responsavel': 'vinculoResponsavel',
     'numero_carteira': 'numeroCarteira',
+    'codigo_verificacao': 'codigoVerificacao',
     'data_emissao': 'dataEmissao',
     'data_validade': 'validade',
     'laudo_url': 'laudoArquivo',
@@ -174,9 +175,23 @@ function normalizarDadosCarteira(dados) {
   
   // Normaliza necessitaAcompanhante para texto
   if (typeof d.necessitaAcompanhante === 'boolean') {
-    d.necessitaAcompanhante = d.necessitaAcompanhante ? 'Sim' : 'Nao';
+    d.necessitaAcompanhante = d.necessitaAcompanhante ? 'Sim' : 'Não';
+  } else if (typeof d.necessitaAcompanhante === 'number') {
+    d.necessitaAcompanhante = d.necessitaAcompanhante === 1 ? 'Sim' : 'Não';
+  } else if (typeof d.necessitaAcompanhante === 'string') {
+    const val = d.necessitaAcompanhante.trim().toLowerCase();
+    if (val === '' || val === 'null' || val === 'undefined') {
+      d.necessitaAcompanhante = '—';
+    } else if (["sim", "true", "1", "s"].includes(val)) {
+      d.necessitaAcompanhante = 'Sim';
+    } else if (["não", "nao", "false", "0", "n"].includes(val)) {
+      d.necessitaAcompanhante = 'Não';
+    } else {
+      d.necessitaAcompanhante = val.charAt(0).toUpperCase() + val.slice(1);
+    }
+  } else if (d.necessitaAcompanhante == null) {
+    d.necessitaAcompanhante = '—';
   }
-  
   return d;
 }
 
@@ -327,8 +342,8 @@ async function loadWalletData() {
   }
 
   // Rodapé oficial
-  setText('dataEmissao', formatDate(d.dataEmissao));
-  setText('dataValidade', formatDate(d.validade));
+    setText('dataEmissao', formatDate(d.dataEmissao || d.data_emissao));
+    setText('dataValidade', formatDate(d.validade || d.data_validade || d.dataValidade));
   setText('numeroCarteira', d.numeroCarteira);
   setText('codigoVerificacao', d.codigoVerificacao);
 
@@ -380,7 +395,23 @@ function generateQRCode(d) {
   // Gera URL simples que aponta para a página de informações
   // Exemplo: informacoes-carteira.html?id=GC1234ABCD
   const baseUrl = window.location.origin + window.location.pathname.replace('carteira.html', '');
-  const qrUrl = `${baseUrl}informacoes-carteira.html?id=${encodeURIComponent(d.numeroCarteira)}`;
+  const qrIdentityParts = [
+    d.numeroCarteira,
+    d.codigoVerificacao,
+    d.id,
+    d.usuario_id,
+    d.cpf
+  ].filter(Boolean);
+  const qrToken = btoa(unescape(encodeURIComponent(qrIdentityParts.join('|'))))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+  const qrParams = new URLSearchParams({
+    id: d.numeroCarteira,
+    cv: d.codigoVerificacao,
+    q: qrToken
+  });
+  const qrUrl = `${baseUrl}informacoes-carteira.html?${qrParams.toString()}`;
 
   console.log('[QR Code] Gerando QR para:', qrUrl);
 

@@ -6,6 +6,9 @@
   <title>Informações da Carteira - GO Card PCD</title>
   <link rel="stylesheet" href="../assets/css/styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Bibliotecas para PDF/Imagem -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <div class="app-container">
@@ -302,13 +305,12 @@
 
         <!-- Botões -->
         <div class="action-row">
-          <button class="btn-action primary" onclick="window.print()">
+          <button class="btn-action primary" id="downloadPdfBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="6 9 6 2 18 2 18 9"/>
-              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-              <rect x="6" y="14" width="12" height="8"/>
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M8 6h8M8 10h8M8 14h6"/>
             </svg>
-            Imprimir
+            Baixar PDF
           </button>
           <button class="btn-action secondary" onclick="window.history.back()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
