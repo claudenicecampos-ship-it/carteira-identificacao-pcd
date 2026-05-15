@@ -444,16 +444,38 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!content) return;
       downloadPdfBtn.innerHTML = '<span>Gerando PDF...</span>';
       downloadPdfBtn.disabled = true;
+      // Oculta cabeçalho de verificação, botão de download e botão Voltar temporariamente
+      const headerToHide = document.querySelector('.verificacao-header, .verificacao-banner, .verificacao, .documento-verificado, .autentico-banner, .autentico, .authentic-banner, .verified-banner, .verified-header, .documento-verificado-banner');
+      const downloadBtn = document.getElementById('downloadPdfBtn');
+      const actionRow = document.querySelector('.action-row');
+      let headerDisplay = null, btnDisplay = null, actionRowDisplay = null;
+      if (headerToHide) {
+        headerDisplay = headerToHide.style.display;
+        headerToHide.style.display = 'none';
+      }
+      if (downloadBtn) {
+        btnDisplay = downloadBtn.style.display;
+        downloadBtn.style.display = 'none';
+      }
+      if (actionRow) {
+        actionRowDisplay = actionRow.style.display;
+        actionRow.style.display = 'none';
+      }
+      // Expande todos os campos (remove colapsos, mostra tudo)
       try {
         if (typeof html2canvas === 'undefined') {
           throw new Error('Biblioteca html2canvas não carregada');
         }
+        // Usa uma escala maior para melhor qualidade
+        // Para PDF em uma única página, ajusta altura do PDF para caber todo o conteúdo
         const canvas = await html2canvas(content, {
           backgroundColor: '#fff',
-          scale: 2,
+          scale: 3,
           useCORS: true,
           allowTaint: true,
-          logging: false
+          logging: false,
+          windowWidth: content.scrollWidth,
+          windowHeight: content.scrollHeight
         });
         // Corrige acesso ao jsPDF para UMD
         let jsPDFConstructor = null;
@@ -471,22 +493,38 @@ document.addEventListener('DOMContentLoaded', () => {
           alert('PDF não disponível. Imagem PNG baixada.');
           return;
         }
+        // Gera PDF em uma única página, ajustando altura
         const imgData = canvas.toDataURL('image/png');
-        const imgWidth = canvas.width;
-        const imgHeight = canvas.height;
-        const ratio = imgWidth / imgHeight;
-        const pdfWidth = 210; // A4 width em mm
-        const pdfHeight = pdfWidth / ratio;
+        const imgProps = {
+          width: canvas.width,
+          height: canvas.height
+        };
+        const pdfPageWidth = 210; // mm (A4)
+        const pxPerMm = imgProps.width / pdfPageWidth;
+        const imgHeightMm = imgProps.height / pxPerMm;
         const pdf = new jsPDFConstructor({
-          orientation: pdfHeight > pdfWidth ? 'portrait' : 'landscape',
+          orientation: imgHeightMm > pdfPageWidth ? 'portrait' : 'landscape',
           unit: 'mm',
-          format: [pdfWidth, pdfHeight]
+          format: [pdfPageWidth, imgHeightMm]
         });
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.addImage(
+          imgData,
+          'PNG',
+          0,
+          0,
+          pdfPageWidth,
+          imgHeightMm,
+          undefined,
+          'FAST'
+        );
         pdf.save(`carteira-informacoes-${Date.now()}.pdf`);
       } catch (e) {
         alert('Erro ao gerar PDF. Tente novamente.');
       } finally {
+        // Restaura cabeçalho, botões
+        if (headerToHide) headerToHide.style.display = headerDisplay;
+        if (downloadBtn) downloadBtn.style.display = btnDisplay;
+        if (actionRow) actionRow.style.display = actionRowDisplay;
         downloadPdfBtn.innerHTML = 'Baixar PDF';
         downloadPdfBtn.disabled = false;
       }

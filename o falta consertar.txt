@@ -1,8 +1,0 @@
-1- tela de do administrador ------ deixar por ultimo 
-fazer com que o administrador desativada uma carteira ou um usuario vai aparecer um campo de descrição para informa porque foi desativado e quando o usuario tentar a acessar a  carteira desativata vai aparecer a decrição pra ele. 
-e ele pode solicitar ao administrado para que ele possa criar uma nova carteira  e ele so podera criar apenas quando o administrador permitir.a carteira  desativada mesmo criando uma nova elas nao serao removidas e ficarão salvas no banco de dados. e o usuario pode criar a nova carterai  com as mesma informações que a anterior
-
-5- localstorage
-armazenamento de dados sensiveis nos campos de userRegistration,carteira_user,carteira_cadastrada,carteira_dados nO aermazene no localstorage
- 
-melhorar o pdf
